@@ -27,7 +27,7 @@ export default function Llamador() {
     return (
         <>
             <div className="flex justify-between items-start">
-                <div className="w-[10rem] pl-2 h-[calc(100vh-4rem)] flex flex-col items-start bg-gray-800 z-50 shadow-slate-900 ">
+                <div className="w-[10rem] pl-2 h-[calc(100vh-4rem)] flex flex-col items-start bg-slate-800 z-50 shadow-slate-900 ">
                     <div className="w-full">
                         <div className="space-y-4 mt-4 text-slate-100 whitespace-nowrap">
                             <div className="flex flex-col space-y-4 ml-3 mr-5">
