@@ -9,7 +9,7 @@ export default function Llamador() {
 
     const [numeros, setNumeros] = useState([]);//numeros
     const [filtros, setFiltros] = useState([]);//filtros
-    const [selected, setSelected] = useState(null); //no se para que lo voy a usar
+    const [selectedFilter, setSelectedFilter] = useState(null); //filtro actual
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
 
@@ -22,6 +22,7 @@ export default function Llamador() {
         })
         .catch(error => {
             console.error('There was an error fetching the data!', error);
+            setError(error);
         });
     }, []);
 
@@ -31,11 +32,16 @@ export default function Llamador() {
         .then(response => response.json())
         .then(data => {
             setFiltros(data);
+            setIsLoading(false);
         })
         .catch(error => {
             console.error('There was an error fetching the data!', error);
         });
     }, []);
+
+    const handleClickFilter = (id) => {
+        setSelectedFilter(id);
+    }
 
     return (
         <>
@@ -48,12 +54,9 @@ export default function Llamador() {
                                 <div className="flex flex-col space-y-4">
                                     {filtros.map((filtros, index) => (
                                         <button key={index} 
-                                            className="rounded 
-                                            bg-slate-100 
-                                            text-slate-800
-                                            font-semibold
-                                            hover:bg-blue-400 
-                                            hover:text-slate-100"
+                                            className={`rounded-sm py-1 text-left pl-1 bg-slate-100 text-slate-800 hover:bg-blue-400 hover:text-slate-100 capitalize
+                                                        ${index == selectedFilter ? 'bg-blue-500 text-white' : ''}`}
+                                            onClick={() => handleClickFilter(index)}
                                         >{filtros.estados}</button>
                                     ))}
                                     <hr />
@@ -72,29 +75,40 @@ export default function Llamador() {
                         <table  className="min-w-full text-left text-sm font-light">
                             <thead className="border-b font-medium dark:border-neutral-500 bg-blue-400 sticky top-0">
                                 <tr>
-                                    <th scope="col" className="px-1 py-1 text-slate-100 font-semibold ">Accion</th>
-                                    <th scope="col" className="px-1 py-1 text-slate-100 font-semibold "><a href="#">Nro.</a></th>
-                                    <th scope="col" className="px-1 py-1 text-slate-100 font-semibold ">Fila</th>
-                                    <th scope="col" className="px-1 py-1 text-slate-100 font-semibold "><a href="#">T. de espera</a></th>
-                                    <th scope="col" className="px-1 py-1 text-slate-100 font-semibold ">Estado</th>
-                                    <th scope="col" className="px-1 py-1 text-slate-100 font-semibold ">Nombre</th>
-                                    <th scope="col" className="px-1 py-1 text-slate-100 font-semibold ">En proceso</th>
+                                    <th scope="col" className="px-1 py-1 text-slate-100">Accion</th>
+                                    <th scope="col" className="px-1 py-1 text-slate-100"><a href="#">Nro.</a></th>
+                                    <th scope="col" className="px-1 py-1 text-slate-100">Fila</th>
+                                    <th scope="col" className="px-1 py-1 text-slate-100"><a href="#">T. de espera</a></th>
+                                    <th scope="col" className="px-1 py-1 text-slate-100">Estado</th>
+                                    <th scope="col" className="px-1 py-1 text-slate-100">Nombre</th>
+                                    <th scope="col" className="px-1 py-1 text-slate-100">En proceso</th>
                                 </tr>
                             </thead>
                             <tbody className="odd">
-                                {numeros.map((item, index) => (
-                                <tr key={index} className="odd:bg-slate-50 even:bg-gray-300">
-                                    <td className="whitespace-nowrap px-1 py-1 font-normal">
-                                    <a className="bg-blue-600 px-3 py-0.5 text-white rounded-sm" href="">Llamar</a>
-                                    </td>
-                                    <td className="whitespace-nowrap px-1 py-1">{item.fila_prefix} {item.numero}</td>
-                                    <td className="whitespace-nowrap px-1 py-1">{item.fila}</td>
-                                    <td className="whitespace-nowrap px-1 py-1">tiempo de espera</td>
-                                    <td className="whitespace-nowrap px-1 py-1">{item.estado}</td>
-                                    <td className="whitespace-nowrap px-1 py-1">{item.nombre}</td>
-                                    <td className="whitespace-nowrap px-1 py-1"></td>
-                                </tr>
-                                ))}
+                                { isLoading ? (
+                                    <tr className="font-semibold text-slate-600 bg-slate-200 shadow-md">
+                                        <td className="px-5 py-1">Loading...</td>
+                                    </tr>
+                                    ) : error ? (
+                                    <tr>
+                                       <td> Error: {error.message} </td>
+                                    </tr>
+                                    ) : (
+                                    numeros.map((item, index) => (
+                                        <tr key={index} className="odd:bg-slate-50 even:bg-gray-300">
+                                        <td className="whitespace-nowrap px-1 py-1 font-normal">
+                                        <a className="bg-blue-600 px-5 py-0.5 text-slate-100 rounded-md font-semibold hover:bg-blue-500 rounded-tl-none" href="#">Llamar</a>
+                                        </td>
+                                        <td className="whitespace-nowrap px-1 py-1">{item.fila_prefix} {item.numero}</td>
+                                        <td className="whitespace-nowrap px-1 py-1">{item.fila}</td>
+                                        <td className="whitespace-nowrap px-1 py-1">tiempo de espera</td>
+                                        <td className="whitespace-nowrap px-1 py-1">{item.estado}</td>
+                                        <td className="whitespace-nowrap px-1 py-1">{item.nombre}</td>
+                                        <td className="whitespace-nowrap px-1 py-1"></td>
+                                        </tr>
+                                        ))
+                                    )
+                                }
                             </tbody>
                         </table>
                     </div>
