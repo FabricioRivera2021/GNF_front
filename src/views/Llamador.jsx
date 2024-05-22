@@ -7,7 +7,8 @@ const API_URL = "http://127.0.0.1:8000/api"
 
 export default function Llamador() {
 
-    const [numeros, setNumeros] = useState([]);
+    const [numeros, setNumeros] = useState([]);//numeros
+    const [filtros, setFiltros] = useState([]);//filtros
     const [selected, setSelected] = useState(null); //no se para que lo voy a usar
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -24,6 +25,18 @@ export default function Llamador() {
         });
     }, []);
 
+    useEffect(() => {
+        // Fetch data from the Laravel API
+        fetch(API_URL + '/allEstados')
+        .then(response => response.json())
+        .then(data => {
+            setFiltros(data);
+        })
+        .catch(error => {
+            console.error('There was an error fetching the data!', error);
+        });
+    }, []);
+
     return (
         <>
             <div className="flex justify-between items-start">
@@ -33,55 +46,16 @@ export default function Llamador() {
                             <div className="flex flex-col space-y-4 ml-3 mr-5">
                             <h5>Filtros</h5>
                                 <div className="flex flex-col space-y-4">
-                                    <button className="rounded 
-                                        bg-slate-100 
-                                        text-slate-800
-                                        font-semibold
-                                        hover:bg-blue-400 
-                                        hover:text-slate-100"
-                                    >Todos</button>
-                                    <button className="rounded 
-                                        bg-slate-100 
-                                        text-slate-800
-                                        font-semibold
-                                        hover:bg-blue-400 
-                                        hover:text-slate-100"
-                                    >Sin atender</button>
-                                    <button className="rounded 
-                                        bg-slate-100 
-                                        text-slate-800
-                                        font-semibold
-                                        hover:bg-blue-400 
-                                        hover:text-slate-100"
-                                    >En preparacion</button>
-                                    <button className="rounded 
-                                        bg-slate-100 
-                                        text-slate-800
-                                        font-semibold
-                                        hover:bg-blue-400 
-                                        hover:text-slate-100"
-                                    >Para pagar</button>
-                                    <button className="rounded 
-                                        bg-slate-100 
-                                        text-slate-800
-                                        font-semibold
-                                        hover:bg-blue-400 
-                                        hover:text-slate-100"
-                                    >Para entregar</button>
-                                    <button className="rounded 
-                                        bg-slate-100 
-                                        text-slate-800
-                                        font-semibold
-                                        hover:bg-blue-400 
-                                        hover:text-slate-100"
-                                    >Pausados</button>
-                                    <button className="rounded 
-                                        bg-slate-100 
-                                        text-slate-800
-                                        font-semibold
-                                        hover:bg-blue-400 
-                                        hover:text-slate-100"
-                                    >Cancelados</button>
+                                    {filtros.map((filtros, index) => (
+                                        <button key={index} 
+                                            className="rounded 
+                                            bg-slate-100 
+                                            text-slate-800
+                                            font-semibold
+                                            hover:bg-blue-400 
+                                            hover:text-slate-100"
+                                        >{filtros.estados}</button>
+                                    ))}
                                     <hr />
                                     <div className="flex flex-col">
                                         {/* <label for="search"></label> */}
