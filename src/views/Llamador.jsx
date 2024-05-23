@@ -9,13 +9,13 @@ export default function Llamador() {
 
     const [numeros, setNumeros] = useState([]);//numeros
     const [filtros, setFiltros] = useState([]);//filtros
-    const [selectedFilter, setSelectedFilter] = useState(null); //filtro actual
+    const [selectedFilter, setSelectedFilter] = useState(0); //filtro actual
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
 
     useEffect(() => {
         // Fetch data from the Laravel API
-        fetch(API_URL + '/allNumbers')
+        fetch(API_URL + '/allNumbers/' + selectedFilter)
         .then(response => response.json())
         .then(data => {
             setNumeros(data);
@@ -24,7 +24,7 @@ export default function Llamador() {
             console.error('There was an error fetching the data!', error);
             setError(error);
         });
-    }, []);
+    }, [selectedFilter]);
 
     useEffect(() => {
         // Fetch data from the Laravel API
@@ -40,23 +40,24 @@ export default function Llamador() {
     }, []);
 
     const handleClickFilter = (id) => {
+        console.log(id);
         setSelectedFilter(id);
     }
 
     return (
         <>
             <div className="flex justify-between items-start">
-                <div className="w-[10rem] pl-2 h-[calc(100vh-4rem)] flex flex-col items-start bg-slate-800 z-50 shadow-slate-900 ">
+                <div className="w-[12rem] pl-2 h-[calc(100vh-4rem)] flex flex-col items-start bg-slate-800 z-50 shadow-slate-900 ">
                     <div className="w-full">
                         <div className="space-y-4 mt-4 text-slate-100 whitespace-nowrap">
                             <div className="flex flex-col space-y-4 ml-3 mr-5">
                             <h5>Filtros</h5>
                                 <div className="flex flex-col space-y-4">
-                                    {filtros.map((filtros, index) => (
-                                        <button key={index} 
-                                            className={`rounded-sm py-1 text-left pl-1 bg-slate-100 text-slate-800 hover:bg-blue-400 hover:text-slate-100 capitalize
-                                                        ${index == selectedFilter ? 'bg-blue-500 text-white' : ''}`}
-                                            onClick={() => handleClickFilter(index)}
+                                    {filtros.map((filtros) => (
+                                        <button key={filtros.id}
+                                            className={`rounded-sm py-1 text-left pl-1 hover:bg-blue-400 hover:text-slate-100 capitalize
+                                                        ${filtros.id == selectedFilter ? 'bg-blue-500 text-white' : 'bg-slate-100 text-slate-800'}`}
+                                            onClick={() => handleClickFilter(filtros.id)}
                                         >{filtros.estados}</button>
                                     ))}
                                     <hr />
