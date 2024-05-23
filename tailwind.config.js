@@ -6,13 +6,14 @@ export default {
   ],
   theme: {
     extend: {
-      extend: {
         fontFamily: {
-          sans: ['Roboto', 'roboto'], // Agregar la fuente aquí
+          roboto: ['Roboto']
         },
-      },
     },
   },
-  plugins: [require('@tailwindcss/forms')],
+  plugins: [
+    require('@tailwindcss/forms'),
+    require('@tailwindcss/typography')
+  ],
 }
 

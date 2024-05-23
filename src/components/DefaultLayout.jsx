@@ -1,6 +1,6 @@
 import { Fragment } from 'react'
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems, Transition } from '@headlessui/react'
-import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { Bars3Icon, BellIcon, XMarkIcon, BeakerIcon } from '@heroicons/react/24/outline'
 import { NavLink, Outlet } from 'react-router-dom'
 
 const user = {
@@ -44,7 +44,7 @@ export default function DefaultLayout() {
                 <div className="flex h-16 items-center justify-between">
                   <div className="flex items-center">
                     <div className="flex-shrink-0">
-                      <p className='text-white'>Tu logo aqui</p>
+                      <p className='text-white'><BeakerIcon width='30px' /></p>
                     </div>
                     {/* Botos del nav bar------------------------------------------------------------------------------- */}
                     <div className="hidden md:block">
