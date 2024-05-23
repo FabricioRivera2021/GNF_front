@@ -9,7 +9,7 @@ export default function Dashboard() {
             </div>
         </header>
         <main>
-            hola verano
+            Back office-- ponele
         </main>
     </>
   )
