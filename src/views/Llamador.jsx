@@ -1,7 +1,7 @@
 /**
  * Vista del menu de gestion de numeros
  */
-
+import { RotatingLines, ThreeDots } from 'react-loader-spinner';
 import { useEffect, useState } from "react";
 const API_URL = "http://127.0.0.1:8000/api"
 
@@ -86,9 +86,100 @@ export default function Llamador() {
                                 </tr>
                             </thead>
                             <tbody className="odd">
-                                { isLoading ? (
-                                    <tr className="font-semibold text-slate-600 bg-slate-200 shadow-md">
-                                        <td className="px-5 py-1">Loading...</td>
+                                { isLoading ? ( //convertir a una funcion q recorra esto...
+                                    <tr>
+                                        <td>
+                                            <div className='mt-2 ml-3'>
+                                                <RotatingLines 
+                                                    width="30" 
+                                                    radius="15"
+                                                    strokeColor='dodgerblue'
+                                                    strokeWidth='2'
+                                                    ariaLabel="rotating-lines-loading"
+                                                    wrapperStyle={{}}
+                                                    wrapperClass=""
+                                                    visible={true}
+                                                    />
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div className='mt-2 ml-1'>
+                                                <RotatingLines 
+                                                    width="30" 
+                                                    radius="15"
+                                                    color="blue" 
+                                                    ariaLabel="rotating-lines-loading"
+                                                    wrapperStyle={{}}
+                                                    wrapperClass=""
+                                                    visible={true}
+                                                    />
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div className='mt-2 ml-1'>
+                                                <RotatingLines 
+                                                    width="30" 
+                                                    radius="15"
+                                                    color="blue" 
+                                                    ariaLabel="rotating-lines-loading"
+                                                    wrapperStyle={{}}
+                                                    wrapperClass=""
+                                                    visible={true}
+                                                    />
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div className='mt-2 ml-1'>
+                                                <RotatingLines 
+                                                    width="30" 
+                                                    radius="15"
+                                                    color="blue" 
+                                                    ariaLabel="rotating-lines-loading"
+                                                    wrapperStyle={{}}
+                                                    wrapperClass=""
+                                                    visible={true}
+                                                    />
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div className='mt-2 ml-1'>
+                                                <RotatingLines 
+                                                    width="30" 
+                                                    radius="15"
+                                                    color="blue" 
+                                                    ariaLabel="rotating-lines-loading"
+                                                    wrapperStyle={{}}
+                                                    wrapperClass=""
+                                                    visible={true}
+                                                    />
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div className='mt-2 ml-1'>
+                                                <RotatingLines 
+                                                    width="30" 
+                                                    radius="15"
+                                                    color="blue" 
+                                                    ariaLabel="rotating-lines-loading"
+                                                    wrapperStyle={{}}
+                                                    wrapperClass=""
+                                                    visible={true}
+                                                    />
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div className='mt-2 ml-1'>
+                                                <RotatingLines 
+                                                    width="30" 
+                                                    radius="15"
+                                                    color="blue" 
+                                                    ariaLabel="rotating-lines-loading"
+                                                    wrapperStyle={{}}
+                                                    wrapperClass=""
+                                                    visible={true}
+                                                    />
+                                            </div>
+                                        </td>
                                     </tr>
                                     ) : error ? (
                                     <tr>
