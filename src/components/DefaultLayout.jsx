@@ -44,7 +44,7 @@ export default function DefaultLayout() {
                 <div className="flex h-16 items-center justify-between">
                   <div className="flex items-center">
                     <div className="flex-shrink-0">
-                      <p className='text-white'><BeakerIcon width='30px' /></p>
+                      <h3 className='text-slate-50 font-sans text-xl border-2 pr-6 pl-1 font-semibold shadow-lg rounded-md'>logo Farmacia</h3>
                     </div>
                     {/* Botos del nav bar------------------------------------------------------------------------------- */}
                     <div className="hidden md:block">
