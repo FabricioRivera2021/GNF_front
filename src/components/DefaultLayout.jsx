@@ -1,13 +1,10 @@
-import { Fragment } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems, Transition } from '@headlessui/react'
-import { Bars3Icon, BellIcon, XMarkIcon, BeakerIcon } from '@heroicons/react/24/outline'
-import { NavLink, Outlet } from 'react-router-dom'
-
-const user = {
-  name: 'Tom Cook',
-  email: 'tom@example.com',
-  imageUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-}
+import { Bars3Icon, XMarkIcon, ArrowRightEndOnRectangleIcon } from '@heroicons/react/24/outline'
+import { Link, NavLink, Navigate, Outlet, redirect } from 'react-router-dom'
+import { userStateContext } from '../context/ContextProvider'
+import axiosClient from '../axios'
+import axios from 'axios'
 
 const navigation = [
 //   { name: 'Recetas', href: '#', current: true },
@@ -29,10 +26,71 @@ function classNames(...classes) {
 
 export default function DefaultLayout() {
 
-  const logout = (e) => {
-    e.preventDefault();
-    console.log('logout');
+  const { currentUser, userToken, setCurrentUser, setUserToken } = userStateContext()
+  const [isLoggingOut, setIsLoggingOut] = useState(false)
+
+  const checkAuth = async () => {
+    try {
+        const response = await axios.get('http://localhost:8000/api/user');
+        if (response.data) {
+            // Usuario autenticado, maneja los datos del usuario
+            setCurrentUser(response.data);
+            // console.log('User is authenticated', response.data);
+        }
+    } catch (error) {
+        console.error('User is not authenticated', error);
+    }
+  };
+  
+  // Llama a checkAuth al cargar la aplicación
+  useEffect(() => {
+    checkAuth();
+  }, []);
+  
+  // Llama a checkAuth al cargar la aplicación
+  useEffect(() => {
+    <Navigate to='/' />
+  }, [isLoggingOut]);
+
+  if(!userToken){
+    return <Navigate to="login" />
   }
+
+  if(!userToken){
+    return <Navigate to="login" />
+  }
+
+  const logout = async (e) => {
+    e.preventDefault();
+    setIsLoggingOut(true);
+    
+    const cookie = await axios.get('http://localhost:8000/sanctum/csrf-cookie', {
+        withCredentials: true
+    })
+
+    await axios.post("http://localhost:8000/api/logout",
+      {
+        headers: {
+          accept: "application/json",
+          'X-XSRF-TOKEN': getCookie('XSRF-TOKEN')
+        },
+        withCredentials: true
+      })
+      .then(({ data }) => {
+        setCurrentUser('');
+        setUserToken(null);
+      })
+      .catch((error) => {
+        console.log(error);
+    });
+
+    function getCookie(name) {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) return parts.pop().split(';').shift();
+      return null;
+    }
+  };
 
   return (
     <>
@@ -68,16 +126,17 @@ export default function DefaultLayout() {
                     {/* END Botos del nav bar------------------------------------------------------------------------------- */}
                   </div>
                   <div className="hidden md:block">
-                    <div className="ml-4 flex items-center md:ml-6">
+                    <div className="flex items-center">
                       {/* Profile dropdown */}
-                      <Menu as="div" className="relative ml-3">
-                        <div>
-                          <MenuButton className="relative flex max-w-xs items-center rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
-                            <span className="absolute -inset-1.5" />
-                            <span className="sr-only">Open user menu</span>
-                            <img className="h-8 w-8 rounded-full" src={user.imageUrl} alt="" />
-                          </MenuButton>
+                      <Menu as="div" className="relative">
+                        <div className='flex gap-3 items-end'>
+                          <MenuButton className='text-slate-100 font-roboto hover:text-blue-300'>Sin asignar</MenuButton>
+                          <p className='text-slate-100 font-roboto'>{currentUser.name}</p>
+                          <Link to='/logout'>
+                            <ArrowRightEndOnRectangleIcon className='h-7 text-red-500' />
+                          </Link>
                         </div>
+                        {/* ----------------Menu desplegable------------------------------------ */}
                         <Transition
                           as={Fragment}
                           enter="transition ease-out duration-100"
@@ -87,20 +146,18 @@ export default function DefaultLayout() {
                           leaveFrom="transform opacity-100 scale-100"
                           leaveTo="transform opacity-0 scale-95"
                         >
-                          <MenuItems className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                            
+                          <MenuItems className="absolute right-16 z-10 mt-2 w-48 origin-top-right rounded-sm bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                               <MenuItem>
-                                  <a
-                                    href="#"
-                                    onClick={(e) => logout(e)}
-                                    className={'block px-4 py-2 text-sm text-gray-700'}
-                                  >
-                                    Salir
-                                  </a>
+                              <>
+                                  <a href="#" className={'block px-4 py-2 text-sm text-gray-700 hover:bg-blue-500 hover:text-white'}>Ventanilla</a>
+                                  <a href="#" className={'block px-4 py-2 text-sm text-gray-700 hover:bg-blue-500 hover:text-white'}>Preparacion</a>
+                                  <a href="#" className={'block px-4 py-2 text-sm text-gray-700 hover:bg-blue-500 hover:text-white'}>Caja</a>
+                                  <a href="#" className={'block px-4 py-2 text-sm text-gray-700 hover:bg-blue-500 hover:text-white'}>Entrega</a>
+                              </>
                               </MenuItem>
-                           
                           </MenuItems>
                         </Transition>
+                         {/* ------------FIN Menu desplegable------------------------------------ */}
                       </Menu>
                     </div>
                   </div>
@@ -140,11 +197,11 @@ export default function DefaultLayout() {
                 <div className="border-t border-gray-700 pb-3 pt-4">
                   <div className="flex items-center px-5">
                     <div className="flex-shrink-0">
-                      <img className="h-10 w-10 rounded-full" src={user.imageUrl} alt="" />
+                      <img className="h-10 w-10 rounded-full" src={currentUser.imageUrl} alt="" />
                     </div>
                     <div className="ml-3">
-                      <div className="text-base font-medium leading-none text-white">{user.name}</div>
-                      <div className="text-sm font-medium leading-none text-gray-400">{user.email}</div>
+                      <div className="text-base font-medium leading-none text-white"></div>
+                      <div className="text-sm font-medium leading-none text-gray-400"></div>
                     </div>
                   </div>
                   {/* Menu de la verion mobile */}
