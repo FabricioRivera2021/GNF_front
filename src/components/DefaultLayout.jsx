@@ -6,6 +6,8 @@ import { userStateContext } from '../context/ContextProvider'
 import axiosClient from '../axios'
 import axios from 'axios'
 
+const API_URL = import.meta.env.VITE_API_BASE_URL
+
 const navigation = [
 //   { name: 'Recetas', href: '#', current: true },
 //   { name: 'Cuentas vigentes', href: '#', current: false },
@@ -26,8 +28,9 @@ function classNames(...classes) {
 
 export default function DefaultLayout() {
 
-  const { currentUser, userToken, setCurrentUser, setUserToken } = userStateContext()
-  const [isLoggingOut, setIsLoggingOut] = useState(false)
+  const { currentUser, userToken, setCurrentUser, setUserToken, position, setPosition } = userStateContext();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [ positions, setPositions ] = useState(null);
 
   const checkAuth = async () => {
     try {
@@ -38,9 +41,77 @@ export default function DefaultLayout() {
             // console.log('User is authenticated', response.data);
         }
     } catch (error) {
-        console.error('User is not authenticated', error);
+        redirect('/');
     }
   };
+
+  const handleClickPosition = async (id) => {
+    // const cookie = await axios.get(
+    //   "http://localhost:8000/sanctum/csrf-cookie",
+    //   {
+    //     withCredentials: true,
+    //   }
+    // );
+
+    await axios
+      .post('http://localhost:8000/api/changePosition/' + id)
+    .then(({ data }) => {
+      console.log(data);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+  }
+
+  const logout = async () => {
+    const cookie = await axios.get(
+      "http://localhost:8000/sanctum/csrf-cookie",
+      {
+        withCredentials: true,
+      }
+    );
+
+    await axios
+      .post("http://localhost:8000/api/logout", {
+        headers: {
+          accept: "application/json",
+          "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
+        },
+        withCredentials: true,
+      })
+      .then(({ data }) => {
+        setCurrentUser("");
+        setUserToken(null);
+        redirect('/')
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+    }
+
+
+    function getCookie(name) {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) return parts.pop().split(";").shift();
+      return null;
+  };
+  // ------------------------------------------------------------------------------------------------------------------------------------
+  // ------------------------------------------------------------------------------------------------------------------------------------
+
+  useEffect(() => {
+    // Fetch data from the Laravel API
+    fetch(API_URL + '/allPositions')
+    .then(response => response.json())
+    .then(data => {
+      console.log(data);
+      setPositions(data)
+    })
+    .catch(error => {
+        console.error('There was an error fetching the data!', error);
+    });
+  }, []);
   
   // Llama a checkAuth al cargar la aplicación
   useEffect(() => {
@@ -60,37 +131,37 @@ export default function DefaultLayout() {
     return <Navigate to="login" />
   }
 
-  const logout = async (e) => {
-    e.preventDefault();
-    setIsLoggingOut(true);
+  // const logout = async (e) => {
+  //   e.preventDefault();
+  //   setIsLoggingOut(true);
     
-    const cookie = await axios.get('http://localhost:8000/sanctum/csrf-cookie', {
-        withCredentials: true
-    })
+  //   const cookie = await axios.get('http://localhost:8000/sanctum/csrf-cookie', {
+  //       withCredentials: true
+  //   })
 
-    await axios.post("http://localhost:8000/api/logout",
-      {
-        headers: {
-          accept: "application/json",
-          'X-XSRF-TOKEN': getCookie('XSRF-TOKEN')
-        },
-        withCredentials: true
-      })
-      .then(({ data }) => {
-        setCurrentUser('');
-        setUserToken(null);
-      })
-      .catch((error) => {
-        console.log(error);
-    });
+  //   await axios.post("http://localhost:8000/api/logout",
+  //     {
+  //       headers: {
+  //         accept: "application/json",
+  //         'X-XSRF-TOKEN': getCookie('XSRF-TOKEN')
+  //       },
+  //       withCredentials: true
+  //     })
+  //     .then(({ data }) => {
+  //       setCurrentUser('');
+  //       setUserToken(null);
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //   });
 
-    function getCookie(name) {
-      const value = `; ${document.cookie}`;
-      const parts = value.split(`; ${name}=`);
-      if (parts.length === 2) return parts.pop().split(';').shift();
-      return null;
-    }
-  };
+  //   function getCookie(name) {
+  //     const value = `; ${document.cookie}`;
+  //     const parts = value.split(`; ${name}=`);
+  //     if (parts.length === 2) return parts.pop().split(';').shift();
+  //     return null;
+  //   }
+  // };
 
   return (
     <>
@@ -150,14 +221,18 @@ export default function DefaultLayout() {
                           leaveFrom="transform opacity-100 scale-100"
                           leaveTo="transform opacity-0 scale-95"
                         >
-                          <MenuItems className="absolute left-6 z-10 mt-2 w-48 origin-top-right rounded-sm bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                          <MenuItems className="absolute left-6 z-10 mt-2 origin-top-right rounded-sm bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                               <MenuItem>
-                              <>
-                                  <a href="#" className={'block px-4 py-2 text-xs text-gray-700 hover:bg-blue-500 hover:text-white'}>Ventanilla</a>
-                                  <a href="#" className={'block px-4 py-2 text-xs text-gray-700 hover:bg-blue-500 hover:text-white'}>Preparacion</a>
-                                  <a href="#" className={'block px-4 py-2 text-xs text-gray-700 hover:bg-blue-500 hover:text-white'}>Caja</a>
-                                  <a href="#" className={'block px-4 py-2 text-xs text-gray-700 hover:bg-blue-500 hover:text-white'}>Entrega</a>
-                              </>
+                              <div className='flex flex-col justify-start items-start'>
+                                {positions ? positions.map((positione) => (
+                                  <button key={positione.id}
+                                    className={`px-4 py-2 text-xs font-roboto text-left w-full ${positione.occupied != 1 ? 'text-gray-700 hover:bg-blue-500 hover:text-white' 
+                                              : 'text-orange-500' }`}
+                                    disabled={positione.occupied}
+                                    onClick={() => handleClickPosition(positione.id)}
+                                  >{positione.position} {positione.occupied == 1 ? 'Ocupada' : ''}</button>
+                                )) : ''}
+                              </div>
                               </MenuItem>
                           </MenuItems>
                         </Transition>
