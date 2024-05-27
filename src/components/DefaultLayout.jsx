@@ -1,6 +1,6 @@
 import { Fragment, useEffect, useState } from 'react'
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems, Transition } from '@headlessui/react'
-import { Bars3Icon, XMarkIcon, ArrowRightEndOnRectangleIcon } from '@heroicons/react/24/outline'
+import { Bars3Icon, XMarkIcon, ArrowRightEndOnRectangleIcon, ExclamationCircleIcon } from '@heroicons/react/24/outline'
 import { Link, NavLink, Navigate, Outlet, redirect } from 'react-router-dom'
 import { userStateContext } from '../context/ContextProvider'
 import axiosClient from '../axios'
@@ -129,13 +129,17 @@ export default function DefaultLayout() {
                     <div className="flex items-center">
                       {/* Profile dropdown */}
                       <Menu as="div" className="relative">
-                        <div className='flex gap-3 items-end'>
-                          <MenuButton className='text-slate-100 font-roboto hover:text-blue-300'>Sin asignar</MenuButton>
+                        <div className='flex gap-3 items-center text-xs'>
+                          <MenuButton className='bg-slate-200 px-2 py-0.5 text-slate-700 rounded-md hover:bg-blue-400 hover:text-white'>Seleccionar posicion</MenuButton>
+                          <div className='flex items-center gap-1 text-orange-400'> 
+                              Posicion actual: sin asignar <ExclamationCircleIcon className='w-7 stroke-orange-400' />
+                          </div>
                           <p className='text-slate-100 font-roboto'>{currentUser.name}</p>
                           <Link to='/logout'>
                             <ArrowRightEndOnRectangleIcon className='h-7 text-red-500' />
                           </Link>
                         </div>
+                        
                         {/* ----------------Menu desplegable------------------------------------ */}
                         <Transition
                           as={Fragment}
@@ -146,13 +150,13 @@ export default function DefaultLayout() {
                           leaveFrom="transform opacity-100 scale-100"
                           leaveTo="transform opacity-0 scale-95"
                         >
-                          <MenuItems className="absolute right-16 z-10 mt-2 w-48 origin-top-right rounded-sm bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                          <MenuItems className="absolute left-6 z-10 mt-2 w-48 origin-top-right rounded-sm bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                               <MenuItem>
                               <>
-                                  <a href="#" className={'block px-4 py-2 text-sm text-gray-700 hover:bg-blue-500 hover:text-white'}>Ventanilla</a>
-                                  <a href="#" className={'block px-4 py-2 text-sm text-gray-700 hover:bg-blue-500 hover:text-white'}>Preparacion</a>
-                                  <a href="#" className={'block px-4 py-2 text-sm text-gray-700 hover:bg-blue-500 hover:text-white'}>Caja</a>
-                                  <a href="#" className={'block px-4 py-2 text-sm text-gray-700 hover:bg-blue-500 hover:text-white'}>Entrega</a>
+                                  <a href="#" className={'block px-4 py-2 text-xs text-gray-700 hover:bg-blue-500 hover:text-white'}>Ventanilla</a>
+                                  <a href="#" className={'block px-4 py-2 text-xs text-gray-700 hover:bg-blue-500 hover:text-white'}>Preparacion</a>
+                                  <a href="#" className={'block px-4 py-2 text-xs text-gray-700 hover:bg-blue-500 hover:text-white'}>Caja</a>
+                                  <a href="#" className={'block px-4 py-2 text-xs text-gray-700 hover:bg-blue-500 hover:text-white'}>Entrega</a>
                               </>
                               </MenuItem>
                           </MenuItems>
