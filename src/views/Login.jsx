@@ -2,14 +2,14 @@
 import { useState } from "react";
 import { userStateContext } from "../context/ContextProvider";
 import axios from "axios";
-import { Blocks, FallingLines } from "react-loader-spinner";
+import { Blocks } from "react-loader-spinner";
 
 export default function Login() {
   const { setCurrentUser, setUserToken } = userStateContext();
-  const [email, setEmail] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState({ __html: "" });
+  const [ email, setEmail ] = useState("");
+  const [ isLoading, setIsLoading ] = useState(false);
+  const [ password, setPassword ] = useState("");
+  const [ error, setError ] = useState({ __html: "" });
 
   const handleSubmit = async (e) => {
     setIsLoading(true);

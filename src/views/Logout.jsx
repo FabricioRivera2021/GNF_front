@@ -11,21 +11,36 @@ export default function Logout() {
     logout();
   }, []);
 
-  const logout = async () => {
-    const cookie = await axios.get(
-      "http://localhost:8000/sanctum/csrf-cookie",
-      {
-        withCredentials: true,
-      }
-    );
+  const logout = () => {
+    // const cookie = await axios.get(
+    //   "http://localhost:8000/sanctum/csrf-cookie",
+    //   {
+    //     withCredentials: true,
+    //   }
+    // );
 
-    await axios
+    axios
+      .post("http://localhost:8000/api/clearPosition", {
+        headers: {
+          accept: "application/json",
+          // "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
+        },
+        // withCredentials: true,
+      })
+      .then(({ data }) => {
+        console.log(data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+    axios
       .post("http://localhost:8000/api/logout", {
         headers: {
           accept: "application/json",
-          "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
+          // "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
         },
-        withCredentials: true,
+        // withCredentials: true,
       })
       .then(({ data }) => {
         setCurrentUser("");
@@ -36,12 +51,12 @@ export default function Logout() {
         console.log(error);
       });
 
-    function getCookie(name) {
-      const value = `; ${document.cookie}`;
-      const parts = value.split(`; ${name}=`);
-      if (parts.length === 2) return parts.pop().split(";").shift();
-      return null;
-    }
+    // function getCookie(name) {
+    //   const value = `; ${document.cookie}`;
+    //   const parts = value.split(`; ${name}=`);
+    //   if (parts.length === 2) return parts.pop().split(";").shift();
+    //   return null;
+    // }
   };
   return(
     <>

@@ -1,8 +1,9 @@
 /**
  * Vista del menu de gestion de numeros
  */
-import { RotatingLines, ThreeDots } from 'react-loader-spinner';
+import { RotatingLines } from 'react-loader-spinner';
 import { useEffect, useState } from "react";
+import { userStateContext } from '../context/ContextProvider';
 const API_URL = import.meta.env.VITE_API_BASE_URL
 
 export default function Llamador() {
@@ -12,6 +13,7 @@ export default function Llamador() {
     const [selectedFilter, setSelectedFilter] = useState(1); //filtro actual
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
+    const {position} = userStateContext();
 
     useEffect(() => {
         // Fetch data from the Laravel API
@@ -40,6 +42,20 @@ export default function Llamador() {
             console.error('There was an error fetching the data!', error);
         });
     }, []);
+
+    //comparar el estado del numero con la posicion del User
+    // useEffect(() => {
+    //     // Fetch data from the Laravel API
+    //     fetch(API_URL + '/allEstados')
+    //     .then(response => response.json())
+    //     .then(data => {
+    //         setFiltros(data);
+    //         setIsLoading(false);
+    //     })
+    //     .catch(error => {
+    //         console.error('There was an error fetching the data!', error);
+    //     });
+    // }, []);
 
     const handleClickFilter = (id) => {
         console.log(id);
@@ -200,7 +216,11 @@ export default function Llamador() {
                                     numeros.map((item, index) => (
                                         <tr key={index} className="odd:bg-slate-50 even:bg-gray-300">
                                             <td className="whitespace-nowrap px-1 py-1 font-normal">
-                                                <a className="bg-blue-600 px-5 py-0.5 text-slate-100 rounded-md font-semibold hover:bg-blue-500 rounded-tl-none" href="#">Llamar</a>
+                                            {item.estado.includes('ventanilla') && position.includes('ventanilla') && (
+                                                <button className="bg-blue-500 px-2 py-0.5 text-white rounded-md hover:bg-blue-400 text-xs font-roboto font-semibold"
+                                                    onClick={() => console.log("llamar")}
+                                                >Llamar</button>
+                                            )}
                                             </td>
                                             <td className="whitespace-nowrap px-1 py-1">{item.fila_prefix} {item.numero}</td>
                                             <td className="whitespace-nowrap px-1 py-1">{item.fila}</td>

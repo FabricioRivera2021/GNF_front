@@ -150,9 +150,9 @@ export default function DefaultLayout() {
                     <div className="flex items-center">
                       {/* Profile dropdown */}
                       <Menu as="div" className="relative">
-                        <div className='flex gap-3 items-center text-xs'>
+                        <div className='flex gap-3 items-center text-xs font-roboto'>
                           <MenuButton className='bg-slate-200 px-2 py-0.5 text-slate-700 rounded-md hover:bg-blue-400 hover:text-white'>Seleccionar posicion</MenuButton>
-                          <div className={`flex items-center gap-1 ${(position == '' || position == 'sin asignar') ? 'text-orange-400' : 'text-slate-100'}`}> 
+                          <div className={`flex items-center justify-center gap-1 ${(position == '' || position == 'sin asignar') ? 'text-orange-400' : 'text-slate-100'}`}> 
                               {
                                 isChangingPosition 
                                   ? <ThreeDots
@@ -167,12 +167,12 @@ export default function DefaultLayout() {
                                     /> //cambiando posicion...
                                   : (position == '' || position == 'sin asignar')
                                     ? <>
-                                        <div>Posicion actual: Sin asignar</div><ExclamationCircleIcon className={`w-7 ${(position == '') ? '' : 'stroke-orange-400'}`} />
+                                        <div>Sin asignar</div><ExclamationCircleIcon className={`w-7 ${(position == '') ? '' : 'stroke-orange-400'}`} />
                                       </>
-                                    : 'Posicion actual: ' + position
+                                    : position
                               }
                           </div>
-                          <p className='text-slate-100 font-roboto'>{currentUser.name}</p>
+                          <p className='text-slate-100'>{currentUser.name}</p>
                           <Link to='/logout'>
                             <ArrowRightEndOnRectangleIcon className='h-7 text-red-500' />
                           </Link>
@@ -193,12 +193,23 @@ export default function DefaultLayout() {
                               <div className='flex flex-col justify-start items-start'>
                                 {positions ? positions.map((positione) => (
                                   <button key={positione.id}
-                                    className={`px-4 py-2 text-xs font-roboto text-left w-full ${positione.occupied != 1 ? 'text-gray-700 hover:bg-blue-500 hover:text-white' 
-                                              : 'text-orange-500' }`}
-                                    disabled={positione.occupied}
-                                    onClick={() => handleClickPosition(positione.position)}
-                                  >{positione.position} {positione.occupied == 1 ? 'Ocupada' : ''}</button>
-                                )) : ''}
+                                  className={`px-4 py-2 text-xs font-roboto text-left w-full 
+                                              ${(positione.occupied == 1 && position == positione.position) 
+                                              ? 'text-blue-400' 
+                                              : (positione.occupied == 1) 
+                                                ? 'text-orange-500' 
+                                                : 'text-slate-600 hover:bg-blue-400 hover:text-white'}`}
+                                  disabled={positione.occupied}
+                                  onClick={() => handleClickPosition(positione.position)}
+                                  >
+                                  {positione.position} {(positione.occupied == 1 && position == positione.position) 
+                                  ? '' 
+                                  : (positione.occupied == 1)
+                                    ? 'Ocupada' 
+                                    : ''}
+                                  </button>
+                                )) 
+                                : ''}
                               </div>
                               </MenuItem>
                           </MenuItems>
