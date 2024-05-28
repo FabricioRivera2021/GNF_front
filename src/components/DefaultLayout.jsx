@@ -43,6 +43,7 @@ export default function DefaultLayout() {
             // console.log('User is authenticated', response.data);
         }
     } catch (error) {
+        setUserToken(null);
         redirect('/');
     }
   };
@@ -151,7 +152,7 @@ export default function DefaultLayout() {
                       <Menu as="div" className="relative">
                         <div className='flex gap-3 items-center text-xs'>
                           <MenuButton className='bg-slate-200 px-2 py-0.5 text-slate-700 rounded-md hover:bg-blue-400 hover:text-white'>Seleccionar posicion</MenuButton>
-                          <div className={`flex items-center gap-1 ${(position != '') ? 'text-slate-100' : 'text-orange-400'}`}> 
+                          <div className={`flex items-center gap-1 ${(position == '' || position == 'sin asignar') ? 'text-orange-400' : 'text-slate-100'}`}> 
                               {
                                 isChangingPosition 
                                   ? <ThreeDots
@@ -164,9 +165,9 @@ export default function DefaultLayout() {
                                       wrapperStyle={{}}
                                       wrapperClass=""
                                     /> //cambiando posicion...
-                                  : (position == '')
+                                  : (position == '' || position == 'sin asignar')
                                     ? <>
-                                        <div>Posicion actual: Sin asignar</div><ExclamationCircleIcon className={`w-7 ${(position != '') ? '' : 'stroke-orange-400'}`} />
+                                        <div>Posicion actual: Sin asignar</div><ExclamationCircleIcon className={`w-7 ${(position == '') ? '' : 'stroke-orange-400'}`} />
                                       </>
                                     : 'Posicion actual: ' + position
                               }
