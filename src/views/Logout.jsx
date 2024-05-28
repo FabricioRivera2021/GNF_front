@@ -54,3 +54,36 @@ export default function Logout() {
   ) 
   
 }
+
+
+ // const logout = async (e) => {
+  //   e.preventDefault();
+  //   setIsLoggingOut(true);
+    
+  //   const cookie = await axios.get('http://localhost:8000/sanctum/csrf-cookie', {
+  //       withCredentials: true
+  //   })
+
+  //   await axios.post("http://localhost:8000/api/logout",
+  //     {
+  //       headers: {
+  //         accept: "application/json",
+  //         'X-XSRF-TOKEN': getCookie('XSRF-TOKEN')
+  //       },
+  //       withCredentials: true
+  //     })
+  //     .then(({ data }) => {
+  //       setCurrentUser('');
+  //       setUserToken(null);
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //   });
+
+  //   function getCookie(name) {
+  //     const value = `; ${document.cookie}`;
+  //     const parts = value.split(`; ${name}=`);
+  //     if (parts.length === 2) return parts.pop().split(';').shift();
+  //     return null;
+  //   }
+  // };

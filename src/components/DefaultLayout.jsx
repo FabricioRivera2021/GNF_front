@@ -5,6 +5,7 @@ import { Link, NavLink, Navigate, Outlet, redirect } from 'react-router-dom'
 import { userStateContext } from '../context/ContextProvider'
 import axiosClient from '../axios'
 import axios from 'axios'
+import { ThreeDots } from 'react-loader-spinner'
 
 const API_URL = import.meta.env.VITE_API_BASE_URL
 
@@ -29,7 +30,8 @@ function classNames(...classes) {
 export default function DefaultLayout() {
 
   const { currentUser, userToken, setCurrentUser, setUserToken, position, setPosition } = userStateContext();
-  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [ isLoggingOut, setIsLoggingOut ] = useState(false);
+  const [ isChangingPosition, setIsChangingPosition ] = useState(false);
   const [ positions, setPositions ] = useState(null);
 
   const checkAuth = async () => {
@@ -45,73 +47,56 @@ export default function DefaultLayout() {
     }
   };
 
-  const handleClickPosition = async (id) => {
-    // const cookie = await axios.get(
-    //   "http://localhost:8000/sanctum/csrf-cookie",
-    //   {
-    //     withCredentials: true,
-    //   }
-    // );
-
-    await axios
-      .post('http://localhost:8000/api/changePosition/' + id)
-    .then(({ data }) => {
-      console.log(data);
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-  }
-
-  const logout = async () => {
-    const cookie = await axios.get(
-      "http://localhost:8000/sanctum/csrf-cookie",
-      {
-        withCredentials: true,
-      }
-    );
-
-    await axios
-      .post("http://localhost:8000/api/logout", {
-        headers: {
-          accept: "application/json",
-          "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
-        },
-        withCredentials: true,
+  const handleClickPosition = (position) => {
+    setIsChangingPosition(true);
+    axios
+      .post('http://localhost:8000/api/changePosition/', {
+          'position': `${position}`
       })
       .then(({ data }) => {
-        setCurrentUser("");
-        setUserToken(null);
-        redirect('/')
+        // console.log(data.position_name);
+        setPosition(data.position_name);
+        setIsChangingPosition(false);
       })
       .catch((error) => {
         console.log(error);
+        setIsChangingPosition(false);
       });
+  }
 
-    }
-
-
-    function getCookie(name) {
-      const value = `; ${document.cookie}`;
-      const parts = value.split(`; ${name}=`);
-      if (parts.length === 2) return parts.pop().split(";").shift();
-      return null;
+  function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(";").shift();
+    return null;
   };
-  // ------------------------------------------------------------------------------------------------------------------------------------
-  // ------------------------------------------------------------------------------------------------------------------------------------
 
+  //pulear la posicion actual del usuario logueado
   useEffect(() => {
-    // Fetch data from the Laravel API
+    setIsChangingPosition(true);
+    axios
+      .get('http://localhost:8000/api/currentPosition')
+      .then(({data}) => {
+        setPosition(data.position);
+        setIsChangingPosition(false);
+      })
+      .catch((error) => {
+        console.log(error);
+        setIsChangingPosition(false);
+      });
+  }, []);
+
+  //pullear todas las posiciones
+  useEffect(() => {
     fetch(API_URL + '/allPositions')
     .then(response => response.json())
     .then(data => {
-      console.log(data);
       setPositions(data)
     })
     .catch(error => {
         console.error('There was an error fetching the data!', error);
     });
-  }, []);
+  }, [position]);
   
   // Llama a checkAuth al cargar la aplicación
   useEffect(() => {
@@ -126,42 +111,6 @@ export default function DefaultLayout() {
   if(!userToken){
     return <Navigate to="login" />
   }
-
-  if(!userToken){
-    return <Navigate to="login" />
-  }
-
-  // const logout = async (e) => {
-  //   e.preventDefault();
-  //   setIsLoggingOut(true);
-    
-  //   const cookie = await axios.get('http://localhost:8000/sanctum/csrf-cookie', {
-  //       withCredentials: true
-  //   })
-
-  //   await axios.post("http://localhost:8000/api/logout",
-  //     {
-  //       headers: {
-  //         accept: "application/json",
-  //         'X-XSRF-TOKEN': getCookie('XSRF-TOKEN')
-  //       },
-  //       withCredentials: true
-  //     })
-  //     .then(({ data }) => {
-  //       setCurrentUser('');
-  //       setUserToken(null);
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //   });
-
-  //   function getCookie(name) {
-  //     const value = `; ${document.cookie}`;
-  //     const parts = value.split(`; ${name}=`);
-  //     if (parts.length === 2) return parts.pop().split(';').shift();
-  //     return null;
-  //   }
-  // };
 
   return (
     <>
@@ -202,8 +151,25 @@ export default function DefaultLayout() {
                       <Menu as="div" className="relative">
                         <div className='flex gap-3 items-center text-xs'>
                           <MenuButton className='bg-slate-200 px-2 py-0.5 text-slate-700 rounded-md hover:bg-blue-400 hover:text-white'>Seleccionar posicion</MenuButton>
-                          <div className='flex items-center gap-1 text-orange-400'> 
-                              Posicion actual: sin asignar <ExclamationCircleIcon className='w-7 stroke-orange-400' />
+                          <div className={`flex items-center gap-1 ${(position != '') ? 'text-slate-100' : 'text-orange-400'}`}> 
+                              {
+                                isChangingPosition 
+                                  ? <ThreeDots
+                                      visible={true}
+                                      height="50"
+                                      width="40"
+                                      color="dodgerblue"
+                                      radius="9"
+                                      ariaLabel="three-dots-loading"
+                                      wrapperStyle={{}}
+                                      wrapperClass=""
+                                    /> //cambiando posicion...
+                                  : (position == '')
+                                    ? <>
+                                        <div>Posicion actual: Sin asignar</div><ExclamationCircleIcon className={`w-7 ${(position != '') ? '' : 'stroke-orange-400'}`} />
+                                      </>
+                                    : 'Posicion actual: ' + position
+                              }
                           </div>
                           <p className='text-slate-100 font-roboto'>{currentUser.name}</p>
                           <Link to='/logout'>
@@ -229,7 +195,7 @@ export default function DefaultLayout() {
                                     className={`px-4 py-2 text-xs font-roboto text-left w-full ${positione.occupied != 1 ? 'text-gray-700 hover:bg-blue-500 hover:text-white' 
                                               : 'text-orange-500' }`}
                                     disabled={positione.occupied}
-                                    onClick={() => handleClickPosition(positione.id)}
+                                    onClick={() => handleClickPosition(positione.position)}
                                   >{positione.position} {positione.occupied == 1 ? 'Ocupada' : ''}</button>
                                 )) : ''}
                               </div>

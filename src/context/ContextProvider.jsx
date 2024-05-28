@@ -3,7 +3,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 const StateContext = createContext({
   currentUser: {},
   userToken: null,
-  position: 1,
+  position: '',
   setCurrentUser: () => {},
   setUserToken: () => {},
   setPosition: () => {}
@@ -12,7 +12,7 @@ const StateContext = createContext({
 export const ContextProvider = ({children}) => {
   const [currentUser, setCurrentUser] = useState({});
   const [userToken, _setUserToken] = useState(localStorage.getItem('TOKEN') || '');
-  const [position, setPosition] = useState(1);
+  const [position, setPosition] = useState('');
 
   const setUserToken = (token) => {
     if (token) {
@@ -31,6 +31,8 @@ export const ContextProvider = ({children}) => {
         setCurrentUser,
         userToken,
         setUserToken,
+        position,
+        setPosition
       }}
     >
       {children}
