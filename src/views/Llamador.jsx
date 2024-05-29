@@ -13,6 +13,7 @@ export default function Llamador() {
     const [selectedFilter, setSelectedFilter] = useState(1); //filtro actual
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [comparePosition, setComparePosition] = useState('');
     const {position} = userStateContext();
 
     useEffect(() => {
@@ -44,18 +45,11 @@ export default function Llamador() {
     }, []);
 
     //comparar el estado del numero con la posicion del User
-    // useEffect(() => {
-    //     // Fetch data from the Laravel API
-    //     fetch(API_URL + '/allEstados')
-    //     .then(response => response.json())
-    //     .then(data => {
-    //         setFiltros(data);
-    //         setIsLoading(false);
-    //     })
-    //     .catch(error => {
-    //         console.error('There was an error fetching the data!', error);
-    //     });
-    // }, []);
+    useEffect(() => {
+        const compare_position = position.split(" ");
+        setComparePosition(compare_position[0])
+        console.log(compare_position[0]);
+    }, [position]);
 
     const handleClickFilter = (id) => {
         console.log(id);
@@ -216,7 +210,7 @@ export default function Llamador() {
                                     numeros.map((item, index) => (
                                         <tr key={index} className="odd:bg-slate-50 even:bg-gray-300">
                                             <td className="whitespace-nowrap px-1 py-1 font-normal">
-                                            {item.estado.includes('ventanilla') && position.includes('ventanilla') && (
+                                            {item.estado.includes(comparePosition) && position.includes(comparePosition) && (
                                                 <button className="bg-blue-500 px-2 py-0.5 text-white rounded-md hover:bg-blue-400 text-xs font-roboto font-semibold"
                                                     onClick={() => console.log("llamar")}
                                                 >Llamar</button>
