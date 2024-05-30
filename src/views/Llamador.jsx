@@ -4,6 +4,9 @@
 import { RotatingLines } from 'react-loader-spinner';
 import { useEffect, useState } from "react";
 import { userStateContext } from '../context/ContextProvider';
+import axios from 'axios';
+import axiosClient from '../axios';
+
 const API_URL = import.meta.env.VITE_API_BASE_URL
 
 export default function Llamador() {
@@ -14,7 +17,7 @@ export default function Llamador() {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [comparePosition, setComparePosition] = useState('');
-    const {position} = userStateContext();
+    const {currentUser, position, numero, setNumero} = userStateContext();
 
     useEffect(() => {
         // Fetch data from the Laravel API
@@ -24,6 +27,7 @@ export default function Llamador() {
         .then(data => {
             setNumeros(data);
             setIsLoading(false);
+            // console.log(data[0].nombre[0].name);
         })
         .catch(error => {
             console.error('There was an error fetching the data!', error);
@@ -32,6 +36,16 @@ export default function Llamador() {
     }, [selectedFilter]);
 
     useEffect(() => {
+        //get current selected number by the User
+        axios
+        .get("http://localhost:8000/api/getCurrentSelectedNumber")
+        .then(({data}) => {
+            setNumero(data.nro);
+        })
+        .catch((error) => {
+            console.log(error);
+        })
+
         // Fetch data from the Laravel API
         fetch(API_URL + '/allEstados')
         .then(response => response.json())
@@ -48,12 +62,32 @@ export default function Llamador() {
     useEffect(() => {
         const compare_position = position.split(" ");
         setComparePosition(compare_position[0])
-        console.log(compare_position[0]);
+        // console.log(compare_position[0]);
     }, [position]);
 
     const handleClickFilter = (id) => {
-        console.log(id);
+        // console.log(id);
         setSelectedFilter(id);
+    }
+
+    const handleLlamarNumero = (id) => {
+        axios
+            .post("http://localhost:8000/api/asignNumberToUser", {
+                id: id 
+            })
+            .then(({data}) => {
+                setNumero(data.nro)
+            })
+            .catch((error) => {
+                console.log(error);
+            })
+    }
+
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+        return null;
     }
 
     return (
@@ -210,9 +244,10 @@ export default function Llamador() {
                                     numeros.map((item, index) => (
                                         <tr key={index} className="odd:bg-slate-50 even:bg-gray-300">
                                             <td className="whitespace-nowrap px-1 py-1 font-normal">
-                                            {item.estado.includes(comparePosition) && position.includes(comparePosition) && (
-                                                <button className="bg-blue-500 px-2 py-0.5 text-white rounded-md hover:bg-blue-400 text-xs font-roboto font-semibold"
-                                                    onClick={() => console.log("llamar")}
+                                            {item.estado.includes(comparePosition) && position.includes(comparePosition) && (!numeros) && (
+                                                <button className={`bg-blue-500 px-2 py-0.5 rounded-md hover:bg-blue-400 text-xs font-roboto font-semibold 
+                                                                    ${(numeros == item.numero) ? 'underline' : ''}`}
+                                                    onClick={() => handleLlamarNumero(item.nombre[0].numeros_id)}
                                                 >Llamar</button>
                                             )}
                                             </td>
@@ -220,7 +255,12 @@ export default function Llamador() {
                                             <td className="whitespace-nowrap px-1 py-1">{item.fila}</td>
                                             <td className="whitespace-nowrap px-1 py-1">12:35</td>
                                             <td className="whitespace-nowrap px-1 py-1">{item.estado}</td>
-                                            <td className="whitespace-nowrap px-1 py-1">Nombre Apellido</td>
+                                            <td className="whitespace-nowrap px-1 py-1">                                          
+                                                {item.nombre.map((elem, idx) => (
+                                                    <span key={idx}>{elem.name}</span>
+                                                ))}
+                                            </td>
+                                            <td className="whitespace-nowrap px-1 py-1">{ currentUser.id }</td>
                                             <td className="whitespace-nowrap px-1 py-1"></td>
                                         </tr>
                                         ))
@@ -232,8 +272,8 @@ export default function Llamador() {
                     <div className="w-full">
                         <div className="bg-slate-100 flex justify-start items-center pt-2 w-full h-full">
                             <div className="bg-orange-400 h-[18vh] w-60 flex ml-1 flex-col justify-center items-center rounded shadow-sm">
-                                <h2 className="text-4xl text-slate-700 font-bold whitespace-nowrap">Sin numero</h2>
-                                <span className="text-xl text-slate-700 font-semibold"></span>
+                                <h2 className="text-4xl text-slate-700 font-bold whitespace-nowrap"></h2>
+                                <span className="text-xl text-slate-700 font-semibold">{numero}</span>
                             </div>
                             <div className=" flex flex-col justify-center items-center w-[50rem]">
                                 <div className="flex px-14 rounded w-full gap-6 mb-2 text-slate-500">

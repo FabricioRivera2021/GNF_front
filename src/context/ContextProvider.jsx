@@ -4,15 +4,18 @@ const StateContext = createContext({
   currentUser: {},
   userToken: null,
   position: '',
+  numero: null,
   setCurrentUser: () => {},
   setUserToken: () => {},
-  setPosition: () => {}
+  setPosition: () => {},
+  setNumero: () => {}
 });
 
 export const ContextProvider = ({children}) => {
   const [currentUser, setCurrentUser] = useState({});
   const [userToken, _setUserToken] = useState(localStorage.getItem('TOKEN') || '');
   const [position, setPosition] = useState('');
+  const [numero, setNumero] = useState(null)
 
   const setUserToken = (token) => {
     if (token) {
@@ -32,7 +35,9 @@ export const ContextProvider = ({children}) => {
         userToken,
         setUserToken,
         position,
-        setPosition
+        setPosition,
+        numero,
+        setNumero
       }}
     >
       {children}
