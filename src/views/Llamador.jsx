@@ -38,14 +38,17 @@ export default function Llamador() {
     useEffect(() => {
         //get current selected number by the User
         axios
-        .get("http://localhost:8000/api/getCurrentSelectedNumber")
+        .get('http://localhost:8000/api/getCurrentSelectedNumber')
         .then(({data}) => {
-            setNumero(data.nro);
+            setNumero(data.nro)
+            // console.log(data.nro);
         })
         .catch((error) => {
             console.log(error);
         })
+    }, []);
 
+    useEffect(() => {
         // Fetch data from the Laravel API
         fetch(API_URL + '/allEstados')
         .then(response => response.json())
@@ -242,12 +245,13 @@ export default function Llamador() {
                                         </tr>
                                     ) : (
                                     numeros.map((item, index) => (
-                                        <tr key={index} className="odd:bg-slate-50 even:bg-gray-300">
+                                        <tr key={index} className={`odd:bg-slate-50 even:bg-gray-300 ${(numero == item.numero) ? '!bg-blue-400 text-slate-100' : ''}`}>
                                             <td className="whitespace-nowrap px-1 py-1 font-normal">
-                                            {item.estado.includes(comparePosition) && position.includes(comparePosition) && (!numeros) && (
-                                                <button className={`bg-blue-500 px-2 py-0.5 rounded-md hover:bg-blue-400 text-xs font-roboto font-semibold 
-                                                                    ${(numeros == item.numero) ? 'underline' : ''}`}
+                                            {item.estado.includes(comparePosition) && position.includes(comparePosition) && (numero != item.numero) && (
+                                                <button className={`bg-blue-500 px-2 py-0.5 rounded-md hover:bg-blue-400 text-xs text-slate-100 font-roboto font-semibold
+                                                                    ${(numero != null) ? 'bg-gray-400 hover:bg-gray-400' : ''}`}
                                                     onClick={() => handleLlamarNumero(item.nombre[0].numeros_id)}
+                                                    disabled={(numero != null)}
                                                 >Llamar</button>
                                             )}
                                             </td>
@@ -260,8 +264,7 @@ export default function Llamador() {
                                                     <span key={idx}>{elem.name}</span>
                                                 ))}
                                             </td>
-                                            <td className="whitespace-nowrap px-1 py-1">{ currentUser.id }</td>
-                                            <td className="whitespace-nowrap px-1 py-1"></td>
+                                            <td className="whitespace-nowrap px-1 py-1">{ (numero == item.numero) ? 'Seleccionado' : '' }</td>
                                         </tr>
                                         ))
                                     )
@@ -273,7 +276,7 @@ export default function Llamador() {
                         <div className="bg-slate-100 flex justify-start items-center pt-2 w-full h-full">
                             <div className="bg-orange-400 h-[18vh] w-60 flex ml-1 flex-col justify-center items-center rounded shadow-sm">
                                 <h2 className="text-4xl text-slate-700 font-bold whitespace-nowrap"></h2>
-                                <span className="text-xl text-slate-700 font-semibold">{numero}</span>
+                                <p className="text-4xl text-slate-700 font-semibold">{numero}</p>
                             </div>
                             <div className=" flex flex-col justify-center items-center w-[50rem]">
                                 <div className="flex px-14 rounded w-full gap-6 mb-2 text-slate-500">
@@ -282,18 +285,22 @@ export default function Llamador() {
                                     <p>Ultima concurrencia: 24/02/24</p>
                                 </div>
                                 <div className="flex px-14 rounded w-full gap-6">
-                                    <button className="bg-slate-300 hover:bg-blue-400 hover:text-white text-slate-700 px-2 rounded-md shadow-md">
-                                        Derivar
-                                    </button>
-                                    <button className="bg-slate-300 hover:bg-blue-400 hover:text-white text-slate-700 px-2 rounded-md shadow-md">
-                                        Derivar a..
-                                    </button>
-                                    <button className="bg-slate-300 hover:bg-blue-400 hover:text-white text-slate-700 px-2 rounded-md shadow-md">
-                                        Pausar
-                                    </button>
-                                    <button className="bg-slate-300 hover:bg-blue-400 hover:text-white text-slate-700 px-2 rounded-md shadow-md">
-                                        Cancelar
-                                    </button>
+                                    <button className={`bg-slate-300 text-slate-700 px-2 rounded-md shadow-md
+                                                        ${(numero) ? '!bg-blue-400 !text-slate-100 hover:!bg-blue-500' : ''}`}
+                                                        disabled={!numero}            
+                                    >Derivar</button>
+                                    <button className={`bg-slate-300 text-slate-700 px-2 rounded-md shadow-md
+                                                        ${(numero) ? '!bg-blue-400 !text-slate-100 hover:!bg-blue-500' : ''}`}
+                                                        disabled={!numero}
+                                    >Derivar a..</button>
+                                    <button className={`bg-slate-300 text-slate-700 px-2 rounded-md shadow-md
+                                                        ${(numero) ? '!bg-blue-400 !text-slate-100 hover:!bg-blue-500' : ''}`}
+                                                        disabled={!numero}
+                                    >Pausar</button>
+                                    <button className={`bg-slate-300 text-slate-700 px-2 rounded-md shadow-md
+                                                        ${(numero) ? '!bg-blue-400 !text-slate-100 hover:!bg-blue-500' : ''}`}
+                                                        disabled={!numero}
+                                    >Cancelar</button>
                                 </div>
                             </div>
                         </div>

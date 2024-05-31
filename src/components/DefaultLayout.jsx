@@ -1,6 +1,6 @@
 import { Fragment, useEffect, useState } from 'react'
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems, Transition } from '@headlessui/react'
-import { Bars3Icon, XMarkIcon, ArrowRightEndOnRectangleIcon, ExclamationCircleIcon } from '@heroicons/react/24/outline'
+import { Bars3Icon, XMarkIcon, ArrowRightEndOnRectangleIcon, ExclamationCircleIcon, LockClosedIcon } from '@heroicons/react/24/outline'
 import { Link, NavLink, Navigate, Outlet, redirect } from 'react-router-dom'
 import { userStateContext } from '../context/ContextProvider'
 import axiosClient from '../axios'
@@ -29,7 +29,7 @@ function classNames(...classes) {
 
 export default function DefaultLayout() {
 
-  const { currentUser, userToken, setCurrentUser, setUserToken, position, setPosition } = userStateContext();
+  const { currentUser, userToken, setCurrentUser, setUserToken, position, setPosition, numero } = userStateContext();
   const [ isLoggingOut, setIsLoggingOut ] = useState(false);
   const [ isChangingPosition, setIsChangingPosition ] = useState(false);
   const [ positions, setPositions ] = useState(null);
@@ -151,7 +151,12 @@ export default function DefaultLayout() {
                       {/* Profile dropdown */}
                       <Menu as="div" className="relative">
                         <div className='flex gap-3 items-center text-xs font-roboto'>
-                          <MenuButton className='bg-slate-200 px-2 py-0.5 text-slate-700 rounded-md hover:bg-blue-400 hover:text-white'>Seleccionar posicion</MenuButton>
+                          <MenuButton className={`bg-slate-200 px-2 py-0.5 text-slate-700 rounded-md hover:bg-blue-400 hover:text-white
+                                                ${(numero) ? 'bg-gray-300 hover:bg-gray-300 hover:text-slate-700' : ''}`}
+                            disabled={numero}
+                          >Seleccionar posicion 
+                          </MenuButton>
+                          {(numero) ? <LockClosedIcon width="20" stroke='white' /> : ''} 
                           <div className={`flex items-center justify-center gap-1 ${(position == '' || position == 'sin asignar') ? 'text-orange-400' : 'text-slate-100'}`}> 
                               {
                                 isChangingPosition 
