@@ -33,7 +33,7 @@ export default function Llamador() {
             console.error('There was an error fetching the data!', error);
             setError(error);
         });
-    }, [selectedFilter]);
+    }, [selectedFilter, numero]);
 
     useEffect(() => {
         //get current selected number by the User
@@ -71,6 +71,47 @@ export default function Llamador() {
     const handleClickFilter = (id) => {
         // console.log(id);
         setSelectedFilter(id);
+    }
+
+    const handleSetNextState = (number) => {
+        axios
+            .post("http://localhost:8000/api/setNextState", {
+                numero: number
+            })
+            .then(({data}) => {
+                // console.log(data)
+                setNumero(null)
+            })
+            .catch((error) => {
+                console.log(error);
+            })
+    }
+
+    const handlePauseNumber = (number) => {
+        axios
+            .post("http://localhost:8000/api/setPause", {
+                numero: number
+            })
+            .then(({data}) => {
+                console.log(data)
+                setNumero(null)
+            })
+            .catch((error) => {
+                console.log(error);
+            })
+    }
+    const handleCancelNumber = (number) => {
+        axios
+            .post("http://localhost:8000/api/setCanceled", {
+                numero: number
+            })
+            .then(({data}) => {
+                console.log(data)
+                setNumero(null)
+            })
+            .catch((error) => {
+                console.log(error);
+            })
     }
 
     const handleLlamarNumero = (id) => {
@@ -245,7 +286,9 @@ export default function Llamador() {
                                         </tr>
                                     ) : (
                                     numeros.map((item, index) => (
-                                        <tr key={index} className={`odd:bg-slate-50 even:bg-gray-300 ${(numero == item.numero) ? '!bg-blue-400 text-slate-100' : ''}`}>
+                                        <tr key={index} className={`odd:bg-slate-50 even:bg-gray-300 ${(numero == item.numero) ? '!bg-blue-400 text-slate-100' : ''}
+                                                                    ${(item.estado == 'pausado') ? 'odd:bg-yellow-100 even:bg-yellow-200' : ''}
+                                                                    ${(item.estado == 'cancelado') ? 'odd:bg-red-100 even:bg-red-200' : ''}`}>
                                             <td className="whitespace-nowrap px-1 py-1 font-normal">
                                             {item.estado.includes(comparePosition) && position.includes(comparePosition) && (numero != item.numero) && (
                                                 <button className={`bg-blue-500 px-2 py-0.5 rounded-md hover:bg-blue-400 text-xs text-slate-100 font-roboto font-semibold
@@ -253,6 +296,20 @@ export default function Llamador() {
                                                     onClick={() => handleLlamarNumero(item.nombre[0].numeros_id)}
                                                     disabled={(numero != null)}
                                                 >Llamar</button>
+                                            )}
+                                            {item.estado.includes('pausado') && (
+                                                <button className={`bg-blue-500 px-2 py-0.5 rounded-md hover:bg-blue-400 text-xs text-slate-100 font-roboto font-semibold
+                                                                    ${(numero != null) ? '!bg-gray-400 hover:!bg-gray-400' : ''}`}
+                                                    onClick={() => handleLlamarNumero(console.log('retomar pausado'))}
+                                                    disabled={(numero != null)}
+                                                >Retomar pausado</button>
+                                            )}
+                                            {item.estado.includes('cancelado') && (
+                                                <button className={`bg-blue-500 px-2 py-0.5 rounded-md hover:bg-blue-400 text-xs text-slate-100 font-roboto font-semibold
+                                                                    ${(numero != null) ? '!bg-gray-400 hover:!bg-gray-400' : ''}`}
+                                                    onClick={() => handleLlamarNumero(console.log('retomar cancelado'))}
+                                                    disabled={(numero != null)}
+                                                >Retomar cancelado</button>
                                             )}
                                             </td>
                                             <td className="whitespace-nowrap px-1 py-1">{item.fila_prefix} {item.numero}</td>
@@ -288,18 +345,22 @@ export default function Llamador() {
                                     <button className={`bg-slate-300 text-slate-700 px-2 rounded-md shadow-md
                                                         ${(numero) ? '!bg-blue-400 !text-slate-100 hover:!bg-blue-500' : ''}`}
                                                         disabled={!numero}            
+                                                        onClick={() => handleSetNextState(numero)}
                                     >Derivar</button>
                                     <button className={`bg-slate-300 text-slate-700 px-2 rounded-md shadow-md
                                                         ${(numero) ? '!bg-blue-400 !text-slate-100 hover:!bg-blue-500' : ''}`}
                                                         disabled={!numero}
+                                                        // onClick={() => handleDerivateTo(numero, position)}
                                     >Derivar a..</button>
                                     <button className={`bg-slate-300 text-slate-700 px-2 rounded-md shadow-md
                                                         ${(numero) ? '!bg-blue-400 !text-slate-100 hover:!bg-blue-500' : ''}`}
                                                         disabled={!numero}
+                                                        onClick={() => handlePauseNumber(numero)}
                                     >Pausar</button>
                                     <button className={`bg-slate-300 text-slate-700 px-2 rounded-md shadow-md
                                                         ${(numero) ? '!bg-blue-400 !text-slate-100 hover:!bg-blue-500' : ''}`}
                                                         disabled={!numero}
+                                                        onClick={() => handleCancelNumber(numero)}
                                     >Cancelar</button>
                                 </div>
                             </div>
