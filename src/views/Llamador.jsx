@@ -171,7 +171,7 @@ export default function Llamador() {
                                     <th scope="col" className="px-1 py-1 text-slate-100">T. de espera</th>
                                     <th scope="col" className="px-1 py-1 text-slate-100">Estado</th>
                                     <th scope="col" className="px-1 py-1 text-slate-100">Nombre</th>
-                                    <th scope="col" className="px-1 py-1 text-slate-100">En proceso</th>
+                                    <th scope="col" className="px-1 py-1 text-slate-100">T. de espera total</th>
                                 </tr>
                             </thead>
                             <tbody className="odd">
@@ -321,7 +321,7 @@ export default function Llamador() {
                                                     <span key={idx}>{elem.name}</span>
                                                 ))}
                                             </td>
-                                            <td className="whitespace-nowrap px-1 py-1">{ (numero == item.numero) ? 'Seleccionado' : '' }</td>
+                                            <td className="whitespace-nowrap px-1 py-1">50:14</td>
                                         </tr>
                                         ))
                                     )
