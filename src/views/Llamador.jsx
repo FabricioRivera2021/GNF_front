@@ -1,20 +1,25 @@
 /**
  * Vista del menu de gestion de numeros
  */
-import { RotatingLines } from 'react-loader-spinner';
 import { useEffect, useState } from "react";
 import { userStateContext } from '../context/ContextProvider';
 import axios from 'axios';
 import axiosClient from '../axios';
+import renderLoadingLines from '../helpers/renderLoadingLines';
+import {Modal} from '../components/index';
+import { ArrowRightCircleIcon } from "@heroicons/react/24/outline";
 
 const API_URL = import.meta.env.VITE_API_BASE_URL
 
 export default function Llamador() {
 
+    const [showModal, setShowModal] = useState(false);
+    const [allDerivates, setAllDerivates] = useState([]);//posibles posiciones para derivar
     const [numeros, setNumeros] = useState([]);//numeros
     const [filtros, setFiltros] = useState([]);//filtros
     const [selectedFilter, setSelectedFilter] = useState(1); //filtro actual
     const [isLoading, setIsLoading] = useState(true);
+    const [isDerivating, setIsDerivating] = useState(false);
     const [error, setError] = useState(null);
     const [comparePosition, setComparePosition] = useState('');
     const {currentUser, position, numero, setNumero} = userStateContext();
@@ -33,7 +38,7 @@ export default function Llamador() {
             console.error('There was an error fetching the data!', error);
             setError(error);
         });
-    }, [selectedFilter, numero]);
+    }, [selectedFilter, numero, isDerivating]);
 
     useEffect(() => {
         //get current selected number by the User
@@ -41,7 +46,7 @@ export default function Llamador() {
         .get('http://localhost:8000/api/getCurrentSelectedNumber')
         .then(({data}) => {
             setNumero(data.nro)
-            // console.log(data.nro);
+            console.log(data.nro);
         })
         .catch((error) => {
             console.log(error);
@@ -79,7 +84,7 @@ export default function Llamador() {
                 numero: number
             })
             .then(({data}) => {
-                // console.log(data)
+                console.log(data)
                 setNumero(null)
             })
             .catch((error) => {
@@ -114,13 +119,52 @@ export default function Llamador() {
             })
     }
 
-    const handleLlamarNumero = (id) => {
+    //llama al numero, ademas de retomar pausado o cancelado
+    const handleLlamarNumero = (id, paused, canceled) => {
         axios
             .post("http://localhost:8000/api/asignNumberToUser", {
-                id: id 
+                id: id,
+                paused: paused,
+                canceled: canceled,
             })
             .then(({data}) => {
                 setNumero(data.nro)
+            })
+            .catch((error) => {
+                console.log(error);
+            })
+    }
+
+    const handleOpenModal = () => setShowModal(true);
+    const handleCloseModal = () => setShowModal(false);
+
+    const handleDerivateTo = (number) => {
+        handleOpenModal();
+
+        axios
+            .get("http://localhost:8000/api/derivateTo", {
+                number: number,
+            })
+            .then(({data}) => {
+                console.log(data);
+                setAllDerivates(data);
+            })
+            .catch((error) => {
+                console.log(error);
+            })
+    }
+
+    const handleDerivateToPosition = (number, position) => {
+        handleCloseModal();
+        axios
+            .post("http://localhost:8000/api/derivateToPosition", {
+                number: number,
+                position: position
+            })
+            .then(({data}) => {
+                console.log(data);
+                setIsDerivating(false);
+                setNumero(null);
             })
             .catch((error) => {
                 console.log(error);
@@ -172,109 +216,13 @@ export default function Llamador() {
                                     <th scope="col" className="px-1 py-1 text-slate-100">Estado</th>
                                     <th scope="col" className="px-1 py-1 text-slate-100">Nombre</th>
                                     <th scope="col" className="px-1 py-1 text-slate-100">T. de espera total</th>
+                                    <th scope="col" className="px-1 py-1 text-slate-100"></th>
                                 </tr>
                             </thead>
                             <tbody className="odd">
-                                { isLoading ? ( //convertir a una funcion q recorra esto...
+                                { isLoading ? (
                                     <tr>
-                                        <td>
-                                            <div className='mt-2 ml-3'>
-                                                <RotatingLines 
-                                                    width="30" 
-                                                    radius="15"
-                                                    strokeColor='dodgerblue'
-                                                    strokeWidth='2'
-                                                    ariaLabel="rotating-lines-loading"
-                                                    wrapperStyle={{}}
-                                                    wrapperClass=""
-                                                    visible={true}
-                                                    />
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div className='mt-2 ml-1'>
-                                                <RotatingLines 
-                                                    width="30" 
-                                                    radius="15"
-                                                    strokeColor='dodgerblue'
-                                                    strokeWidth='2'
-                                                    ariaLabel="rotating-lines-loading"
-                                                    wrapperStyle={{}}
-                                                    wrapperClass=""
-                                                    visible={true}
-                                                    />
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div className='mt-2 ml-1'>
-                                                <RotatingLines 
-                                                    width="30" 
-                                                    radius="15"
-                                                    strokeColor='dodgerblue'
-                                                    strokeWidth='2'
-                                                    ariaLabel="rotating-lines-loading"
-                                                    wrapperStyle={{}}
-                                                    wrapperClass=""
-                                                    visible={true}
-                                                    />
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div className='mt-2 ml-1'>
-                                                <RotatingLines 
-                                                    width="30" 
-                                                    radius="15"
-                                                    strokeColor='dodgerblue'
-                                                    strokeWidth='2' 
-                                                    ariaLabel="rotating-lines-loading"
-                                                    wrapperStyle={{}}
-                                                    wrapperClass=""
-                                                    visible={true}
-                                                    />
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div className='mt-2 ml-1'>
-                                                <RotatingLines 
-                                                    width="30" 
-                                                    radius="15"
-                                                    strokeColor='dodgerblue'
-                                                    strokeWidth='2'
-                                                    ariaLabel="rotating-lines-loading"
-                                                    wrapperStyle={{}}
-                                                    wrapperClass=""
-                                                    visible={true}
-                                                    />
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div className='mt-2 ml-1'>
-                                                <RotatingLines 
-                                                    width="30" 
-                                                    radius="15"
-                                                    strokeColor='dodgerblue'
-                                                    strokeWidth='2'
-                                                    ariaLabel="rotating-lines-loading"
-                                                    wrapperStyle={{}}
-                                                    wrapperClass=""
-                                                    visible={true}
-                                                    />
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div className='mt-2 ml-1'>
-                                                <RotatingLines 
-                                                    width="30" 
-                                                    radius="15"
-                                                    strokeColor='dodgerblue'
-                                                    strokeWidth='2'
-                                                    ariaLabel="rotating-lines-loading"
-                                                    wrapperStyle={{}}
-                                                    wrapperClass=""
-                                                    visible={true}
-                                                    />
-                                            </div>
-                                        </td>
+                                        {renderLoadingLines(7)}
                                     </tr>
                                     ) : error ? (
                                     <tr>
@@ -287,27 +235,27 @@ export default function Llamador() {
                                     ) : (
                                     numeros.map((item, index) => (
                                         <tr key={index} className={`odd:bg-slate-50 even:bg-gray-300 ${(numero == item.numero) ? '!bg-blue-400 text-slate-100' : ''}
-                                                                    ${(item.estado == 'pausado') ? 'odd:bg-yellow-100 even:bg-yellow-200' : ''}
-                                                                    ${(item.estado == 'cancelado') ? 'odd:bg-red-100 even:bg-red-200' : ''}`}>
+                                                                    ${(item.pausado == 1) ? 'odd:bg-yellow-100 even:bg-yellow-200' : ''}
+                                                                    ${(item.cancelado == 1) ? 'odd:bg-red-300 even:bg-red-200' : ''}`}>
                                             <td className="whitespace-nowrap px-1 py-1 font-normal">
-                                            {item.estado.includes(comparePosition) && position.includes(comparePosition) && (numero != item.numero) && (
+                                            {item.estado.includes(comparePosition) && position.includes(comparePosition) && item.pausado != 1 && item.cancelado != 1 && (numero != item.numero) && (
                                                 <button className={`bg-blue-500 px-2 py-0.5 rounded-md hover:bg-blue-400 text-xs text-slate-100 font-roboto font-semibold
                                                                     ${(numero != null) ? 'bg-gray-400 hover:bg-gray-400' : ''}`}
-                                                    onClick={() => handleLlamarNumero(item.nombre[0].numeros_id)}
-                                                    disabled={(numero != null)}
+                                                    onClick={() => handleLlamarNumero(item.nombre[0].numeros_id, item.pausado, item.cancelado)}
+                                                    disabled={(numero != null || item.pausado == 1 || item.cancelado == 1)}
                                                 >Llamar</button>
                                             )}
-                                            {item.estado.includes('pausado') && (
+                                            {item.pausado == 1 && (
                                                 <button className={`bg-blue-500 px-2 py-0.5 rounded-md hover:bg-blue-400 text-xs text-slate-100 font-roboto font-semibold
                                                                     ${(numero != null) ? '!bg-gray-400 hover:!bg-gray-400' : ''}`}
-                                                    onClick={() => handleLlamarNumero(console.log('retomar pausado'))}
+                                                    onClick={() => handleLlamarNumero(item.nombre[0].numeros_id, item.pausado, item.cancelado)}
                                                     disabled={(numero != null)}
                                                 >Retomar pausado</button>
                                             )}
-                                            {item.estado.includes('cancelado') && (
+                                            {item.cancelado == 1 && (
                                                 <button className={`bg-blue-500 px-2 py-0.5 rounded-md hover:bg-blue-400 text-xs text-slate-100 font-roboto font-semibold
                                                                     ${(numero != null) ? '!bg-gray-400 hover:!bg-gray-400' : ''}`}
-                                                    onClick={() => handleLlamarNumero(console.log('retomar cancelado'))}
+                                                    onClick={() => handleLlamarNumero(item.nombre[0].numeros_id, item.pausado, item.cancelado)}
                                                     disabled={(numero != null)}
                                                 >Retomar cancelado</button>
                                             )}
@@ -322,6 +270,7 @@ export default function Llamador() {
                                                 ))}
                                             </td>
                                             <td className="whitespace-nowrap px-1 py-1">50:14</td>
+                                            <td className="whitespace-nowrap px-1 py-1">{item.user}</td>
                                         </tr>
                                         ))
                                     )
@@ -347,11 +296,34 @@ export default function Llamador() {
                                                         disabled={!numero}            
                                                         onClick={() => handleSetNextState(numero)}
                                     >Derivar</button>
-                                    <button className={`bg-slate-300 text-slate-700 px-2 rounded-md shadow-md
+                                    <div>
+                                        <button className={`bg-slate-300 text-slate-700 px-2 rounded-md shadow-md
                                                         ${(numero) ? '!bg-blue-400 !text-slate-100 hover:!bg-blue-500' : ''}`}
                                                         disabled={!numero}
-                                                        // onClick={() => handleDerivateTo(numero, position)}
-                                    >Derivar a..</button>
+                                                        onClick={() => handleDerivateTo(numero)}
+                                        >Derivar a..</button>
+                                        <Modal show={showModal} handleClose={handleCloseModal}>
+                                            <h2 className="text-xl font-bold mb-2">Derivar a..</h2>
+                                            <table className="min-w-full text-left text-sm font-roboto font-medium text-slate-600 text-surface">
+                                                <tbody className="odd">
+                                                    {allDerivates.map((item, index) => (
+                                                        <tr key={index} className="border-b-2">
+                                                            <td className="whitespace-nowrap px-1 py-1">{item.estado}</td>
+                                                            <td className="whitespace-nowrap px-1 py-1">
+                                                                <button
+                                                                    onClick={() => handleDerivateToPosition(numero, item.estado)}
+                                                                >
+                                                                    <ArrowRightCircleIcon 
+                                                                        className="w-6 stroke-blue-500 hover:stroke-blue-400" 
+                                                                    />
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                    ))}
+                                                </tbody>
+                                            </table>
+                                        </Modal>
+                                    </div>
                                     <button className={`bg-slate-300 text-slate-700 px-2 rounded-md shadow-md
                                                         ${(numero) ? '!bg-blue-400 !text-slate-100 hover:!bg-blue-500' : ''}`}
                                                         disabled={!numero}
@@ -363,6 +335,7 @@ export default function Llamador() {
                                                         onClick={() => handleCancelNumber(numero)}
                                     >Cancelar</button>
                                 </div>
+
                             </div>
                         </div>
                     </div>
