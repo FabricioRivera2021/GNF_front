@@ -4,6 +4,7 @@ import GuestLayout from "./components/GuestLayout.jsx";
 import DefaultLayout from "./components/DefaultLayout.jsx";
 import Llamador from "./views/Llamador.jsx";
 import Logout from "./views/Logout.jsx";
+import TV from "./views/TV.jsx"
 
 // parece que las rutas tienen un orden determinado, ojo con cual 
 // va primero en el codigo
@@ -38,6 +39,10 @@ const router = createBrowserRouter([
             {
                 path: '/login',
                 element: <Login />
+            },
+            {
+                path: '/TV',
+                element: <TV />
             }
         ] 
     },
