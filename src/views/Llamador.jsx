@@ -6,7 +6,7 @@ import { userStateContext } from '../context/ContextProvider';
 import axios from 'axios';
 import axiosClient from '../axios';
 import renderLoadingLines from '../helpers/renderLoadingLines';
-import {Modal} from '../components/index';
+import { Modal } from '../components/index';
 import { ArrowRightCircleIcon } from "@heroicons/react/24/outline";
 
 const API_URL = import.meta.env.VITE_API_BASE_URL

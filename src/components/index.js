@@ -1,3 +1,3 @@
-export * from './DefaultLayout'
-export * from './GuestLayout'
-export * from './Modal'
+export {default as DefaultLayout} from './DefaultLayout'
+export {default as GuestLayout} from './GuestLayout'
+export {default as Modal} from './Modal'

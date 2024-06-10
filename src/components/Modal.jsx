@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const Modal = ({ show, handleClose, children }) => {
+export default function Modal({ show, handleClose, children }){
     const showHideClassName = show ? "fixed inset-0 flex items-center justify-center bg-black bg-opacity-50" : "hidden";
 
     return (
