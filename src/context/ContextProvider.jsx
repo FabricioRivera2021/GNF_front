@@ -26,7 +26,6 @@ export const ContextProvider = ({children}) => {
     _setUserToken(token);
   }
 
-
   return (
     <StateContext.Provider
       value={{

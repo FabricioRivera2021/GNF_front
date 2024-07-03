@@ -182,10 +182,10 @@ export default function Llamador() {
         <>
             <div className="flex justify-between items-start">
                 <div className="w-[12rem] pl-2 h-[calc(100vh-4rem)] flex flex-col items-start bg-slate-800 z-50 shadow-slate-900 ">
-                    <div className="w-full">
-                        <div className="space-y-4 mt-4 text-slate-100 whitespace-nowrap">
-                            <div className="flex flex-col space-y-4 ml-3 mr-5">
-                                <div className="flex flex-col space-y-4">
+                    <div className="w-full h-full">
+                        <div className="space-y-4 mt-4 text-slate-100 whitespace-nowrap h-[95%]">
+                            <div className="flex flex-col space-y-4 ml-3 mr-5 h-full">
+                                <div className="flex flex-col space-y-4 h-[100%]">
                                     {filtros.map((filtros) => (
                                         <button key={filtros.id}
                                             className={`rounded-sm py-1 text-left pl-1 hover:bg-blue-400 hover:text-slate-100 capitalize font-roboto text-sm
@@ -197,6 +197,14 @@ export default function Llamador() {
                                     <div className="flex flex-col">
                                         {/* <label for="search"></label> */}
                                         <input className="rounded-sm h-7 text-slate-800 pl-1" placeholder="Buscar" type="text" />
+                                    </div>
+                                    <div className="flex flex-col justify-between pt-10 gap-4 h-full">
+                                        {/* <label for="search"></label> */}
+                                        <div className="flex flex-col gap-4">
+                                            <button className="rounded-sm py-1 text-center pl-1 bg-yellow-400 hover:bg-yellow-200 text-slate-700 capitalize font-roboto text-sm">Ver pausados [ {2} ]</button>
+                                            <button className="rounded-sm py-1 text-center pl-1 bg-red-500 hover:bg-red-600 text-slate-100 capitalize font-roboto text-sm">Ver cancelados [ 2 ]</button>
+                                        </div>
+                                        <button className="rounded-sm py-1 text-center pl-1 bg-green-500 hover:bg-green-600 text-slate-800 hover:text-slate-100 capitalize font-roboto text-sm">Ver finalizados [ 65 ]</button>
                                     </div>
                                 </div>
                             </div>
