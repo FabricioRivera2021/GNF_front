@@ -32,13 +32,13 @@ export default function Llamador() {
         .then(data => {
             setNumeros(data);
             setIsLoading(false);
-            // console.log(data[0].nombre[0].name);
+            // console.log(data[8]);
         })
         .catch(error => {
             console.error('There was an error fetching the data!', error);
             setError(error);
         });
-    }, [selectedFilter, numero, isDerivating]);
+    }, [numero, isDerivating]);
 
     useEffect(() => {
         //get current selected number by the User
@@ -75,7 +75,21 @@ export default function Llamador() {
 
     const handleClickFilter = (id) => {
         // console.log(id);
+        setIsLoading(true)
         setSelectedFilter(id);
+        fetch(API_URL + '/allNumbers/' + selectedFilter)
+        .then(response => response.json())
+        .then(data => {
+            setNumeros(data);
+            setIsLoading(false);
+            // console.log(data[8]);
+        })
+        .catch(error => {
+            console.error('There was an error fetching the data!', error);
+            setError(error);
+        });
+
+        // console.log(numeros.filter((numero) => numero.pausado == 1));
     }
 
     const handleSetNextState = (number) => {
@@ -171,6 +185,32 @@ export default function Llamador() {
             })
     }
 
+    const filterPausedNumber = () => {
+        axios
+            .get("http://localhost:8000/api/filterPausedNumbers")
+            .then(({data}) => {
+                console.log(data);
+                setNumeros(data);
+                setSelectedFilter(1);
+            })
+            .catch((error) => {
+                console.log(error);
+            })
+    }
+
+    const filterCancelNumber = () => {
+        axios
+            .get("http://localhost:8000/api/filterCancelNumbers")
+            .then(({data}) => {
+                console.log(data);
+                setNumeros(data);
+                setSelectedFilter(1);
+            })
+            .catch((error) => {
+                console.log(error);
+            })
+    }
+
     function getCookie(name) {
         const value = `; ${document.cookie}`;
         const parts = value.split(`; ${name}=`);
@@ -195,16 +235,22 @@ export default function Llamador() {
                                     ))}
                                     <hr />
                                     <div className="flex flex-col">
-                                        {/* <label for="search"></label> */}
                                         <input className="rounded-sm h-7 text-slate-800 pl-1" placeholder="Buscar" type="text" />
                                     </div>
                                     <div className="flex flex-col justify-between pt-10 gap-4 h-full">
-                                        {/* <label for="search"></label> */}
                                         <div className="flex flex-col gap-4">
-                                            <button className="rounded-sm py-1 text-center pl-1 bg-yellow-400 hover:bg-yellow-200 text-slate-700 capitalize font-roboto text-sm">Ver pausados [ {2} ]</button>
-                                            <button className="rounded-sm py-1 text-center pl-1 bg-red-500 hover:bg-red-600 text-slate-100 capitalize font-roboto text-sm">Ver cancelados [ 2 ]</button>
+                                            <button className="rounded-sm py-1 text-center pl-1 bg-yellow-400 hover:bg-yellow-200 text-slate-700 capitalize font-roboto text-sm"
+                                                    onClick={() => filterPausedNumber()}>{/*Mostrar solo los numeros pausados, poner el filtro en 1 y luego filtrar por pausado*/}
+                                                Ver pausados [ {numeros.filter((numero) => numero.pausado === 1).length} ]
+                                            </button>
+                                            <button className="rounded-sm py-1 text-center pl-1 bg-red-500 hover:bg-red-600 text-slate-100 capitalize font-roboto text-sm"
+                                                    onClick={() => filterCancelNumber()}>
+                                                Ver cancelados [ {numeros.filter((numero) => numero.cancelado === 1).length} ]
+                                            </button>
                                         </div>
-                                        <button className="rounded-sm py-1 text-center pl-1 bg-green-500 hover:bg-green-600 text-slate-800 hover:text-slate-100 capitalize font-roboto text-sm">Ver finalizados [ 65 ]</button>
+                                        <button className="rounded-sm py-1 text-center pl-1 bg-green-500 hover:bg-green-600 text-slate-800 hover:text-slate-100 capitalize font-roboto text-sm">
+                                            Ver finalizados [ 65 ]
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -244,29 +290,29 @@ export default function Llamador() {
                                     numeros.map((item, index) => (
                                         <tr key={index} className={`odd:bg-slate-50 even:bg-gray-300 ${(numero == item.numero) ? '!bg-blue-400 text-slate-100' : ''}
                                                                     ${(item.pausado == 1) ? 'odd:bg-yellow-100 even:bg-yellow-200' : ''}
-                                                                    ${(item.cancelado == 1) ? 'odd:bg-red-300 even:bg-red-200' : ''}`}>
+                                                                    ${(item.cancelado == 1) ? 'odd:bg-red-500 even:bg-red-400 text-white' : ''}`}>
                                             <td className="whitespace-nowrap px-1 py-1 font-normal">
-                                            {item.estado.includes(comparePosition) && position.includes(comparePosition) && item.pausado != 1 && item.cancelado != 1 && (numero != item.numero) && (
-                                                <button className={`bg-blue-500 px-2 py-0.5 rounded-md hover:bg-blue-400 text-xs text-slate-100 font-roboto font-semibold
-                                                                    ${(numero != null) ? 'bg-gray-400 hover:bg-gray-400' : ''}`}
-                                                    onClick={() => handleLlamarNumero(item.nombre[0].numeros_id, item.pausado, item.cancelado)}
-                                                    disabled={(numero != null || item.pausado == 1 || item.cancelado == 1)}
-                                                >Llamar</button>
-                                            )}
-                                            {item.pausado == 1 && (
-                                                <button className={`bg-blue-500 px-2 py-0.5 rounded-md hover:bg-blue-400 text-xs text-slate-100 font-roboto font-semibold
-                                                                    ${(numero != null) ? '!bg-gray-400 hover:!bg-gray-400' : ''}`}
-                                                    onClick={() => handleLlamarNumero(item.nombre[0].numeros_id, item.pausado, item.cancelado)}
-                                                    disabled={(numero != null)}
-                                                >Retomar pausado</button>
-                                            )}
-                                            {item.cancelado == 1 && (
-                                                <button className={`bg-blue-500 px-2 py-0.5 rounded-md hover:bg-blue-400 text-xs text-slate-100 font-roboto font-semibold
-                                                                    ${(numero != null) ? '!bg-gray-400 hover:!bg-gray-400' : ''}`}
-                                                    onClick={() => handleLlamarNumero(item.nombre[0].numeros_id, item.pausado, item.cancelado)}
-                                                    disabled={(numero != null)}
-                                                >Retomar cancelado</button>
-                                            )}
+                                                {item.estado.includes(comparePosition) && position.includes(comparePosition) && item.pausado != 1 && item.cancelado != 1 && (numero != item.numero) && (
+                                                    <button className={`bg-blue-500 px-2 py-0.5 rounded-md hover:bg-blue-400 text-xs text-slate-100 font-roboto font-semibold
+                                                                        ${(numero != null) ? 'bg-gray-400 hover:bg-gray-400' : ''}`}
+                                                        onClick={() => handleLlamarNumero(item.nombre[0].numeros_id, item.pausado, item.cancelado)}
+                                                        disabled={(numero != null || item.pausado == 1 || item.cancelado == 1)}
+                                                    >Llamar</button>
+                                                )}
+                                                {item.pausado == 1 && (
+                                                    <button className={`bg-blue-500 px-2 py-0.5 rounded-md hover:bg-blue-400 text-xs text-slate-100 font-roboto font-semibold
+                                                                        ${(numero != null) ? '!bg-gray-400 hover:!bg-gray-400' : ''}`}
+                                                        onClick={() => handleLlamarNumero(item.nombre[0].numeros_id, item.pausado, item.cancelado)}
+                                                        disabled={(numero != null)}
+                                                    >Retomar pausado</button>
+                                                )}
+                                                {item.cancelado == 1 && (
+                                                    <button className={`bg-blue-500 px-2 py-0.5 rounded-md hover:bg-blue-400 text-xs text-slate-100 font-roboto font-semibold
+                                                                        ${(numero != null) ? '!bg-gray-400 hover:!bg-gray-400' : ''}`}
+                                                        onClick={() => handleLlamarNumero(item.nombre[0].numeros_id, item.pausado, item.cancelado)}
+                                                        disabled={(numero != null)}
+                                                    >Retomar cancelado</button>
+                                                )}
                                             </td>
                                             <td className="whitespace-nowrap px-1 py-1">{item.fila_prefix} {item.numero}</td>
                                             <td className="whitespace-nowrap px-1 py-1">{item.fila}</td>
