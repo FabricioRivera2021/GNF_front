@@ -32,13 +32,13 @@ export default function Llamador() {
         .then(data => {
             setNumeros(data);
             setIsLoading(false);
-            // console.log(data[8]);
+            console.log(data);
         })
         .catch(error => {
             console.error('There was an error fetching the data!', error);
             setError(error);
         });
-    }, [numero, isDerivating]);
+    }, [selectedFilter, numero, isDerivating]);
 
     useEffect(() => {
         //get current selected number by the User
@@ -70,7 +70,7 @@ export default function Llamador() {
     useEffect(() => {
         const compare_position = position.split(" ");
         setComparePosition(compare_position[0])
-        // console.log(compare_position[0]);
+        console.log(compare_position[0]);
     }, [position]);
 
     const handleClickFilter = (id) => {
@@ -81,7 +81,6 @@ export default function Llamador() {
         .then(response => response.json())
         .then(data => {
             setNumeros(data);
-            setIsLoading(false);
             // console.log(data[8]);
         })
         .catch(error => {
@@ -93,6 +92,8 @@ export default function Llamador() {
     }
 
     const handleSetNextState = (number) => {
+        console.log(numero);
+        console.log(number);
         axios
             .post("http://localhost:8000/api/setNextState", {
                 numero: number
@@ -135,6 +136,7 @@ export default function Llamador() {
 
     //llama al numero, ademas de retomar pausado o cancelado
     const handleLlamarNumero = (id, paused, canceled) => {
+        console.log(id, paused, canceled);
         axios
             .post("http://localhost:8000/api/asignNumberToUser", {
                 id: id,
@@ -143,6 +145,7 @@ export default function Llamador() {
             })
             .then(({data}) => {
                 setNumero(data.nro)
+                console.log(data);
             })
             .catch((error) => {
                 console.log(error);
