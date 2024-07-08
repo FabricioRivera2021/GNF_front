@@ -17,36 +17,56 @@ export default function Llamador() {
     const [allDerivates, setAllDerivates] = useState([]);//posibles posiciones para derivar
     const [numeros, setNumeros] = useState([]);//numeros
     const [filtros, setFiltros] = useState([]);//filtros
+    const [filterPaused, setFilterPaused] = useState(false);//cantidad numeros pausados
+    const [cancelCount, setCancelCount] = useState(0);//cantidad numeros cancelados
     const [selectedFilter, setSelectedFilter] = useState(1); //filtro actual
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(true); //! quizas halla que borrar esto
     const [isDerivating, setIsDerivating] = useState(false);
     const [error, setError] = useState(null);
     const [comparePosition, setComparePosition] = useState('');
-    const {currentUser, position, numero, setNumero} = userStateContext();
+    const {currentUser, position, numero, setNumero, isChangingPosition} = userStateContext();
 
     useEffect(() => {
         // Fetch data from the Laravel API
+        console.log("Use effect 1- fetch numbers and displays them");
         setIsLoading(true)
-        fetch(API_URL + '/allNumbers/' + selectedFilter)
-        .then(response => response.json())
-        .then(data => {
-            setNumeros(data);
-            setIsLoading(false);
-            console.log(data);
-        })
-        .catch(error => {
-            console.error('There was an error fetching the data!', error);
-            setError(error);
-        });
-    }, [selectedFilter, numero, isDerivating]);
+        if(filterPaused){
+            console.log("numeros pausados");
+            axios
+                .get("http://localhost:8000/api/filterPausedNumbers")
+                .then(({data}) => {
+                    console.log(data);
+                    setNumeros(data);
+                    // setFilterPaused(false);
+                    setIsLoading(false);
+                })
+                .catch((error) => {
+                    console.log(error);
+                    setIsLoading(false);
+                })
+        }else{
+            console.log("todos los numeros");
+            fetch(API_URL + '/allNumbers/' + selectedFilter)
+            .then(response => response.json())
+            .then(data => {
+                setNumeros(data);
+                console.log(data);
+                // setIsLoading(false);
+            })
+            .catch(error => {
+                console.error('There was an error fetching the data!', error);
+                setError(error);
+            });
+        }
+    }, [selectedFilter, numero, isDerivating, filterPaused]);
 
     useEffect(() => {
         //get current selected number by the User
+        console.log("Use effect 2");
         axios
         .get('http://localhost:8000/api/getCurrentSelectedNumber')
         .then(({data}) => {
             setNumero(data.nro)
-            console.log(data.nro);
         })
         .catch((error) => {
             console.log(error);
@@ -55,11 +75,12 @@ export default function Llamador() {
 
     useEffect(() => {
         // Fetch data from the Laravel API
+        console.log("Use effect 3");
         fetch(API_URL + '/allEstados')
         .then(response => response.json())
         .then(data => {
             setFiltros(data);
-            setIsLoading(false);
+            // setIsLoading(false);
         })
         .catch(error => {
             console.error('There was an error fetching the data!', error);
@@ -68,32 +89,34 @@ export default function Llamador() {
 
     //comparar el estado del numero con la posicion del User
     useEffect(() => {
+        console.log("Use effect 4");
         const compare_position = position.split(" ");
         setComparePosition(compare_position[0])
-        console.log(compare_position[0]);
+        setIsLoading(false);
     }, [position]);
 
     const handleClickFilter = (id) => {
-        // console.log(id);
+        console.log("handleClickFilter");
         setIsLoading(true)
         setSelectedFilter(id);
-        fetch(API_URL + '/allNumbers/' + selectedFilter)
-        .then(response => response.json())
-        .then(data => {
-            setNumeros(data);
-            // console.log(data[8]);
-        })
-        .catch(error => {
-            console.error('There was an error fetching the data!', error);
-            setError(error);
-        });
+        setFilterPaused(false);
+        // fetch(API_URL + '/allNumbers/' + selectedFilter)
+        // .then(response => response.json())
+        // .then(data => {
+        //     setNumeros(data);
+        //     setIsLoading(false);
+        //     console.log(data);
+        // })
+        // .catch(error => {
+        //     console.error('There was an error fetching the data!', error);
+        //     setError(error);
+        // });
 
         // console.log(numeros.filter((numero) => numero.pausado == 1));
     }
 
     const handleSetNextState = (number) => {
-        console.log(numero);
-        console.log(number);
+        console.log("handleSetNextState");
         axios
             .post("http://localhost:8000/api/setNextState", {
                 numero: number
@@ -108,12 +131,14 @@ export default function Llamador() {
     }
 
     const handlePauseNumber = (number) => {
+        console.log("handlePauseNumber");
         axios
             .post("http://localhost:8000/api/setPause", {
                 numero: number
             })
             .then(({data}) => {
                 console.log(data)
+                // setPausedCount++;
                 setNumero(null)
             })
             .catch((error) => {
@@ -121,12 +146,14 @@ export default function Llamador() {
             })
     }
     const handleCancelNumber = (number) => {
+        console.log("handleCancelNumber");
         axios
             .post("http://localhost:8000/api/setCanceled", {
                 numero: number
             })
             .then(({data}) => {
                 console.log(data)
+                // setPausedCount++;
                 setNumero(null)
             })
             .catch((error) => {
@@ -136,7 +163,7 @@ export default function Llamador() {
 
     //llama al numero, ademas de retomar pausado o cancelado
     const handleLlamarNumero = (id, paused, canceled) => {
-        console.log(id, paused, canceled);
+        console.log("handleLlamarNumero");
         axios
             .post("http://localhost:8000/api/asignNumberToUser", {
                 id: id,
@@ -156,8 +183,8 @@ export default function Llamador() {
     const handleCloseModal = () => setShowModal(false);
 
     const handleDerivateTo = (number) => {
+        console.log("handleDerivateTo");
         handleOpenModal();
-
         axios
             .get("http://localhost:8000/api/derivateTo", {
                 number: number,
@@ -172,6 +199,7 @@ export default function Llamador() {
     }
 
     const handleDerivateToPosition = (number, position) => {
+        console.log("handleDerivateToPosition");
         handleCloseModal();
         axios
             .post("http://localhost:8000/api/derivateToPosition", {
@@ -189,19 +217,12 @@ export default function Llamador() {
     }
 
     const filterPausedNumber = () => {
-        axios
-            .get("http://localhost:8000/api/filterPausedNumbers")
-            .then(({data}) => {
-                console.log(data);
-                setNumeros(data);
-                setSelectedFilter(1);
-            })
-            .catch((error) => {
-                console.log(error);
-            })
+        console.log("filterPausedNumber");
+        setFilterPaused(true);
     }
 
     const filterCancelNumber = () => {
+        console.log("filterCancelNumber");
         axios
             .get("http://localhost:8000/api/filterCancelNumbers")
             .then(({data}) => {
@@ -244,11 +265,11 @@ export default function Llamador() {
                                         <div className="flex flex-col gap-4">
                                             <button className="rounded-sm py-1 text-center pl-1 bg-yellow-400 hover:bg-yellow-200 text-slate-700 capitalize font-roboto text-sm"
                                                     onClick={() => filterPausedNumber()}>{/*Mostrar solo los numeros pausados, poner el filtro en 1 y luego filtrar por pausado*/}
-                                                Ver pausados [ {numeros.filter((numero) => numero.pausado === 1).length} ]
+                                                Ver pausados
                                             </button>
                                             <button className="rounded-sm py-1 text-center pl-1 bg-red-500 hover:bg-red-600 text-slate-100 capitalize font-roboto text-sm"
                                                     onClick={() => filterCancelNumber()}>
-                                                Ver cancelados [ {numeros.filter((numero) => numero.cancelado === 1).length} ]
+                                                Ver cancelados
                                             </button>
                                         </div>
                                         <button className="rounded-sm py-1 text-center pl-1 bg-green-500 hover:bg-green-600 text-slate-800 hover:text-slate-100 capitalize font-roboto text-sm">
@@ -277,7 +298,7 @@ export default function Llamador() {
                                 </tr>
                             </thead>
                             <tbody className="odd">
-                                { isLoading ? (
+                                { isChangingPosition ? (
                                     <tr>
                                         {renderLoadingLines(7)}
                                     </tr>
@@ -293,7 +314,7 @@ export default function Llamador() {
                                     numeros.map((item, index) => (
                                         <tr key={index} className={`odd:bg-slate-50 even:bg-gray-300 ${(numero == item.numero) ? '!bg-blue-400 text-slate-100' : ''}
                                                                     ${(item.pausado == 1) ? 'odd:bg-yellow-100 even:bg-yellow-200' : ''}
-                                                                    ${(item.cancelado == 1) ? 'odd:bg-red-500 even:bg-red-400 text-white' : ''}`}>
+                                                                    ${(item.cancelado == 1) ? 'odd:!bg-red-500 even:!bg-red-400 text-white' : ''}`}>
                                             <td className="whitespace-nowrap px-1 py-1 font-normal">
                                                 {item.estado.includes(comparePosition) && position.includes(comparePosition) && item.pausado != 1 && item.cancelado != 1 && (numero != item.numero) && (
                                                     <button className={`bg-blue-500 px-2 py-0.5 rounded-md hover:bg-blue-400 text-xs text-slate-100 font-roboto font-semibold
@@ -302,14 +323,14 @@ export default function Llamador() {
                                                         disabled={(numero != null || item.pausado == 1 || item.cancelado == 1)}
                                                     >Llamar</button>
                                                 )}
-                                                {item.pausado == 1 && (
+                                                {item.estado.includes(comparePosition) && position.includes(comparePosition) && item.pausado == 1 && (
                                                     <button className={`bg-blue-500 px-2 py-0.5 rounded-md hover:bg-blue-400 text-xs text-slate-100 font-roboto font-semibold
                                                                         ${(numero != null) ? '!bg-gray-400 hover:!bg-gray-400' : ''}`}
                                                         onClick={() => handleLlamarNumero(item.nombre[0].numeros_id, item.pausado, item.cancelado)}
                                                         disabled={(numero != null)}
                                                     >Retomar pausado</button>
                                                 )}
-                                                {item.cancelado == 1 && (
+                                                {item.estado.includes(comparePosition) && position.includes(comparePosition) && item.cancelado == 1 && (
                                                     <button className={`bg-blue-500 px-2 py-0.5 rounded-md hover:bg-blue-400 text-xs text-slate-100 font-roboto font-semibold
                                                                         ${(numero != null) ? '!bg-gray-400 hover:!bg-gray-400' : ''}`}
                                                         onClick={() => handleLlamarNumero(item.nombre[0].numeros_id, item.pausado, item.cancelado)}
@@ -343,7 +364,7 @@ export default function Llamador() {
                             </div>
                             <div className=" flex flex-col justify-center items-center w-[50rem]">
                                 <div className="flex px-14 rounded w-full gap-6 mb-2 text-slate-500">
-                                    <p>Nombre: Pepita perez</p>
+                                    <p>Nombre: Nombre generico</p>
                                     <p>CI: 45062412</p>
                                     <p>Ultima concurrencia: 24/02/24</p>
                                 </div>

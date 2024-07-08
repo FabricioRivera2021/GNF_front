@@ -5,6 +5,7 @@ const StateContext = createContext({
   userToken: null,
   position: '',
   numero: null,
+  isChangingPosition: false,
   setCurrentUser: () => {},
   setUserToken: () => {},
   setPosition: () => {},
@@ -15,6 +16,7 @@ export const ContextProvider = ({children}) => {
   const [currentUser, setCurrentUser] = useState({});
   const [userToken, _setUserToken] = useState(localStorage.getItem('TOKEN') || '');
   const [position, setPosition] = useState('');
+  const [ isChangingPosition, setIsChangingPosition ] = useState(false);
   const [numero, setNumero] = useState(null)
 
   const setUserToken = (token) => {
@@ -33,6 +35,8 @@ export const ContextProvider = ({children}) => {
         setCurrentUser,
         userToken,
         setUserToken,
+        isChangingPosition,
+        setIsChangingPosition,
         position,
         setPosition,
         numero,

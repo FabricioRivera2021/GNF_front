@@ -29,9 +29,8 @@ function classNames(...classes) {
 
 export default function DefaultLayout() {
 
-  const { currentUser, userToken, setCurrentUser, setUserToken, position, setPosition, numero } = userStateContext();
+  const { currentUser, userToken, setCurrentUser, setUserToken, position, setPosition, numero, isChangingPosition, setIsChangingPosition} = userStateContext();
   const [ isLoggingOut, setIsLoggingOut ] = useState(false);
-  const [ isChangingPosition, setIsChangingPosition ] = useState(false);
   const [ positions, setPositions ] = useState(null);
 
   const checkAuth = async () => {
