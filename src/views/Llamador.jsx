@@ -18,13 +18,22 @@ export default function Llamador() {
     const [numeros, setNumeros] = useState([]);//numeros
     const [filtros, setFiltros] = useState([]);//filtros
     const [filterPaused, setFilterPaused] = useState(false);//cantidad numeros pausados
-    const [cancelCount, setCancelCount] = useState(0);//cantidad numeros cancelados
+    const [filterCancel, setFilterCancel] = useState(false);//cantidad numeros cancelados
     const [selectedFilter, setSelectedFilter] = useState(1); //filtro actual
     const [isLoading, setIsLoading] = useState(true); //! quizas halla que borrar esto
     const [isDerivating, setIsDerivating] = useState(false);
     const [error, setError] = useState(null);
     const [comparePosition, setComparePosition] = useState('');
+    const [currentTime, setCurrentTime] = useState(new Date());
     const {currentUser, position, numero, setNumero, isChangingPosition} = userStateContext();
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+          setCurrentTime(new Date());
+        }, 1000);
+    
+        return () => clearInterval(interval);
+    }, []);
 
     useEffect(() => {
         // Fetch data from the Laravel API
@@ -44,7 +53,23 @@ export default function Llamador() {
                     console.log(error);
                     setIsLoading(false);
                 })
-        }else{
+        }
+        if(filterCancel){
+            console.log("numeros cancelado");
+            axios
+                .get("http://localhost:8000/api/filterCancelNumbers")
+                .then(({data}) => {
+                    console.log(data);
+                    setNumeros(data);
+                    // setFilterPaused(false);
+                    setIsLoading(false);
+                })
+                .catch((error) => {
+                    console.log(error);
+                    setIsLoading(false);
+                })
+        }
+        if(!filterPaused && !filterCancel){
             console.log("todos los numeros");
             fetch(API_URL + '/allNumbers/' + selectedFilter)
             .then(response => response.json())
@@ -58,7 +83,7 @@ export default function Llamador() {
                 setError(error);
             });
         }
-    }, [selectedFilter, numero, isDerivating, filterPaused]);
+    }, [selectedFilter, numero, isDerivating, filterPaused, filterCancel]);
 
     useEffect(() => {
         //get current selected number by the User
@@ -98,21 +123,9 @@ export default function Llamador() {
     const handleClickFilter = (id) => {
         console.log("handleClickFilter");
         setIsLoading(true)
-        setSelectedFilter(id);
         setFilterPaused(false);
-        // fetch(API_URL + '/allNumbers/' + selectedFilter)
-        // .then(response => response.json())
-        // .then(data => {
-        //     setNumeros(data);
-        //     setIsLoading(false);
-        //     console.log(data);
-        // })
-        // .catch(error => {
-        //     console.error('There was an error fetching the data!', error);
-        //     setError(error);
-        // });
-
-        // console.log(numeros.filter((numero) => numero.pausado == 1));
+        setFilterCancel(false);
+        setSelectedFilter(id);
     }
 
     const handleSetNextState = (number) => {
@@ -145,6 +158,7 @@ export default function Llamador() {
                 console.log(error);
             })
     }
+
     const handleCancelNumber = (number) => {
         console.log("handleCancelNumber");
         axios
@@ -218,21 +232,14 @@ export default function Llamador() {
 
     const filterPausedNumber = () => {
         console.log("filterPausedNumber");
+        setFilterCancel(false);
         setFilterPaused(true);
     }
 
     const filterCancelNumber = () => {
         console.log("filterCancelNumber");
-        axios
-            .get("http://localhost:8000/api/filterCancelNumbers")
-            .then(({data}) => {
-                console.log(data);
-                setNumeros(data);
-                setSelectedFilter(1);
-            })
-            .catch((error) => {
-                console.log(error);
-            })
+        setFilterPaused(false);
+        setFilterCancel(true);
     }
 
     function getCookie(name) {
@@ -241,6 +248,23 @@ export default function Llamador() {
         if (parts.length === 2) return parts.pop().split(';').shift();
         return null;
     }
+
+    const calculateTimeDifference = (timestamp) => {
+        const givenDate = new Date(timestamp);
+        const currentDate = new Date();
+      
+        const diffInMilliseconds = currentDate - givenDate;
+      
+        const diffInSeconds = Math.floor(diffInMilliseconds / 1000);
+        const diffInMinutes = Math.floor(diffInSeconds / 60);
+        const diffInHours = Math.floor(diffInMinutes / 60);
+      
+        const hours = String(diffInHours % 24).padStart(2, '0');
+        const minutes = String(diffInMinutes % 60).padStart(2, '0');
+        const seconds = String(diffInSeconds % 60).padStart(2, '0');
+      
+        return `${hours}:${minutes}:${seconds}`;
+    };
 
     return (
         <>
@@ -282,8 +306,8 @@ export default function Llamador() {
                     </div>
                 </div>
                 {/* ------------------------------------------------------------------------------------- */}
-                <div className="w-full flex flex-col h-[calc(100vh-4rem)]" >
-                    <div className="h-[35rem] overflow-auto">
+                <div className="w-full flex flex-col justify-between h-[calc(100vh-4rem)]" >
+                    <div className="min-h-20 pb-3 overflow-auto">
                         <table  className="min-w-full text-left text-sm font-roboto font-medium text-slate-600 text-surface">
                             <thead className="border-b dark:border-neutral-500 bg-blue-400 sticky top-0">
                                 <tr>
@@ -340,14 +364,14 @@ export default function Llamador() {
                                             </td>
                                             <td className="whitespace-nowrap px-1 py-1">{item.fila_prefix} {item.numero}</td>
                                             <td className="whitespace-nowrap px-1 py-1">{item.fila}</td>
-                                            <td className="whitespace-nowrap px-1 py-1">12:35</td>
+                                            <td className="whitespace-nowrap px-1 py-1">{calculateTimeDifference(item.modified_at)}</td>
                                             <td className="whitespace-nowrap px-1 py-1">{item.estado}</td>
                                             <td className="whitespace-nowrap px-1 py-1">                                          
                                                 {item.nombre.map((elem, idx) => (
                                                     <span key={idx}>{elem.name}</span>
                                                 ))}
                                             </td>
-                                            <td className="whitespace-nowrap px-1 py-1">50:14</td>
+                                            <td className="whitespace-nowrap px-1 py-1">{calculateTimeDifference(item.created_at)}</td>
                                             <td className="whitespace-nowrap px-1 py-1">{item.user}</td>
                                         </tr>
                                         ))
@@ -358,9 +382,9 @@ export default function Llamador() {
                     </div>
                     <div className="w-full">
                         <div className="bg-slate-100 flex justify-start items-center pt-2 w-full h-full">
-                            <div className="bg-orange-400 h-[18vh] w-60 flex ml-1 flex-col justify-center items-center rounded shadow-sm">
+                            <div className="pl-10 h-[10vh] w-40 flex ml-1 flex-col justify-center items-center rounded shadow-sm">
                                 <h2 className="text-4xl text-slate-700 font-bold whitespace-nowrap"></h2>
-                                <p className="text-4xl text-slate-700 font-semibold">{numero}</p>
+                                <p className="text-4xl text-slate-600 font-semibold">{numero}</p>
                             </div>
                             <div className=" flex flex-col justify-center items-center w-[50rem]">
                                 <div className="flex px-14 rounded w-full gap-6 mb-2 text-slate-500">
