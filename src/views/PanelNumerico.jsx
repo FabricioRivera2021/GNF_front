@@ -1,5 +1,6 @@
 import { ArrowLeftIcon } from '@heroicons/react/24/outline'
 import React, { useEffect, useState } from 'react'
+import axios from 'axios';
 
 export default function panelNumerico() {
 
@@ -22,6 +23,23 @@ export default function panelNumerico() {
       setInputValue((prev) => prev.slice(0, -1));
     }
   };
+
+  const handleCreateNumber = () => {
+    //Crear el numero
+    console.log(inputValue);
+    //hacer la peticion al endpoint pasando la cedula
+    axios
+      .post('http://localhost:8000/api/createNumber', {
+        "ci": inputValue,
+        "filas": "Comun"
+      })
+      .then(({data}) => {
+        console.log(data);
+      })
+      .catch((error) => {
+          console.log(error);
+      })
+  }
 
 	useEffect(() => {
     window.addEventListener('keydown', handleKeyPress);
@@ -66,6 +84,10 @@ export default function panelNumerico() {
             <div className="flex flex-col gap-1 w-3/5 max-w-sm">
                 <button className="border rounded-xs bg-red-400 px-3 col-span-3 py-1 font-semibold text-slate-100">Cancelar</button>
                 <button className="border rounded-xs bg-blue-400 px-3 col-span-3 py-1 font-semibold text-slate-100">Agregar Cedula</button>
+                <button className="border rounded-xs bg-blue-400 px-3 col-span-3 py-1 font-semibold text-slate-100"
+                        onClick={() => handleCreateNumber()}>
+                  Sacar número
+                </button>
             </div>
             
             <div className="w-3/5 max-w-sm hidden">
