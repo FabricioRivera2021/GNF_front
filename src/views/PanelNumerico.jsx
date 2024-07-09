@@ -1,6 +1,8 @@
 import { ArrowLeftIcon } from '@heroicons/react/24/outline'
 import React, { useEffect, useState } from 'react'
 import axios from 'axios';
+import { showInfoMsg } from '../helpers/showInfoMsg';
+import { ThreeDots } from 'react-loader-spinner';
 
 export default function panelNumerico() {
 
@@ -10,6 +12,7 @@ export default function panelNumerico() {
 	const [cedulas, setCedulas] = useState([]);
 	const [cedula, setCedula] = useState(null);
 	const [isLoading, setIsLoading] = useState(false);
+	const [message, setMessage] = useState('');
 
 	const onPanelClick = (number) => {
 		setCedula = number;
@@ -25,19 +28,24 @@ export default function panelNumerico() {
   };
 
   const handleCreateNumber = () => {
+    setIsLoading(true);
     //Crear el numero
     console.log(inputValue);
     //hacer la peticion al endpoint pasando la cedula
     axios
       .post('http://localhost:8000/api/createNumber', {
         "ci": inputValue,
-        "filas": "Comun"
+        "filas": "Emergencia"
       })
       .then(({data}) => {
         console.log(data);
+        setInputValue('');
+        setIsLoading(false);
+        setMessage(true);
       })
       .catch((error) => {
-          console.log(error);
+        console.log(error);
+        setIsLoading(false);
       })
   }
 
@@ -61,16 +69,14 @@ export default function panelNumerico() {
 									<button
 										key={index}
 										onClick={() => setInputValue((prev) => prev + number)}
-										className={`col-span-1 px-5 py-2 text-3xl rounded-md bg-slate-300 border font-semibold text-slate-500 hover:bg-blue-300 text-center ${number === '0' ? 'col-span-2' : ''}`}
-									>
-										{number}
+										className={`col-span-1 px-5 py-2 text-3xl rounded-md bg-slate-300 border font-semibold text-slate-500 hover:bg-blue-300 text-center ${number === '0' ? 'col-span-2' : ''}`}>
+										  {number}
 									</button>
 								))}
                 <button  
 									className="col-span-1 px-5 py-2 text-3xl rounded-md bg-orange-300 border font-semibold text-slate-500 hover:bg-blue-300 flex justify-center"
-									onClick={() => setInputValue((prev) => prev.slice(0, -1))}
-								>
-                  <ArrowLeftIcon className='w-10' />
+									onClick={() => setInputValue((prev) => prev.slice(0, -1))}>
+                    <ArrowLeftIcon className='w-10' />
                 </button>
             </div>
 
@@ -79,13 +85,13 @@ export default function panelNumerico() {
 							type="text" 
 							readOnly
 							placeholder={inputValue}
-						/>
+            />
             
             <div className="flex flex-col gap-1 w-3/5 max-w-sm">
                 <button className="border rounded-xs bg-red-400 px-3 col-span-3 py-1 font-semibold text-slate-100">Cancelar</button>
                 <button className="border rounded-xs bg-blue-400 px-3 col-span-3 py-1 font-semibold text-slate-100">Agregar Cedula</button>
                 <button className="border rounded-xs bg-blue-400 px-3 col-span-3 py-1 font-semibold text-slate-100"
-                        onClick={() => handleCreateNumber()}>
+                  onClick={() => handleCreateNumber()}>
                   Sacar número
                 </button>
             </div>
@@ -98,6 +104,22 @@ export default function panelNumerico() {
                 </div>
                 <button className="w-full hidden border rounded-xs bg-blue-500 px-3 col-span-3 py-0.5 my-3 text-slate-100 text-sm">Finalizar</button>
             </div>
+
+            { (isLoading) 
+              ?
+              <ThreeDots
+                visible={true}
+                height="50"
+                width="40"
+                color="dodgerblue"
+                radius="9"
+                ariaLabel="three-dots-loading"
+                wrapperStyle={{}}
+                wrapperClass=""
+              /> 
+              : ''
+            }
+
         </div>
     </div>
   )
