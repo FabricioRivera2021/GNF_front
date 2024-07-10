@@ -1,8 +1,9 @@
 import { ArrowLeftIcon } from '@heroicons/react/24/outline'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import axios from 'axios';
 import { showInfoMsg } from '../helpers/showInfoMsg';
 import { ThreeDots } from 'react-loader-spinner';
+import ReactToPrint from 'react-to-print';
 
 export default function panelNumerico() {
 
@@ -44,7 +45,7 @@ export default function panelNumerico() {
         setMessage(true);
       })
       .catch((error) => {
-        console.log(error);
+        console.log(error.response.data.message);
         setIsLoading(false);
       })
   }
@@ -124,3 +125,76 @@ export default function panelNumerico() {
     </div>
   )
 }
+
+// const TicketComponent = React.forwardRef((props, ref) => (
+//   <div className='w-full text-center' ref={ref}>
+//     <h2 className='text-xl'>Ticket</h2>
+//     <p>Cedula: {props.cedula}</p>
+//     <p>Fila: {props.fila}</p>
+//     <p>Hora: testing123</p>
+//     <div className='flex w-full justify-center'>
+//       <p className='text-2xl border w-fit p-10'>Numero: NC 12</p>
+//     </div>
+//   </div>
+// ));
+
+// const App = () => {
+//   const [formData, setFormData] = useState({
+//     name: '',
+//     fila: '',
+//     cedula: '',
+//   });
+//   const [submitted, setSubmitted] = useState(false);
+//   const ticketRef = useRef();
+
+//   const handleChange = (e) => {
+//     const { name, value } = e.target;
+//     setFormData((prevData) => ({
+//       ...prevData,
+//       [name]: value,
+//     }));
+//   };
+
+//   const handleSubmit = (e) => {
+//     e.preventDefault();
+//     setSubmitted(true);
+//   };
+
+//   return (
+//     <div>
+//       <h1>Event Registration</h1>
+//       {!submitted ? (
+//         <form onSubmit={handleSubmit}>
+//           <div>
+//             <label>Name:</label>
+//             <input type="text" name="name" value={formData.name} onChange={handleChange} />
+//           </div>
+//           <div>
+//             <label>Fila:</label>
+//             <input type="text" name="fila" value={formData.fila} onChange={handleChange} />
+//           </div>
+//           <div>
+//             <label>Cedula:</label>
+//             <input type="text" name="cedula" value={formData.cedula} onChange={handleChange} />
+//           </div>
+//           <button type="submit">Submit</button>
+//         </form>
+//       ) : (
+//         <>
+//           <TicketComponent
+//             ref={ticketRef}
+//             name={formData.name}
+//             fila={formData.fila}
+//             cedula={formData.cedula}
+//           />
+//           <ReactToPrint
+//             trigger={() => <button>Print Ticket</button>}
+//             content={() => ticketRef.current}
+//           />
+//         </>
+//       )}
+//     </div>
+//   );
+// };
+
+// export default App;
