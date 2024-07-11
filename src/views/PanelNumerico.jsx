@@ -14,6 +14,10 @@ export default function panelNumerico() {
 	const [cedula, setCedula] = useState(null);
 	const [isLoading, setIsLoading] = useState(false);
 	const [message, setMessage] = useState('');
+	const [ticketData, setTicketData] = useState({});
+  const ticketRef = useRef(null);
+  const printRef = useRef(null);
+  const reactToPrintRef = useRef(null);
 
 	const onPanelClick = (number) => {
 		setCedula = number;
@@ -31,23 +35,23 @@ export default function panelNumerico() {
   const handleCreateNumber = () => {
     setIsLoading(true);
     //Crear el numero
-    console.log(inputValue);
     //hacer la peticion al endpoint pasando la cedula
     axios
       .post('http://localhost:8000/api/createNumber', {
         "ci": inputValue,
-        "filas": "Emergencia"
+        "filas": "comun"
       })
-      .then(({data}) => {
-        console.log(data);
+      .then(response => {
+        const { data } = response;
         setInputValue('');
         setIsLoading(false);
-        setMessage(true);
+        setMessage('Number created');
+        setTicketData(data);  // Set the data directly
       })
       .catch((error) => {
-        console.log(error.response.data.message);
+        console.log(error);
         setIsLoading(false);
-      })
+      });
   }
 
 	useEffect(() => {
@@ -58,6 +62,13 @@ export default function panelNumerico() {
       window.removeEventListener('keydown', handleKeyPress);
     };
   }, []);
+
+  useEffect(() => {
+    if (ticketData && Object.keys(ticketData).length > 0) {
+      reactToPrintRef.current.handlePrint();
+      console.log("useeffect");
+    }
+  }, [ticketData]);
 
   return (
     <div>
@@ -96,6 +107,24 @@ export default function panelNumerico() {
                   Sacar número
                 </button>
             </div>
+
+            {/* <div className='hidden'> */}
+              <div ref={ticketRef} className="p-20 border-solid w-full m-auto text-center font-roboto">
+                <h2 className='text-2xl mb-5'>LOGO organización</h2>
+                <p className='p-2 text-xl font-semibold'><strong>NUMERO</strong></p>
+                <p className='text-5xl mb-4'>{ticketData.numero}</p>
+                <p className='p-2'><strong>FILA:</strong> {ticketData.fila}</p>
+                <p className='p-2'>NOMBRE: {ticketData.nombre}</p>
+                <p className='p-2'>CEDULA: {ticketData.cedula}</p>
+                <p className='p-2'>-----------------------------------------</p>
+              </div>
+            {/* </div> */}
+
+            <ReactToPrint
+              trigger={() => <button style={{ display: 'none' }}>Print Ticket</button>}
+              content={() => ticketRef.current}
+              ref={reactToPrintRef}
+            />
             
             <div className="w-3/5 max-w-sm hidden">
                 <div className="w-full flex items-center justify-start bg-slate-100">
@@ -125,76 +154,3 @@ export default function panelNumerico() {
     </div>
   )
 }
-
-// const TicketComponent = React.forwardRef((props, ref) => (
-//   <div className='w-full text-center' ref={ref}>
-//     <h2 className='text-xl'>Ticket</h2>
-//     <p>Cedula: {props.cedula}</p>
-//     <p>Fila: {props.fila}</p>
-//     <p>Hora: testing123</p>
-//     <div className='flex w-full justify-center'>
-//       <p className='text-2xl border w-fit p-10'>Numero: NC 12</p>
-//     </div>
-//   </div>
-// ));
-
-// const App = () => {
-//   const [formData, setFormData] = useState({
-//     name: '',
-//     fila: '',
-//     cedula: '',
-//   });
-//   const [submitted, setSubmitted] = useState(false);
-//   const ticketRef = useRef();
-
-//   const handleChange = (e) => {
-//     const { name, value } = e.target;
-//     setFormData((prevData) => ({
-//       ...prevData,
-//       [name]: value,
-//     }));
-//   };
-
-//   const handleSubmit = (e) => {
-//     e.preventDefault();
-//     setSubmitted(true);
-//   };
-
-//   return (
-//     <div>
-//       <h1>Event Registration</h1>
-//       {!submitted ? (
-//         <form onSubmit={handleSubmit}>
-//           <div>
-//             <label>Name:</label>
-//             <input type="text" name="name" value={formData.name} onChange={handleChange} />
-//           </div>
-//           <div>
-//             <label>Fila:</label>
-//             <input type="text" name="fila" value={formData.fila} onChange={handleChange} />
-//           </div>
-//           <div>
-//             <label>Cedula:</label>
-//             <input type="text" name="cedula" value={formData.cedula} onChange={handleChange} />
-//           </div>
-//           <button type="submit">Submit</button>
-//         </form>
-//       ) : (
-//         <>
-//           <TicketComponent
-//             ref={ticketRef}
-//             name={formData.name}
-//             fila={formData.fila}
-//             cedula={formData.cedula}
-//           />
-//           <ReactToPrint
-//             trigger={() => <button>Print Ticket</button>}
-//             content={() => ticketRef.current}
-//           />
-//         </>
-//       )}
-//     </div>
-//   );
-// };
-
-// export default App;
