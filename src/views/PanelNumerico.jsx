@@ -110,9 +110,9 @@ export default function panelNumerico() {
 
             {/* <div className='hidden'> */}
               <div ref={ticketRef} className="p-20 border-solid w-full m-auto text-center font-roboto">
-                <h2 className='text-2xl mb-5'>LOGO organización</h2>
+                <h2 className='text-2xl mb-5'>-TICKET-</h2>
                 <p className='p-2 text-xl font-semibold'><strong>NUMERO</strong></p>
-                <p className='text-5xl mb-4'>{ticketData.numero}</p>
+                <p className='text-5xl mb-4'>{ticketData.prefijo} {ticketData.numero}</p>
                 <p className='p-2'><strong>FILA:</strong> {ticketData.fila}</p>
                 <p className='p-2'>NOMBRE: {ticketData.nombre}</p>
                 <p className='p-2'>CEDULA: {ticketData.cedula}</p>
