@@ -13,10 +13,13 @@ export default function panelNumerico() {
 	const [cedulas, setCedulas] = useState([]);
 	const [cedula, setCedula] = useState(null);
 	const [isLoading, setIsLoading] = useState(false);
-	const [message, setMessage] = useState('');
+	const [message, setMessage] = useState({
+    message: "nones",
+    status: "none"
+  });
+	const [createNumberOk, setCreateNumberOk] = useState(false);
 	const [ticketData, setTicketData] = useState({});
   const ticketRef = useRef(null);
-  const printRef = useRef(null);
   const reactToPrintRef = useRef(null);
 
 	const onPanelClick = (number) => {
@@ -45,12 +48,21 @@ export default function panelNumerico() {
         const { data } = response;
         setInputValue('');
         setIsLoading(false);
-        setMessage('Number created');
+        setMessage({
+          message: "Imprimiendo ticket",
+          status: "ok"
+        });
+        setCreateNumberOk(true);
         setTicketData(data);  // Set the data directly
       })
       .catch((error) => {
         console.log(error);
         setIsLoading(false);
+        setMessage({
+          message: "Error en cedula",
+          status: "error"
+        });
+        setCreateNumberOk(true);
       });
   }
 
@@ -69,6 +81,14 @@ export default function panelNumerico() {
       console.log("useeffect");
     }
   }, [ticketData]);
+
+  useEffect(() => {
+    if (createNumberOk == true) {
+      setTimeout(() => {
+        setCreateNumberOk(false);
+      }, 3000);
+    }
+  }, [createNumberOk]);
 
   return (
     <div>
@@ -106,9 +126,15 @@ export default function panelNumerico() {
                   onClick={() => handleCreateNumber()}>
                   Sacar número
                 </button>
+                {
+                  (!createNumberOk)
+                    ? ''
+                    : showInfoMsg(message)
+                }
             </div>
 
-            {/* <div className='hidden'> */}
+
+            <div className='hidden'>
               <div ref={ticketRef} className="p-20 border-solid w-full m-auto text-center font-roboto">
                 <h2 className='text-2xl mb-5'>-TICKET-</h2>
                 <p className='p-2 text-xl font-semibold'><strong>NUMERO</strong></p>
@@ -118,7 +144,7 @@ export default function panelNumerico() {
                 <p className='p-2'>CEDULA: {ticketData.cedula}</p>
                 <p className='p-2'>-----------------------------------------</p>
               </div>
-            {/* </div> */}
+            </div>
 
             <ReactToPrint
               trigger={() => <button style={{ display: 'none' }}>Print Ticket</button>}
