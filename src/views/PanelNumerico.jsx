@@ -4,23 +4,24 @@ import axios from 'axios';
 import { showInfoMsg } from '../helpers/showInfoMsg';
 import { ThreeDots } from 'react-loader-spinner';
 import ReactToPrint from 'react-to-print';
+import { Modal } from '../components';
 
 export default function panelNumerico() {
 
 	const numbers = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
 
 	const [inputValue, setInputValue] = useState('');
-	const [cedulas, setCedulas] = useState([]);
-	const [cedula, setCedula] = useState(null);
 	const [isLoading, setIsLoading] = useState(false);
-	const [message, setMessage] = useState({
-    message: "nones",
-    status: "none"
-  });
 	const [createNumberOk, setCreateNumberOk] = useState(false);
 	const [ticketData, setTicketData] = useState({});
   const ticketRef = useRef(null);
   const reactToPrintRef = useRef(null);
+  const [showModal, setShowModal] = useState(false);
+  const [filasData, setFilasData] = useState([]);
+	const [message, setMessage] = useState({
+    message: "nones",
+    status: "none"
+  });
 
 	const onPanelClick = (number) => {
 		setCedula = number;
@@ -35,14 +36,35 @@ export default function panelNumerico() {
     }
   };
 
-  const handleCreateNumber = () => {
+  const handleOpenModal = () => setShowModal(true);
+  const handleCloseModal = () => setShowModal(false);
+
+  const handleCheckCustomer = () => {
+    handleOpenModal();
+    //pedir las filas al servidor
+    axios
+      .get('http://localhost:8000/api/allFilas')
+      .then(response => {
+        const { data } = response;
+        setMessage({
+          status: "ok"
+        });
+        setFilasData(data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+  
+  const handleCreateNumber = (fila) => {
+    handleCloseModal();
     setIsLoading(true);
     //Crear el numero
     //hacer la peticion al endpoint pasando la cedula
     axios
       .post('http://localhost:8000/api/createNumber', {
         "ci": inputValue,
-        "filas": "comun"
+        "filas": fila
       })
       .then(response => {
         const { data } = response;
@@ -66,6 +88,10 @@ export default function panelNumerico() {
       });
   }
 
+  const handleCancelNumber = () => {
+    setInputValue('');
+  }
+
 	useEffect(() => {
     window.addEventListener('keydown', handleKeyPress);
 
@@ -78,7 +104,6 @@ export default function panelNumerico() {
   useEffect(() => {
     if (ticketData && Object.keys(ticketData).length > 0) {
       reactToPrintRef.current.handlePrint();
-      console.log("useeffect");
     }
   }, [ticketData]);
 
@@ -120,12 +145,27 @@ export default function panelNumerico() {
             />
             
             <div className="flex flex-col gap-1 w-3/5 max-w-sm">
-                <button className="border rounded-xs bg-red-400 px-3 col-span-3 py-1 font-semibold text-slate-100">Cancelar</button>
-                <button className="border rounded-xs bg-blue-400 px-3 col-span-3 py-1 font-semibold text-slate-100">Agregar Cedula</button>
-                <button className="border rounded-xs bg-blue-400 px-3 col-span-3 py-1 font-semibold text-slate-100"
-                  onClick={() => handleCreateNumber()}>
-                  Sacar número
+                <button className="border rounded-md bg-red-400 px-3 col-span-3 py-1 font-semibold text-slate-100"
+                  onClick={() => handleCancelNumber()}>
+                  Cancelar
                 </button>
+                <button className="border rounded-md bg-blue-400 px-3 col-span-3 py-1 font-semibold text-slate-100"
+                  onClick={() => handleCheckCustomer()}>
+                  Siguiente
+                </button>
+                <Modal show={showModal} handleClose={handleCloseModal}>
+                    <h2 className="text-2xl font-bold mb-8 text-slate-600 text-center">Elegir fila</h2>
+                    <ul>
+                      {filasData.map((elem) => (
+                       <li>
+                          <button className='font-medium mb-2 text-slate-100 text-2xl px-5 py-1.5 w-full bg-blue-600 focus:bg-blue-500'
+                            onClick={() => handleCreateNumber(elem.filas)}>
+                            {elem.filas}
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                </Modal>
                 {
                   (!createNumberOk)
                     ? ''
@@ -141,7 +181,7 @@ export default function panelNumerico() {
                 <p className='text-5xl mb-4'>{ticketData.prefijo} {ticketData.numero}</p>
                 <p className='p-2'><strong>FILA:</strong> {ticketData.fila}</p>
                 <p className='p-2'>NOMBRE: {ticketData.nombre}</p>
-                <p className='p-2'>CEDULA: {ticketData.cedula}</p>
+                {/* <p className='p-2'>CEDULA: {ticketData.cedula}</p> */}
                 <p className='p-2'>-----------------------------------------</p>
               </div>
             </div>
@@ -152,14 +192,14 @@ export default function panelNumerico() {
               ref={reactToPrintRef}
             />
             
-            <div className="w-3/5 max-w-sm hidden">
+            {/* <div className="w-3/5 max-w-sm hidden">
                 <div className="w-full flex items-center justify-start bg-slate-100">
                     <div className="pl-3 py-1 text-slate-500 flex w-full justify-between">
                         <div><button className="border rounded bg-red-400 shadow-sm text-slate-100 px-2 mr-3">Eliminar</button></div>
                     </div>
                 </div>
                 <button className="w-full hidden border rounded-xs bg-blue-500 px-3 col-span-3 py-0.5 my-3 text-slate-100 text-sm">Finalizar</button>
-            </div>
+            </div> */}
 
             { (isLoading) 
               ?

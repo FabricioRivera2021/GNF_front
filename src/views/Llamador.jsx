@@ -277,7 +277,8 @@ export default function Llamador() {
                                     {filtros.map((filtros) => (
                                         <button key={filtros.id}
                                             className={`rounded-sm py-1 text-left pl-1 hover:bg-blue-400 hover:text-slate-100 capitalize font-roboto text-sm
-                                                        ${filtros.id == selectedFilter ? 'bg-blue-500 text-white' : 'bg-slate-100 text-slate-800'}`}
+                                                        ${filtros.id == selectedFilter ? 'bg-blue-500 text-white' : 'bg-slate-100 text-slate-800'}
+                                                        ${filtros.estado == 'finalizado' ? 'bg-green-500 text-white' : ''}`}
                                             onClick={() => handleClickFilter(filtros.id)}
                                         >{filtros.estados}</button>
                                     ))}
@@ -296,9 +297,6 @@ export default function Llamador() {
                                                 Ver cancelados
                                             </button>
                                         </div>
-                                        <button className="rounded-sm py-1 text-center pl-1 bg-green-500 hover:bg-green-600 text-slate-800 hover:text-slate-100 capitalize font-roboto text-sm">
-                                            Ver finalizados [ 65 ]
-                                        </button>
                                     </div>
                                 </div>
                             </div>

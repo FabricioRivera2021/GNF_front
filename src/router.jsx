@@ -1,6 +1,7 @@
 import { Navigate, createBrowserRouter } from "react-router-dom";
 import { Login, Logout, Llamador, Dashboard, PanelNumerico } from "./views/index.js";
 import { DefaultLayout, GuestLayout } from "./components/index.js";
+import { AdminLayout } from "./components/AdminLayout.jsx";
 
 // parece que las rutas tienen un orden determinado, ojo con cual 
 // va primero en el codigo
@@ -41,6 +42,11 @@ const router = createBrowserRouter([
                 element: <PanelNumerico />
             }
         ] 
+    },
+    { 
+        path: '/admin', //cada ves que el usuario valla a esta ruta
+        //se dirige al guestlayout que muestra el login
+        element: <AdminLayout />
     },
 ])
 
