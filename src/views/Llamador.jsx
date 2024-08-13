@@ -150,9 +150,9 @@ export default function Llamador() {
                 numero: number
             })
             .then(({data}) => {
-                console.log(data)
+                console.log(data);
                 // setPausedCount++;
-                setNumero(null)
+                setNumero(null);
             })
             .catch((error) => {
                 console.log(error);
@@ -166,9 +166,9 @@ export default function Llamador() {
                 numero: number
             })
             .then(({data}) => {
-                console.log(data)
+                console.log(data);
                 // setPausedCount++;
-                setNumero(null)
+                setNumero(null);
             })
             .catch((error) => {
                 console.log(error);
@@ -185,7 +185,14 @@ export default function Llamador() {
                 canceled: canceled,
             })
             .then(({data}) => {
-                setNumero(data.nro)
+                //logica nueva
+                setNumero({
+                    'nro': data.nro,
+                    'estado': data.estado,
+                    'fila': data.fila,
+                    'prefix': data.prefix,
+                    'lugar': data.lugar
+                });
                 console.log(data);
             })
             .catch((error) => {

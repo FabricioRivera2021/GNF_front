@@ -2,6 +2,7 @@ import { Navigate, createBrowserRouter } from "react-router-dom";
 import { Login, Logout, Llamador, Dashboard, PanelNumerico } from "./views/index.js";
 import { DefaultLayout, GuestLayout } from "./components/index.js";
 import { AdminLayout } from "./components/AdminLayout.jsx";
+import { TV } from "./views/TV.jsx";
 
 // parece que las rutas tienen un orden determinado, ojo con cual 
 // va primero en el codigo
@@ -40,6 +41,10 @@ const router = createBrowserRouter([
             {
                 path: '/panelNumerico',
                 element: <PanelNumerico />
+            },
+            {
+                path: '/TV',
+                element: <TV />
             }
         ] 
     },
