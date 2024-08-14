@@ -151,11 +151,11 @@ export default function DefaultLayout() {
                       <Menu as="div" className="relative">
                         <div className='flex gap-3 items-center text-xs font-roboto'>
                           <MenuButton className={`bg-slate-200 px-2 py-0.5 text-slate-700 rounded-md hover:bg-blue-400 hover:text-white
-                                                ${(numero) ? 'bg-gray-300 hover:bg-gray-300 hover:text-slate-700' : ''}`}
-                            disabled={numero}
+                                                ${(numero.nro) ? 'bg-gray-300 hover:bg-gray-300 hover:text-slate-700' : ''}`}
+                            disabled={numero.nro}
                           >Seleccionar posicion 
                           </MenuButton>
-                          {(numero) ? <LockClosedIcon width="20" stroke='white' /> : ''} 
+                          {(numero.nro) ? <LockClosedIcon width="20" stroke='white' /> : ''} 
                           <div className={`flex items-center justify-center gap-1 ${(position == '' || position == 'sin asignar') ? 'text-orange-400' : 'text-slate-100'}`}> 
                               {
                                 isChangingPosition 

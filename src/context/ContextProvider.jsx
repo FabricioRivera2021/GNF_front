@@ -17,7 +17,13 @@ export const ContextProvider = ({children}) => {
   const [userToken, _setUserToken] = useState(localStorage.getItem('TOKEN') || '');
   const [position, setPosition] = useState('');
   const [ isChangingPosition, setIsChangingPosition ] = useState(false);
-  const [numero, setNumero] = useState({});
+  const [numero, setNumero] = useState({
+    'nro': null,
+    'estado': "none",
+    'fila': "none",
+    'prefix': "none",
+    'lugar': "none",
+  });
   const [oldNumero, setOldNumero] = useState();//array para guardar los numeros que ya fueron llamados y mostarlos en la TV
 
   const setUserToken = (token) => {

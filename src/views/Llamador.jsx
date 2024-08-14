@@ -27,6 +27,9 @@ export default function Llamador() {
     const [currentTime, setCurrentTime] = useState(new Date());
     const {currentUser, position, numero, setNumero, isChangingPosition} = userStateContext();
 
+    // console.log(numero);
+    
+
     useEffect(() => {
         const interval = setInterval(() => {
           setCurrentTime(new Date());
@@ -91,7 +94,14 @@ export default function Llamador() {
         axios
         .get('http://localhost:8000/api/getCurrentSelectedNumber')
         .then(({data}) => {
-            setNumero(data.nro)
+            setNumero({
+                'nro': data.nro,
+                'estado': data.estado,
+                'fila': data.fila,
+                'prefix': data.prefix,
+                'lugar': data.lugar,
+            })
+            console.log(numero);
         })
         .catch((error) => {
             console.log(error);
@@ -112,7 +122,7 @@ export default function Llamador() {
         });
     }, []);
 
-    //comparar el estado del numero con la posicion del User
+    // comparar el estado del numero con la posicion del User
     useEffect(() => {
         console.log("Use effect 4");
         const compare_position = position.split(" ");
@@ -136,7 +146,13 @@ export default function Llamador() {
             })
             .then(({data}) => {
                 console.log(data)
-                setNumero(null)
+                setNumero({
+                    'nro': null,
+                    'estado': "none",
+                    'fila': "none",
+                    'prefix': "none",
+                    'lugar': "none",
+                })
             })
             .catch((error) => {
                 console.log(error);
@@ -152,7 +168,13 @@ export default function Llamador() {
             .then(({data}) => {
                 console.log(data);
                 // setPausedCount++;
-                setNumero(null);
+                setNumero({
+                    'nro': null,
+                    'estado': "none",
+                    'fila': "none",
+                    'prefix': "none",
+                    'lugar': "none",
+                });
             })
             .catch((error) => {
                 console.log(error);
@@ -168,7 +190,13 @@ export default function Llamador() {
             .then(({data}) => {
                 console.log(data);
                 // setPausedCount++;
-                setNumero(null);
+                setNumero({
+                    'nro': null,
+                    'estado': "none",
+                    'fila': "none",
+                    'prefix': "none",
+                    'lugar': "none",
+                });
             })
             .catch((error) => {
                 console.log(error);
@@ -230,7 +258,13 @@ export default function Llamador() {
             .then(({data}) => {
                 console.log(data);
                 setIsDerivating(false);
-                setNumero(null);
+                setNumero({
+                    'nro': null,
+                    'estado': "none",
+                    'fila': "none",
+                    'prefix': "none",
+                    'lugar': "none",
+                });
             })
             .catch((error) => {
                 console.log(error);
@@ -341,29 +375,29 @@ export default function Llamador() {
                                         </tr>
                                     ) : (
                                     numeros.map((item, index) => (
-                                        <tr key={index} className={`odd:bg-slate-50 even:bg-gray-300 ${(numero == item.numero) ? '!bg-blue-400 text-slate-100' : ''}
+                                        <tr key={index} className={`odd:bg-slate-50 even:bg-gray-300 ${(numero.nro == item.numero) ? '!bg-blue-400 text-slate-100' : ''}
                                                                     ${(item.pausado == 1) ? 'odd:bg-yellow-100 even:bg-yellow-200' : ''}
                                                                     ${(item.cancelado == 1) ? 'odd:!bg-red-500 even:!bg-red-400 text-white' : ''}`}>
                                             <td className="whitespace-nowrap px-1 py-1 font-normal">
-                                                {item.estado.includes(comparePosition) && position.includes(comparePosition) && item.pausado != 1 && item.cancelado != 1 && (numero != item.numero) && (
+                                                {item.estado.includes(comparePosition) && position.includes(comparePosition) && item.pausado != 1 && item.cancelado != 1 && (numero.nro != item.numero) && (
                                                     <button className={`bg-blue-500 px-2 py-0.5 rounded-md hover:bg-blue-400 text-xs text-slate-100 font-roboto font-semibold
-                                                                        ${(numero != null) ? 'bg-gray-400 hover:bg-gray-400' : ''}`}
+                                                                        ${(numero.nro != null) ? 'bg-gray-400 hover:bg-gray-400' : ''}`}
                                                         onClick={() => handleLlamarNumero(item.nombre[0].numeros_id, item.pausado, item.cancelado)}
-                                                        disabled={(numero != null || item.pausado == 1 || item.cancelado == 1)}
+                                                        disabled={(numero.nro != null || item.pausado == 1 || item.cancelado == 1)}
                                                     >Llamar</button>
                                                 )}
                                                 {item.estado.includes(comparePosition) && position.includes(comparePosition) && item.pausado == 1 && (
                                                     <button className={`bg-blue-500 px-2 py-0.5 rounded-md hover:bg-blue-400 text-xs text-slate-100 font-roboto font-semibold
-                                                                        ${(numero != null) ? '!bg-gray-400 hover:!bg-gray-400' : ''}`}
+                                                                        ${(numero.nro != null) ? '!bg-gray-400 hover:!bg-gray-400' : ''}`}
                                                         onClick={() => handleLlamarNumero(item.nombre[0].numeros_id, item.pausado, item.cancelado)}
-                                                        disabled={(numero != null)}
+                                                        disabled={(numero.nro != null)}
                                                     >Retomar pausado</button>
                                                 )}
                                                 {item.estado.includes(comparePosition) && position.includes(comparePosition) && item.cancelado == 1 && (
                                                     <button className={`bg-blue-500 px-2 py-0.5 rounded-md hover:bg-blue-400 text-xs text-slate-100 font-roboto font-semibold
-                                                                        ${(numero != null) ? '!bg-gray-400 hover:!bg-gray-400' : ''}`}
+                                                                        ${(numero.nro != null) ? '!bg-gray-400 hover:!bg-gray-400' : ''}`}
                                                         onClick={() => handleLlamarNumero(item.nombre[0].numeros_id, item.pausado, item.cancelado)}
-                                                        disabled={(numero != null)}
+                                                        disabled={(numero.nro != null)}
                                                     >Retomar cancelado</button>
                                                 )}
                                             </td>
@@ -389,7 +423,7 @@ export default function Llamador() {
                         <div className="bg-slate-100 flex justify-start items-center pt-2 w-full h-full">
                             <div className="pl-10 h-[10vh] w-40 flex ml-1 flex-col justify-center items-center rounded shadow-sm">
                                 <h2 className="text-4xl text-slate-700 font-bold whitespace-nowrap"></h2>
-                                <p className="text-4xl text-slate-600 font-semibold">{numero}</p>
+                                <p className="text-4xl text-slate-600 font-semibold">{numero.nro}</p>
                             </div>
                             <div className=" flex flex-col justify-center items-center w-[50rem]">
                                 <div className="flex px-14 rounded w-full gap-6 mb-2 text-slate-500">
@@ -399,15 +433,15 @@ export default function Llamador() {
                                 </div>
                                 <div className="flex px-14 rounded w-full gap-6">
                                     <button className={`bg-slate-300 text-slate-700 px-2 rounded-md shadow-md
-                                                        ${(numero) ? '!bg-blue-400 !text-slate-100 hover:!bg-blue-500' : ''}`}
-                                                        disabled={!numero}            
-                                                        onClick={() => handleSetNextState(numero)}
+                                                        ${(numero.nro) ? '!bg-blue-400 !text-slate-100 hover:!bg-blue-500' : ''}`}
+                                                        disabled={!numero.nro}            
+                                                        onClick={() => handleSetNextState(numero.nro)}
                                     >Derivar</button>
                                     <div>
                                         <button className={`bg-slate-300 text-slate-700 px-2 rounded-md shadow-md
-                                                        ${(numero) ? '!bg-blue-400 !text-slate-100 hover:!bg-blue-500' : ''}`}
-                                                        disabled={!numero}
-                                                        onClick={() => handleDerivateTo(numero)}
+                                                        ${(numero.nro) ? '!bg-blue-400 !text-slate-100 hover:!bg-blue-500' : ''}`}
+                                                        disabled={!numero.nro}
+                                                        onClick={() => handleDerivateTo(numero.nro)}
                                         >Derivar a..</button>
                                         <Modal show={showModal} handleClose={handleCloseModal}>
                                             <h2 className="text-xl font-bold mb-2">Derivar a..</h2>
@@ -418,7 +452,7 @@ export default function Llamador() {
                                                             <td className="whitespace-nowrap px-1 py-1">{item.estado}</td>
                                                             <td className="whitespace-nowrap px-1 py-1">
                                                                 <button
-                                                                    onClick={() => handleDerivateToPosition(numero, item.estado)}
+                                                                    onClick={() => handleDerivateToPosition(numero.nro, item.estado)}
                                                                 >
                                                                     <ArrowRightCircleIcon 
                                                                         className="w-6 stroke-blue-500 hover:stroke-blue-400" 
