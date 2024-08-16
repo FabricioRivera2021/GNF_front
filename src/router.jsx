@@ -27,6 +27,10 @@ const router = createBrowserRouter([
                 path: '/logout',
                 element: <Logout />
             },
+            {
+                path: '/TV',
+                element: <TV />
+            }
         ] 
     },
     { 
@@ -42,10 +46,7 @@ const router = createBrowserRouter([
                 path: '/panelNumerico',
                 element: <PanelNumerico />
             },
-            {
-                path: '/TV',
-                element: <TV />
-            }
+
         ] 
     },
     { 

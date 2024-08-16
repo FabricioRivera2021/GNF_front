@@ -13,7 +13,7 @@ const navigation = [
 //   { name: 'Recetas', href: '#', current: true },
 //   { name: 'Cuentas vigentes', href: '#', current: false },
 //   { name: 'Ultimos retiros', href: '#', current: false },
-//   { name: 'Stock', href: '#', current: false },
+  { name: 'TV', to: '/TV' },
   { name: 'Llamador', to: '/llamador'},
 ]
 

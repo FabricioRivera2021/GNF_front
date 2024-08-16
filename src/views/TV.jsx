@@ -11,9 +11,9 @@ export const TV = () => {
    */
   const { numero } = userStateContext();
 
-  console.log(numero);
-
+  
   useEffect(() => {
+    console.log(numero);
     
   }, [numero])
 
@@ -21,18 +21,19 @@ export const TV = () => {
     <div className='w-screen h-screen flex antialiased'>
       <div className='w-[65%] h-screen z-50 p-2'>
         <div className='w-full h-full'>
-          <p className='text-white w-fit p-5 text-6xl bg-blue-400 rounded-sm font-semibold'>12:45</p>
+          <p className='text-slate-700 w-fit py-3 px-5 text-6xl bg-blue-300 rounded-sm font-semibold'>12:45</p>
         </div>
       </div>
       <div className='w-[32%]'>
         {/* Card */}
-        <div className='flex flex-col justify-around items-center w-full py-5 bg-blue-500 rounded text-white mt-2 gap-4'>
-          <div className='w-3/4 flex gap-5 items-end justify-center'>
-            <h4 className='text-5xl text-center whitespace-nowrap tracking-widest font-semibold uppercase'>{numero.lugar}</h4>
-            <p className='text-5xl text-left font-semibold whitespace-nowrap rounded-sm px-2 bg-slate-50 text-slate-600'>{numero.prefix} {numero.nro}</p>
+        <div className='flex flex-col justify-around items-center w-full bg-blue-800 rounded text-white mt-2 py-5 px-1'>
+          <div className='w-full flex items-end justify-evenly'>
+            <h4 className='text-4xl text-slate-50 whitespace-nowrap tracking-wide font-semibold uppercase'>{numero.lugar}</h4>
+            <h4 className='text-6xl font-bold whitespace-nowrap pr-5 pl-2 text-orange-400'>{numero.prefix} {numero.nro}</h4>
           </div>
-          <div className='w-3/4 flex flex-col justify-center items-start px-4 rounded-md'>
-            <p className='text-4xl text-center self-center whitespace-nowrap tracking-widest font-semibold uppercase text-slate-100'>{numero.fila}</p>
+          <div className='w-full flex flex-col justify-center items-start px-4 bg-white pt-4'>
+            <p className='text-3xl text-center self-center whitespace-nowrap tracking-widest font-semibold uppercase text-slate-600'>Numero {numero.fila}</p>
+            <p className='text-2xl text-center self-center whitespace-nowrap tracking-widest font-semibold text-slate-600'>Pepita Perez</p>
           </div>
         </div>
         {/* END Card */}
