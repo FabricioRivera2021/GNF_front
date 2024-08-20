@@ -3,6 +3,7 @@ import { Login, Logout, Llamador, Dashboard, PanelNumerico } from "./views/index
 import { DefaultLayout, GuestLayout } from "./components/index.js";
 import { AdminLayout } from "./components/AdminLayout.jsx";
 import { TV } from "./views/TV.jsx";
+import { Supervisor } from "./views/Supervisor.jsx";
 
 // parece que las rutas tienen un orden determinado, ojo con cual 
 // va primero en el codigo
@@ -28,8 +29,12 @@ const router = createBrowserRouter([
                 element: <Logout />
             },
             {
-                path: '/TV',
+                path: '/TV', //cambiar esto despues de probar a guest
                 element: <TV />
+            },
+            {
+                path: '/supervisor', //cambiar esto despues de probar a guest
+                element: <Supervisor />
             }
         ] 
     },

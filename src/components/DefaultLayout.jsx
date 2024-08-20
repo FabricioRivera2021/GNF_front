@@ -12,7 +12,7 @@ const API_URL = import.meta.env.VITE_API_BASE_URL
 const navigation = [
 //   { name: 'Recetas', href: '#', current: true },
 //   { name: 'Cuentas vigentes', href: '#', current: false },
-//   { name: 'Ultimos retiros', href: '#', current: false },
+  { name: 'Supervisor', to: '/supervisor'},
   { name: 'TV', to: '/TV' },
   { name: 'Llamador', to: '/llamador'},
 ]
