@@ -6,10 +6,12 @@ const StateContext = createContext({
   position: '',
   numero: {},
   isChangingPosition: false,
+  numerosTV: [],
   setCurrentUser: () => {},
   setUserToken: () => {},
   setPosition: () => {},
-  setNumero: () => {}
+  setNumero: () => {},
+  setNumerosTV: () => {}
 });
 
 export const ContextProvider = ({children}) => {
@@ -24,7 +26,7 @@ export const ContextProvider = ({children}) => {
     'prefix': "none",
     'lugar': "none",
   });
-  const [oldNumero, setOldNumero] = useState();//array para guardar los numeros que ya fueron llamados y mostarlos en la TV
+  const [numerosTV, setNumerosTV] = useState([]);//array para guardar los numeros que ya fueron llamados y mostarlos en la TV
 
   const setUserToken = (token) => {
     if (token) {
@@ -48,8 +50,8 @@ export const ContextProvider = ({children}) => {
         setPosition,
         numero,
         setNumero,
-        oldNumero,
-        setOldNumero
+        numerosTV,
+        setNumerosTV
       }}
     >
       {children}

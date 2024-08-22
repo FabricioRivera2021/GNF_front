@@ -7,7 +7,7 @@ import axios from 'axios';
 import axiosClient from '../axios';
 import renderLoadingLines from '../helpers/renderLoadingLines';
 import { Modal } from '../components/index';
-import { ArrowRightCircleIcon } from "@heroicons/react/24/outline";
+import { ArrowRightCircleIcon, CheckCircleIcon, XCircleIcon, PauseCircleIcon, SpeakerWaveIcon, SpeakerXMarkIcon } from "@heroicons/react/24/outline";
 
 const API_URL = import.meta.env.VITE_API_BASE_URL
 
@@ -25,7 +25,7 @@ export default function Llamador() {
     const [error, setError] = useState(null);
     const [comparePosition, setComparePosition] = useState('');
     const [currentTime, setCurrentTime] = useState(new Date());
-    const {currentUser, position, numero, setNumero, isChangingPosition} = userStateContext();
+    const {currentUser, position, numero, setNumero, isChangingPosition, numerosTV, setNumerosTV} = userStateContext();
 
     // console.log(numero);
     
@@ -101,11 +101,11 @@ export default function Llamador() {
                 'prefix': data.prefix,
                 'lugar': data.lugar,
             })
-            console.log(numero);
         })
         .catch((error) => {
             console.log(error);
         })
+        console.log(numero);
     }, []);
 
     useEffect(() => {
@@ -214,14 +214,24 @@ export default function Llamador() {
             })
             .then(({data}) => {
                 //logica nueva
-                setNumero({
+                const nuevoNumero = {
                     'nro': data.nro,
                     'estado': data.estado,
                     'fila': data.fila,
                     'prefix': data.prefix,
                     'lugar': data.lugar
+                };
+                setNumero(nuevoNumero);
+
+                console.log(nuevoNumero);
+                setNumerosTV(prevNumeros => {   
+                    const nuevaLista = [nuevoNumero, ...prevNumeros];
+                    if (nuevaLista.length > 4) {
+                      nuevaLista.pop(); // Elimina el último número si la lista tiene más de 5
+                    }
+                    return nuevaLista
                 });
-                console.log(data);
+                console.log(numerosTV);
             })
             .catch((error) => {
                 console.log(error);
@@ -375,36 +385,48 @@ export default function Llamador() {
                                         </tr>
                                     ) : (
                                     numeros.map((item, index) => (
-                                        <tr key={index} className={`odd:bg-slate-50 even:bg-gray-300 ${(numero.nro == item.numero) ? '!bg-blue-400 text-slate-100' : ''}
-                                                                    ${(item.pausado == 1) ? 'odd:bg-yellow-100 even:bg-yellow-200' : ''}
-                                                                    ${(item.cancelado == 1) ? 'odd:!bg-red-500 even:!bg-red-400 text-white' : ''}`}>
-                                            <td className="whitespace-nowrap px-1 py-1 font-normal">
+                                        <tr key={index} className={`odd:bg-slate-50 even:bg-gray-100 ${(numero.nro == item.numero) ? '!bg-blue-400 text-slate-100' : ''}`}>
+                                            <td className="whitespace-nowrap px-1 flex items-center font-normal">
                                                 {item.estado.includes(comparePosition) && position.includes(comparePosition) && item.pausado != 1 && item.cancelado != 1 && (numero.nro != item.numero) && (
-                                                    <button className={`bg-blue-500 px-2 py-0.5 rounded-md hover:bg-blue-400 text-xs text-slate-100 font-roboto font-semibold
+                                                    <button className={`bg-blue-500 px-2 mr-2 rounded-md hover:bg-blue-400 text-xs text-slate-100 font-roboto font-semibold
                                                                         ${(numero.nro != null) ? 'bg-gray-400 hover:bg-gray-400' : ''}`}
                                                         onClick={() => handleLlamarNumero(item.nombre[0].numeros_id, item.pausado, item.cancelado)}
                                                         disabled={(numero.nro != null || item.pausado == 1 || item.cancelado == 1)}
-                                                    >Llamar</button>
+                                                    ><SpeakerWaveIcon title="Llamar numero" className="w-6 text-white" /></button>
+                                                )}
+                                                {item.estado.includes(comparePosition) && position.includes(comparePosition) && item.pausado != 1 && item.cancelado != 1 && (numero.nro != item.numero) && (
+                                                    <button className={`bg-blue-500 px-2 rounded-md hover:bg-blue-400 text-xs text-slate-100 font-roboto font-semibold
+                                                                        ${(numero.nro != null) ? 'bg-gray-400 hover:bg-gray-400' : ''}`}
+                                                        onClick={() => handleLlamarNumero(item.nombre[0].numeros_id, item.pausado, item.cancelado)}
+                                                        disabled={(numero.nro != null || item.pausado == 1 || item.cancelado == 1)}
+                                                    ><SpeakerXMarkIcon title="Llamar numero en silencio" className="w-6 text-white" /></button>
                                                 )}
                                                 {item.estado.includes(comparePosition) && position.includes(comparePosition) && item.pausado == 1 && (
-                                                    <button className={`bg-blue-500 px-2 py-0.5 rounded-md hover:bg-blue-400 text-xs text-slate-100 font-roboto font-semibold
+                                                    <button className={`bg-blue-500 px-2 rounded-md hover:bg-blue-400 text-xs text-slate-100 font-roboto font-semibold
                                                                         ${(numero.nro != null) ? '!bg-gray-400 hover:!bg-gray-400' : ''}`}
                                                         onClick={() => handleLlamarNumero(item.nombre[0].numeros_id, item.pausado, item.cancelado)}
                                                         disabled={(numero.nro != null)}
-                                                    >Retomar pausado</button>
+                                                    ><SpeakerWaveIcon title="Llamar numero pausado" className="w-6 text-white" /></button>
                                                 )}
                                                 {item.estado.includes(comparePosition) && position.includes(comparePosition) && item.cancelado == 1 && (
-                                                    <button className={`bg-blue-500 px-2 py-0.5 rounded-md hover:bg-blue-400 text-xs text-slate-100 font-roboto font-semibold
+                                                    <button className={`bg-blue-500 px-2 rounded-md hover:bg-blue-400 text-xs text-slate-100 font-roboto font-semibold
                                                                         ${(numero.nro != null) ? '!bg-gray-400 hover:!bg-gray-400' : ''}`}
                                                         onClick={() => handleLlamarNumero(item.nombre[0].numeros_id, item.pausado, item.cancelado)}
                                                         disabled={(numero.nro != null)}
-                                                    >Retomar cancelado</button>
+                                                    ><SpeakerWaveIcon title="Llamar numero cancelado" className="w-6 text-white" /></button>
                                                 )}
                                             </td>
                                             <td className="whitespace-nowrap px-1 py-1">{item.fila_prefix} {item.numero}</td>
                                             <td className="whitespace-nowrap px-1 py-1">{item.fila}</td>
                                             <td className="whitespace-nowrap px-1 py-1">{calculateTimeDifference(item.modified_at)}</td>
-                                            <td className="whitespace-nowrap px-1 py-1">{item.estado}</td>
+                                            <td className="whitespace-nowrap px-1 py-1"><div className="flex items-center">{item.estado} {item.estado == 'finalizado' 
+                                                                                                                    ? <CheckCircleIcon className="w-6 text-green-500" /> 
+                                                                                                                    : item.pausado == 1
+                                                                                                                        ? <PauseCircleIcon title="Numero pausado" className="w-6 text-yellow-500" />
+                                                                                                                        : item.cancelado == 1
+                                                                                                                            ? <XCircleIcon title="Numero cancelado" className="w-6 text-red-500" />
+                                                                                                                            : ''}
+                                            </div></td>
                                             <td className="whitespace-nowrap px-1 py-1">                                          
                                                 {item.nombre.map((elem, idx) => (
                                                     <span key={idx}>{elem.name}</span>
@@ -420,65 +442,68 @@ export default function Llamador() {
                         </table>
                     </div>
                     <div className="w-full">
-                        <div className="bg-slate-100 flex justify-start items-center pt-2 w-full h-full">
-                            <div className="pl-10 h-[10vh] w-40 flex ml-1 flex-col justify-center items-center rounded shadow-sm">
-                                <h2 className="text-4xl text-slate-700 font-bold whitespace-nowrap"></h2>
-                                <p className="text-4xl text-slate-600 font-semibold">{numero.nro}</p>
-                            </div>
-                            <div className=" flex flex-col justify-center items-center w-[50rem]">
-                                <div className="flex px-14 rounded w-full gap-6 mb-2 text-slate-500">
-                                    <p>Nombre: Nombre generico</p>
-                                    <p>CI: 45062412</p>
-                                    <p>Ultima concurrencia: 24/02/24</p>
-                                </div>
-                                <div className="flex px-14 rounded w-full gap-6">
-                                    <button className={`bg-slate-300 text-slate-700 px-2 rounded-md shadow-md
-                                                        ${(numero.nro) ? '!bg-blue-400 !text-slate-100 hover:!bg-blue-500' : ''}`}
-                                                        disabled={!numero.nro}            
-                                                        onClick={() => handleSetNextState(numero.nro)}
-                                    >Derivar</button>
-                                    <div>
-                                        <button className={`bg-slate-300 text-slate-700 px-2 rounded-md shadow-md
-                                                        ${(numero.nro) ? '!bg-blue-400 !text-slate-100 hover:!bg-blue-500' : ''}`}
-                                                        disabled={!numero.nro}
-                                                        onClick={() => handleDerivateTo(numero.nro)}
-                                        >Derivar a..</button>
-                                        <Modal show={showModal} handleClose={handleCloseModal}>
-                                            <h2 className="text-xl font-bold mb-2">Derivar a..</h2>
-                                            <table className="min-w-full text-left text-sm font-roboto font-medium text-slate-600 text-surface">
-                                                <tbody className="odd">
-                                                    {allDerivates.map((item, index) => (
-                                                        <tr key={index} className="border-b-2">
-                                                            <td className="whitespace-nowrap px-1 py-1">{item.estado}</td>
-                                                            <td className="whitespace-nowrap px-1 py-1">
-                                                                <button
-                                                                    onClick={() => handleDerivateToPosition(numero.nro, item.estado)}
-                                                                >
-                                                                    <ArrowRightCircleIcon 
-                                                                        className="w-6 stroke-blue-500 hover:stroke-blue-400" 
-                                                                    />
-                                                                </button>
-                                                            </td>
-                                                        </tr>
-                                                    ))}
-                                                </tbody>
-                                            </table>
-                                        </Modal>
+                        {
+                            numero.nro != null && (
+                                <div className="bg-slate-100 flex justify-start items-center pt-2 w-full h-full">
+                                    <div className="h-[10vh] w-56 flex ml-1 flex-col justify-center items-center rounded shadow-sm bg-blue-500 mb-2">
+                                        <p className="text-6xl text-white font-semibold whitespace-nowrap">{numero.prefix} {numero.nro}</p>
                                     </div>
-                                    <button className={`bg-slate-300 text-slate-700 px-2 rounded-md shadow-md
-                                                        ${(numero) ? '!bg-blue-400 !text-slate-100 hover:!bg-blue-500' : ''}`}
-                                                        disabled={!numero}
-                                                        onClick={() => handlePauseNumber(numero)}
-                                    >Pausar</button>
-                                    <button className={`bg-slate-300 text-slate-700 px-2 rounded-md shadow-md
-                                                        ${(numero) ? '!bg-blue-400 !text-slate-100 hover:!bg-blue-500' : ''}`}
-                                                        disabled={!numero}
-                                                        onClick={() => handleCancelNumber(numero)}
-                                    >Cancelar</button>
-                                </div>
+                                    <div className=" flex flex-col justify-center items-center w-[50rem]">
+                                        <div className="flex px-14 rounded w-full gap-6 mb-2 text-slate-500">
+                                            <p>Nombre: Nombre generico</p>
+                                            <p>CI: 45062412</p>
+                                            <p>Ultima concurrencia: 24/02/24</p>
+                                        </div>
+                                        <div className="flex px-14 rounded w-full gap-6">
+                                            <button className={`bg-slate-300 text-slate-700 px-2 rounded-md shadow-md
+                                                                ${(numero.nro) ? '!bg-blue-400 !text-slate-100 hover:!bg-blue-500' : ''}`}
+                                                                disabled={!numero.nro}            
+                                                                onClick={() => handleSetNextState(numero.nro)}
+                                            >Derivar</button>
+                                            <div>
+                                                <button className={`bg-slate-300 text-slate-700 px-2 rounded-md shadow-md
+                                                                ${(numero.nro) ? '!bg-blue-400 !text-slate-100 hover:!bg-blue-500' : ''}`}
+                                                                disabled={!numero.nro}
+                                                                onClick={() => handleDerivateTo(numero.nro)}
+                                                >Derivar a..</button>
+                                                <Modal show={showModal} handleClose={handleCloseModal}>
+                                                    <h2 className="text-xl font-bold mb-2">Derivar a..</h2>
+                                                    <table className="min-w-full text-left text-sm font-roboto font-medium text-slate-600 text-surface">
+                                                        <tbody className="odd">
+                                                            {allDerivates.map((item, index) => (
+                                                                <tr key={index} className="border-b-2">
+                                                                    <td className="whitespace-nowrap px-1 py-1">{item.estado}</td>
+                                                                    <td className="whitespace-nowrap px-1 py-1">
+                                                                        <button
+                                                                            onClick={() => handleDerivateToPosition(numero.nro, item.estado)}
+                                                                        >
+                                                                            <ArrowRightCircleIcon 
+                                                                                className="w-6 stroke-blue-500 hover:stroke-blue-400" 
+                                                                            />
+                                                                        </button>
+                                                                    </td>
+                                                                </tr>
+                                                            ))}
+                                                        </tbody>
+                                                    </table>
+                                                </Modal>
+                                            </div>
+                                            <button className={`bg-slate-300 text-slate-700 px-2 rounded-md shadow-md
+                                                                ${(numero) ? '!bg-blue-400 !text-slate-100 hover:!bg-blue-500' : ''}`}
+                                                                disabled={!numero}
+                                                                onClick={() => handlePauseNumber(numero)}
+                                            >Pausar</button>
+                                            <button className={`bg-slate-300 text-slate-700 px-2 rounded-md shadow-md
+                                                                ${(numero) ? '!bg-blue-400 !text-slate-100 hover:!bg-blue-500' : ''}`}
+                                                                disabled={!numero}
+                                                                onClick={() => handleCancelNumber(numero)}
+                                            >Cancelar</button>
+                                        </div>
 
-                            </div>
-                        </div>
+                                    </div>
+                                </div>
+                            )
+                        }
                     </div>
                 </div>
                 {/* -----------------------------------------------------------*-------------------------------------------------------------------------------------------------------------------- */}

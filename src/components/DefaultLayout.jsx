@@ -15,6 +15,8 @@ const navigation = [
   { name: 'Supervisor', to: '/supervisor'},
   { name: 'TV', to: '/TV' },
   { name: 'Llamador', to: '/llamador'},
+  { name: 'Ingresar medicacion', to: '/nuevoIngresoVentanilla'},
+  { name: 'Consultas stock', to: '/consultasStock'},
 ]
 
 const userNavigation = [
