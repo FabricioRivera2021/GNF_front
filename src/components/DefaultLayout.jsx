@@ -15,8 +15,10 @@ const navigation = [
   { name: 'Supervisor', to: '/supervisor'},
   { name: 'TV', to: '/TV' },
   { name: 'Llamador', to: '/llamador'},
-  { name: 'Ingresar medicacion', to: '/nuevoIngresoVentanilla'},
+  { name: 'Dispensar medicacion', to: '/nuevoIngresoVentanilla'},
   { name: 'Consultas stock', to: '/consultasStock'},
+  { name: 'Abastecimiento', to: '/abastecimiento'},
+  { name: 'Menu pedidos remotos', to: '/asd'},
 ]
 
 const userNavigation = [

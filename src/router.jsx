@@ -6,6 +6,7 @@ import { TV } from "./views/TV.jsx";
 import { Supervisor } from "./views/Supervisor.jsx";
 import { IngresarMed } from "./views/IngresarMed.jsx";
 import { ConsultaStock } from "./views/ConsultaStock.jsx";
+import { Abastecimiento } from "./views/Abastecimiento.jsx";
 
 // parece que las rutas tienen un orden determinado, ojo con cual 
 // va primero en el codigo
@@ -45,6 +46,10 @@ const router = createBrowserRouter([
             {
                 path: '/consultasStock', //cambiar esto despues de probar a guest
                 element: <ConsultaStock />
+            },
+            {
+                path: '/abastecimiento', //cambiar esto despues de probar a guest
+                element: <Abastecimiento />
             }
         ] 
     },

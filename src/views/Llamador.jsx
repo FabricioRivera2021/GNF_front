@@ -395,11 +395,11 @@ export default function Llamador() {
                                                     ><SpeakerWaveIcon title="Llamar numero" className="w-6 text-white" /></button>
                                                 )}
                                                 {item.estado.includes(comparePosition) && position.includes(comparePosition) && item.pausado != 1 && item.cancelado != 1 && (numero.nro != item.numero) && (
-                                                    <button className={`bg-blue-500 px-2 rounded-md hover:bg-blue-400 text-xs text-slate-100 font-roboto font-semibold
+                                                    <button className={`bg-blue-100 px-2 rounded-md hover:bg-blue-400 text-xs text-slate-100 font-roboto font-semibold
                                                                         ${(numero.nro != null) ? 'bg-gray-400 hover:bg-gray-400' : ''}`}
                                                         onClick={() => handleLlamarNumero(item.nombre[0].numeros_id, item.pausado, item.cancelado)}
                                                         disabled={(numero.nro != null || item.pausado == 1 || item.cancelado == 1)}
-                                                    ><SpeakerXMarkIcon title="Llamar numero en silencio" className="w-6 text-white" /></button>
+                                                    ><SpeakerXMarkIcon title="Llamar numero en silencio" className="w-6 text-blue-500" /></button>
                                                 )}
                                                 {item.estado.includes(comparePosition) && position.includes(comparePosition) && item.pausado == 1 && (
                                                     <button className={`bg-blue-500 px-2 rounded-md hover:bg-blue-400 text-xs text-slate-100 font-roboto font-semibold

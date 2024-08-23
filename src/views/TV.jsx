@@ -14,7 +14,6 @@ export const TV = () => {
 
   useEffect(() => {
     console.log(numerosTV);
-    
   }, [numerosTV])
 
   return (
