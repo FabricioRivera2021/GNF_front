@@ -1,0 +1,35 @@
+           <h2 className='text-center text-xl pb-5'>Administrar Estados</h2>
+                <table class="table-auto">
+                    <thead>
+                        <tr className='text-left'>
+                            <th>Posicion</th>
+                            <th>Elegible para llamar</th>
+                            <th>Precede a</th>
+                            <th>Avanza a</th>
+                            <th>Editar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Para ventanilla</td>
+                            <td>SI</td>
+                            <td>Ninguna</td>
+                            <td>En ventanilla</td>
+                            <button className='bg-slate-500 hover:bg-slate-600 text-white px-4 shadow-md rounded-sm'>Editar</button>
+                        </tr>
+                        <tr>
+                            <td>En Ventanilla</td>
+                            <td>NO</td>
+                            <td>Para ventanilla</td>
+                            <td>Para preparacion</td>
+                            <button className='bg-slate-500 hover:bg-slate-600 text-white px-4 shadow-md rounded-sm'>Editar</button>
+                        </tr>
+                        <tr>
+                            <td>Para preparacion</td>
+                            <td>SI</td>
+                            <td>En ventanilla</td>
+                            <td>En preparacion</td>
+                            <button className='bg-slate-500 hover:bg-slate-600 text-white px-4 shadow-md rounded-sm'>Editar</button>
+                        </tr>
+                    </tbody>
+                </table>
