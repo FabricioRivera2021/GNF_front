@@ -300,6 +300,7 @@ export default function Llamador() {
         return null;
     }
 
+    //modularizar esto
     const calculateTimeDifference = (timestamp) => {
         const givenDate = new Date(timestamp);
         const currentDate = new Date();

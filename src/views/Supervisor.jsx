@@ -8,6 +8,21 @@ export const Supervisor = () => {
     const [puestos, setPuestos] = useState([]);
     const [users, setUsers] = useState([]);
     const [isProcesingNumber, setIsProcesingNumber] = useState([]);
+    const [currentTime, setCurrentTime] = useState(new Date());
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+          setCurrentTime(new Date());
+        }, 1000);
+    
+        return () => clearInterval(interval);
+    }, []);
+
+    useEffect(() => {
+        getAllPuestos()
+        getUsers()
+        getUserIsProcesingNumber()
+      }, [])
 
     const getUsers = () => {
         axios
@@ -23,7 +38,7 @@ export const Supervisor = () => {
         .get("http://localhost:8000/api/isProcesingNumber")
         .then(({data}) => {
             setIsProcesingNumber(data);
-            console.log(data);
+            console.log("is procesing number ", data[0].created_at);
         })
     }
 
@@ -70,12 +85,22 @@ export const Supervisor = () => {
         })
     }
 
-    useEffect(() => {
-      getAllPuestos()
-      getUsers()
-      getUserIsProcesingNumber()
-    }, [])
-    
+    const calculateTimeDifference = (timestamp) => {
+        const givenDate = new Date(timestamp);
+        const currentDate = new Date();
+      
+        const diffInMilliseconds = currentDate - givenDate;
+      
+        const diffInSeconds = Math.floor(diffInMilliseconds / 1000);
+        const diffInMinutes = Math.floor(diffInSeconds / 60);
+        const diffInHours = Math.floor(diffInMinutes / 60);
+      
+        const hours = String(diffInHours % 24).padStart(2, '0');
+        const minutes = String(diffInMinutes % 60).padStart(2, '0');
+        const seconds = String(diffInSeconds % 60).padStart(2, '0');
+      
+        return `${hours}:${minutes}:${seconds}`;
+    };
 
     return (
         <>
@@ -83,7 +108,7 @@ export const Supervisor = () => {
             <div className='flex flex-col mt-5 w-3/5 gap-6'>
                 <h3 className='text-center text-2xl pb-5'>Menu Posiciones</h3>
                 <div className='flex flex-col gap-4 items-start'>
-                    <h2 className='text-center text-xl pb-5'>Administrar Posiciones</h2>
+                    <h2 className='text-center text-xl font-bold text-slate-600'>Administrar Posiciones</h2>
                     <table className="table-fixed w-full">
                         <thead className='mb-4'>
                             <tr className='text-left bg-blue-400 text-white'>
@@ -112,7 +137,7 @@ export const Supervisor = () => {
                                         <td className='py-1'>{puesto.position}</td>
                                         <td>{puesto.occupied ? 'Ocupado' : 'Libre'}</td>
                                         <td>{procesingNumber ? 'En atención' : 'Sin número'}</td>
-                                        <td>10:15</td>
+                                        <td>{procesingNumber ? calculateTimeDifference(procesingNumber.updated_at) : '-'}</td>
                                         <td>{assignedUser ? assignedUser.name : '-'}</td>
                                         <td><button className='bg-slate-500 hover:bg-blue-400 text-white px-4 shadow-md rounded-sm'>Editar puesto</button></td>
                                         <td><button className='bg-slate-500 hover:bg-blue-400 text-white px-4 shadow-md rounded-sm'>Liberar</button></td>
