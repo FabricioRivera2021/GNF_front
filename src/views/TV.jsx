@@ -5,9 +5,7 @@ export const TV = () => {
 
   // 4 como maximo
   /**
-   * un endpoint que checkee en que estan los numeros
-   * se podria tene un contexto global que tenga una variable que cambie cada vez que se llama un numero
-   * y al llamarla un useeffct que atualiza los numeros
+   * !esto deberia ser con websockets
    */
 
   const { numerosTV } = userStateContext();

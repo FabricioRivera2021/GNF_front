@@ -3,10 +3,11 @@
  */
 import { useEffect, useState } from "react";
 import { userStateContext } from '../context/ContextProvider';
+import { fetchAllEstados } from '../API/apiServices'
 import axios from 'axios';
 import axiosClient from '../axios';
 import renderLoadingLines from '../helpers/renderLoadingLines';
-import { Modal } from '../components/index';
+import { Modal, FilterSidebar } from '../components/index';
 import { ArrowRightCircleIcon, CheckCircleIcon, XCircleIcon, PauseCircleIcon, SpeakerWaveIcon, SpeakerXMarkIcon } from "@heroicons/react/24/outline";
 
 const API_URL = import.meta.env.VITE_API_BASE_URL
@@ -26,6 +27,7 @@ export default function Llamador() {
     const [comparePosition, setComparePosition] = useState('');
     const [currentTime, setCurrentTime] = useState(new Date());
     const {currentUser, position, numero, setNumero, isChangingPosition, numerosTV, setNumerosTV} = userStateContext();
+
 
     // console.log(numero);
     
@@ -111,15 +113,23 @@ export default function Llamador() {
     useEffect(() => {
         // Fetch data from the Laravel API
         console.log("Use effect 3");
-        fetch(API_URL + '/allEstados')
-        .then(response => response.json())
-        .then(data => {
-            setFiltros(data);
-            // setIsLoading(false);
-        })
-        .catch(error => {
-            console.error('There was an error fetching the data!', error);
-        });
+        fetchAllEstados()
+            .then(response => {
+                setFiltros(response.data); // Access the data from the response
+                setIsLoading(false);
+            })
+            .catch(error => {
+                console.error('Error fetching estados:', error);
+                setIsLoading(false);
+            });
+        // .then(response => response.json())
+        // .then(data => {
+        //     setFiltros(data);
+        //     // setIsLoading(false);
+        // })
+        // .catch(error => {
+        //     console.error('There was an error fetching the data!', error);
+        // });
     }, []);
 
     // comparar el estado del numero con la posicion del User
@@ -321,7 +331,7 @@ export default function Llamador() {
     return (
         <>
             <div className="flex justify-between items-start">
-                <div className="w-[12rem] pl-2 h-[calc(100vh-4rem)] flex flex-col items-start bg-slate-800 z-50 shadow-slate-900 ">
+                {/* <div className="w-[12rem] pl-2 h-[calc(100vh-4rem)] flex flex-col items-start bg-slate-800 z-50 shadow-slate-900 ">
                     <div className="w-full h-full">
                         <div className="space-y-4 mt-4 text-slate-100 whitespace-nowrap h-[95%]">
                             <div className="flex flex-col space-y-4 ml-3 mr-5 h-full">
@@ -341,7 +351,7 @@ export default function Llamador() {
                                     <div className="flex flex-col justify-between pt-10 gap-4 h-full">
                                         <div className="flex flex-col gap-4">
                                             <button className="rounded-sm py-1 text-center pl-1 bg-yellow-400 hover:bg-yellow-200 text-slate-700 capitalize font-roboto text-sm"
-                                                    onClick={() => filterPausedNumber()}>{/*Mostrar solo los numeros pausados, poner el filtro en 1 y luego filtrar por pausado*/}
+                                                    onClick={() => filterPausedNumber()}>{/*Mostrar solo los numeros pausados, poner el filtro en 1 y luego filtrar por pausado
                                                 Ver pausados
                                             </button>
                                             <button className="rounded-sm py-1 text-center pl-1 bg-red-500 hover:bg-red-600 text-slate-100 capitalize font-roboto text-sm"
@@ -354,7 +364,14 @@ export default function Llamador() {
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> */}
+                <FilterSidebar
+                    filtros={filtros}
+                    selectedFilter={selectedFilter}
+                    handleClickFilter={handleFilterChange}
+                    filterPausedNumber={() => setFilterPaused(true)}
+                    filterCancelNumber={() => setFilterCancel(true)}
+                />
                 {/* ------------------------------------------------------------------------------------- */}
                 <div className="w-full flex flex-col justify-between h-[calc(100vh-4rem)]" >
                     <div className="min-h-20 pb-3 overflow-auto">
