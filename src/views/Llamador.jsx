@@ -21,7 +21,7 @@ export default function Llamador() {
     const [filterCancel, setFilterCancel] = useState(false);//cantidad numeros cancelados
     const [selectedFilter, setSelectedFilter] = useState(1); //filtro actual
     const [isDerivating, setIsDerivating] = useState(false);
-    // const [error, setError] = useState(null);
+    const [error, setError] = useState(null);
     const [comparePosition, setComparePosition] = useState('');
     const [currentTime, setCurrentTime] = useState(new Date());
     const {currentUser, position, numero, setNumero, isChangingPosition, numerosTV, setNumerosTV} = userStateContext();
