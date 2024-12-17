@@ -1,3 +1,5 @@
 export {default as DefaultLayout} from './DefaultLayout'
 export {default as GuestLayout} from './GuestLayout'
 export {default as Modal} from './Modal'
+export {default as FilterSideBar} from './FilterSideBar'
+export {default as LlamadorTabla} from './LlamadorTabla'
