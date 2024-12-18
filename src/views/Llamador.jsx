@@ -3,11 +3,12 @@
  */
 import { useEffect, useState } from "react";
 import { userStateContext } from '../context/ContextProvider';
-import { fetchAllEstados } from '../API/apiServices'
+import { fetchAllEstados, fetchAllNumbers, fetchCancelNumbers, fetchPausedNumbers, getCurrentSelectedNumber, setCancel, setNextState, setPause } from '../API/apiServices'
 import axios from 'axios';
 import axiosClient from '../axios';
-import { Modal, FilterSideBar, LlamadorTabla } from '../components/index';
+import { FilterSideBar, LlamadorTabla } from '../components/index';
 import LlamadorPanel from "../components/LlamadorPanel";
+import { handleCancelNumber, handleClickFilter, handleLlamarNumero, handlePauseNumber, handleSetNextState } from "../handlers/llamadorHandlers";
 
 const API_URL = import.meta.env.VITE_API_BASE_URL
 
@@ -34,54 +35,39 @@ export default function Llamador() {
         return () => clearInterval(interval);
     }, []);
 
+    //Filtrar los numeros y mostrarlos en pantalla
     useEffect(() => {
-        // Fetch data from the Laravel API
-        console.log("Use effect 1- fetch numbers and displays them");
-            if(filterPaused){
-            console.log("numeros pausados");
-            axios
-                .get("http://localhost:8000/api/filterPausedNumbers")
-                .then(({data}) => {
-                    console.log(data);
+        if (filterPaused) {
+            fetchPausedNumbers()
+                .then(({ data }) => {
                     setNumeros(data);
                 })
                 .catch((error) => {
                     console.log(error);
-                })
-        }
-        if(filterCancel){
-            console.log("numeros cancelado");
-            axios
-                .get("http://localhost:8000/api/filterCancelNumbers")
-                .then(({data}) => {
-                    console.log(data);
+                });
+        } else if (filterCancel) {
+            fetchCancelNumbers()
+                .then(({ data }) => {
                     setNumeros(data);
-                    // setFilterPaused(false);
                 })
                 .catch((error) => {
                     console.log(error);
+                });
+        } else {
+            fetchAllNumbers(selectedFilter)
+                .then(({ data }) => {
+                    setNumeros(data);
                 })
-        }
-        if(!filterPaused && !filterCancel){
-            console.log("todos los numeros");
-            fetch(API_URL + '/allNumbers/' + selectedFilter)
-            .then(response => response.json())
-            .then(data => {
-                setNumeros(data);
-                console.log(data);
-            })
-            .catch(error => {
-                console.error('There was an error fetching the data!', error);
-                setError(error);
-            });
+                .catch((error) => {
+                    console.error('There was an error fetching the data!', error);
+                    setError(error);
+                });
         }
     }, [selectedFilter, numero, isDerivating, filterPaused, filterCancel]);
 
     useEffect(() => {
         //get current selected number by the User
-        console.log("Use effect 2");
-        axios
-        .get('http://localhost:8000/api/getCurrentSelectedNumber')
+        getCurrentSelectedNumber()
         .then(({data}) => {
             setNumero({
                 'nro': data.nro,
@@ -94,11 +80,9 @@ export default function Llamador() {
         .catch((error) => {
             console.log(error);
         })
-        console.log(numero);
     }, []);
 
     useEffect(() => {
-        console.log("Use effect 3 - Fetch all estados");
         fetchAllEstados()
             .then(response => {
                 setFiltros(response.data); // Access the data from the response
@@ -115,112 +99,112 @@ export default function Llamador() {
         setComparePosition(compare_position[0])
     }, [position]);
 
-    const handleClickFilter = (id) => {
-        console.log("handleClickFilter");
-        setFilterPaused(false);
-        setFilterCancel(false);
-        setSelectedFilter(id);
-    }
+    // const handleClickFilter = (id) => {
+    //     console.log("handleClickFilter");
+    //     setFilterPaused(false);
+    //     setFilterCancel(false);
+    //     setSelectedFilter(id);
+    // }
 
-    const handleSetNextState = (number) => {
-        console.log("handleSetNextState");
-        axios
-            .post("http://localhost:8000/api/setNextState", {
-                numero: number
-            })
-            .then(({data}) => {
-                console.log(data)
-                setNumero({
-                    'nro': null,
-                    'estado': "none",
-                    'fila': "none",
-                    'prefix': "none",
-                    'lugar': "none",
-                })
-            })
-            .catch((error) => {
-                console.log(error);
-            })
-    }
+    // const handleSetNextState = (number) => {
+    //     console.log("handleSetNextState");
+    //     axios
+    //         .post("http://localhost:8000/api/setNextState", {
+    //             numero: number
+    //         })
+    //         .then(({data}) => {
+    //             console.log(data)
+    //             setNumero({
+    //                 'nro': null,
+    //                 'estado': "none",
+    //                 'fila': "none",
+    //                 'prefix': "none",
+    //                 'lugar': "none",
+    //             })
+    //         })
+    //         .catch((error) => {
+    //             console.log(error);
+    //         })
+    // }
 
-    const handlePauseNumber = (number) => {
-        console.log("handlePauseNumber");
-        axios
-            .post("http://localhost:8000/api/setPause", {
-                numero: number
-            })
-            .then(({data}) => {
-                console.log(data);
-                // setPausedCount++;
-                setNumero({
-                    'nro': null,
-                    'estado': "none",
-                    'fila': "none",
-                    'prefix': "none",
-                    'lugar': "none",
-                });
-            })
-            .catch((error) => {
-                console.log(error);
-            })
-    }
+    // const handlePauseNumber = (number) => {
+    //     console.log("handlePauseNumber");
+    //     axios
+    //         .post("http://localhost:8000/api/setPause", {
+    //             numero: number
+    //         })
+    //         .then(({data}) => {
+    //             console.log(data);
+    //             // setPausedCount++;
+    //             setNumero({
+    //                 'nro': null,
+    //                 'estado': "none",
+    //                 'fila': "none",
+    //                 'prefix': "none",
+    //                 'lugar': "none",
+    //             });
+    //         })
+    //         .catch((error) => {
+    //             console.log(error);
+    //         })
+    // }
 
-    const handleCancelNumber = (number) => {
-        console.log("handleCancelNumber");
-        axios
-            .post("http://localhost:8000/api/setCanceled", {
-                numero: number
-            })
-            .then(({data}) => {
-                console.log(data);
-                // setPausedCount++;
-                setNumero({
-                    'nro': null,
-                    'estado': "none",
-                    'fila': "none",
-                    'prefix': "none",
-                    'lugar': "none",
-                });
-            })
-            .catch((error) => {
-                console.log(error);
-            })
-    }
+    // const handleCancelNumber = (number) => {
+    //     console.log("handleCancelNumber");
+    //     axios
+    //         .post("http://localhost:8000/api/setCanceled", {
+    //             numero: number
+    //         })
+    //         .then(({data}) => {
+    //             console.log(data);
+    //             // setPausedCount++;
+    //             setNumero({
+    //                 'nro': null,
+    //                 'estado': "none",
+    //                 'fila': "none",
+    //                 'prefix': "none",
+    //                 'lugar': "none",
+    //             });
+    //         })
+    //         .catch((error) => {
+    //             console.log(error);
+    //         })
+    // }
 
-    //llama al numero, ademas de retomar pausado o cancelado
-    const handleLlamarNumero = (id, paused, canceled) => {
-        console.log("handleLlamarNumero");
-        axios
-            .post("http://localhost:8000/api/asignNumberToUser", {
-                id: id,
-                paused: paused,
-                canceled: canceled,
-            })
-            .then(({data}) => {
-                //logica nueva
-                const nuevoNumero = {
-                    'nro': data.nro,
-                    'estado': data.estado,
-                    'fila': data.fila,
-                    'prefix': data.prefix,
-                    'lugar': data.lugar
-                };
-                setNumero(nuevoNumero);
+    // //llama al numero, ademas de retomar pausado o cancelado
+    // const handleLlamarNumero = (id, paused, canceled) => {
+    //     console.log("handleLlamarNumero");
+    //     axios
+    //         .post("http://localhost:8000/api/asignNumberToUser", {
+    //             id: id,
+    //             paused: paused,
+    //             canceled: canceled,
+    //         })
+    //         .then(({data}) => {
+    //             //logica nueva
+    //             const nuevoNumero = {
+    //                 'nro': data.nro,
+    //                 'estado': data.estado,
+    //                 'fila': data.fila,
+    //                 'prefix': data.prefix,
+    //                 'lugar': data.lugar
+    //             };
+    //             setNumero(nuevoNumero);
 
-                console.log(nuevoNumero);
-                setNumerosTV(prevNumeros => {   
-                    const nuevaLista = [nuevoNumero, ...prevNumeros];
-                    if (nuevaLista.length > 4) {
-                      nuevaLista.pop(); // Elimina el último número si la lista tiene más de 5
-                    }
-                    return nuevaLista
-                });
-                console.log(numerosTV);
-            })
-            .catch((error) => {
-                console.log(error);
-            })
-    }
+    //             console.log(nuevoNumero);
+    //             setNumerosTV(prevNumeros => {   
+    //                 const nuevaLista = [nuevoNumero, ...prevNumeros];
+    //                 if (nuevaLista.length > 4) {
+    //                   nuevaLista.pop(); // Elimina el último número si la lista tiene más de 5
+    //                 }
+    //                 return nuevaLista
+    //             });
+    //             console.log(numerosTV);
+    //         })
+    //         .catch((error) => {
+    //             console.log(error);
+    //         })
+    // }
 
     const handleOpenModal = () => setShowModal(true);
     const handleCloseModal = () => setShowModal(false);
@@ -271,7 +255,7 @@ export default function Llamador() {
                 <FilterSideBar
                     filtros={filtros}
                     selectedFilter={selectedFilter}
-                    handleClickFilter={handleClickFilter}
+                    handleClickFilter={(id) => handleClickFilter(id, setFilterCancel, setFilterPaused, setSelectedFilter)}
                     filterPausedNumber={() => setFilterPaused(true)}
                     filterCancelNumber={() => setFilterCancel(true)}
                 />
@@ -280,7 +264,7 @@ export default function Llamador() {
                     <LlamadorTabla
                         numeros={numeros}
                         comparePosition={comparePosition}
-                        handleLlamarNumero={handleLlamarNumero}
+                        handleLlamarNumero={(id, paused, canceled) => handleLlamarNumero(id, paused, canceled, setNumero, setNumerosTV)}
                         position={position}
                         isChangingPosition={isChangingPosition}
                         numero={numero}
@@ -288,11 +272,11 @@ export default function Llamador() {
                     {/* -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */}
                     <LlamadorPanel
                         numero={numero}
-                        handleSetNextState={handleSetNextState}
+                        handleSetNextState={(number) => handleSetNextState(number, setNextState)}
                         handleDerivateTo={handleDerivateTo}
                         handleDerivateToPosition={handleDerivateToPosition}
-                        handlePauseNumber={handlePauseNumber}
-                        handleCancelNumber={handleCancelNumber}
+                        handlePauseNumber={(number) => handlePauseNumber(number, setPause)}
+                        handleCancelNumber={(number) => handleCancelNumber(number, setCancel)}
                         showModal={showModal}
                         handleCloseModal={handleCloseModal}
                         allDerivates={allDerivates}

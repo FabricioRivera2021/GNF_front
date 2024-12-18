@@ -1,4 +1,5 @@
 import axios from 'axios';
+import axiosClient from '../axios';
 
 const API_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -22,13 +23,18 @@ export const fetchAllEstados = () => axios.get(
     `${API_URL}/allEstados`
 );
 
-export const assignNumberToUser = (payload) => axios.post(
-    'http://localhost:8000/api/asignNumberToUser', payload
+export const assignNumberToUser = (id, paused, canceled) => axios.post(
+    'http://localhost:8000/api/asignNumberToUser', { id: id, paused: paused, canceled: canceled }
 );
 
-export const setNextState = (number) => axios.post(
-    'http://localhost:8000/api/setNextState', { numero: number }
-);
+export const setNextState = async (number) => {
+    try {
+        const data = await setNextState(number);
+        console.log(data); // Handle the successful response here
+    } catch (error) {
+        console.error("Error in handleSetNextState:", error);
+    }
+};
 
 export const setPause = (number) => axios.post(
     'http://localhost:8000/api/setPause', { numero: number }
