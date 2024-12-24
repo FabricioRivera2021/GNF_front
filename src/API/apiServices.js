@@ -1,7 +1,9 @@
-import axios from 'axios';
-import axiosClient from '../axios';
-
+import axios from "axios";
+import axiosClient from "../axios";
+import Cookies from 'js-cookie';
 const API_URL = import.meta.env.VITE_API_BASE_URL;
+// Set up Axios to include the CSRF token in the headers
+axios.defaults.headers.common['X-CSRF-TOKEN'] = Cookies.get('XSRF-TOKEN');
 
 export const fetchAllNumbers = (filter) => axios.get(
     `${API_URL}/allNumbers/${filter}`
@@ -29,10 +31,12 @@ export const assignNumberToUser = (id, paused, canceled) => axios.post(
 
 export const setNextState = async (number) => {
     try {
-        const data = await setNextState(number);
-        console.log(data); // Handle the successful response here
+        const response = await axios.post(`${API_URL}/setNextState`, { numero: number });
+        console.log(response.data); // Handle the successful response here
+        return response.data;
     } catch (error) {
-        console.error("Error in handleSetNextState:", error);
+        console.error("Error in setNextState:", error);
+        throw error;
     }
 };
 
