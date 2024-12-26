@@ -38,9 +38,9 @@ export default function Logout() {
       .post("http://localhost:8000/api/logout", {
         headers: {
           accept: "application/json",
-          // "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
+          "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
         },
-        // withCredentials: true,
+        withCredentials: true,
       })
       .then(({ data }) => {
         setCurrentUser("");
@@ -51,12 +51,13 @@ export default function Logout() {
         console.log(error);
       });
 
-    // function getCookie(name) {
-    //   const value = `; ${document.cookie}`;
-    //   const parts = value.split(`; ${name}=`);
-    //   if (parts.length === 2) return parts.pop().split(";").shift();
-    //   return null;
-    // }
+    function getCookie(name) {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) return parts.pop().split(";").shift();
+      return null;
+    }
+    
   };
   return(
     <>
