@@ -3,7 +3,7 @@ import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuIt
 import { Bars3Icon, XMarkIcon, ArrowRightEndOnRectangleIcon, ExclamationCircleIcon, LockClosedIcon } from '@heroicons/react/24/outline'
 import { Link, NavLink, Navigate, Outlet, redirect } from 'react-router-dom'
 import { userStateContext } from '../context/ContextProvider'
-import axiosClient from '../axios'
+import axiosClient from '../axiosCustom'
 import axios from 'axios'
 import { ThreeDots } from 'react-loader-spinner'
 

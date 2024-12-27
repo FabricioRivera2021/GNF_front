@@ -49,29 +49,15 @@ export default function Login() {
           setIsLoading(false);
         }
     });
+  }
 
-    function getCookie(name) {
-      const value = `; ${document.cookie}`;
-      const parts = value.split(`; ${name}=`);
-      if (parts.length === 2) return parts.pop().split(';').shift();
-      return null;
-    }
+  function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+    return null;
+  }
 
-    setIsLoading(false);
-
-    // axiosClient
-    //   .post("/login", {
-    //     email,
-    //     password,
-    //   })
-    //   .then(({ data }) => {
-    //     setCurrentUser(data.user);
-    //     setUserToken(data.token);
-    //   })
-    //   .catch((error) => {
-    //     console.log(error);
-    //   });
-  };
 
   return (
     <>

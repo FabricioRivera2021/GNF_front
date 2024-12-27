@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { userStateContext } from '../context/ContextProvider';
 import { fetchAllEstados, fetchAllNumbers, fetchCancelNumbers, fetchPausedNumbers, getCurrentSelectedNumber, setCancel, setNextState, setPause } from '../API/apiServices'
 import axios from 'axios';
-import axiosClient from '../axios';
+import axiosClient from '../axiosCustom';
 import { FilterSideBar, LlamadorTabla } from '../components/index';
 import LlamadorPanel from "../components/LlamadorPanel";
 import { handleCancelNumber, handleClickFilter, handleLlamarNumero, handlePauseNumber, handleSetNextState } from "../handlers/llamadorHandlers";

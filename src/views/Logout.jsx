@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useEffect } from "react";
-import axiosClient from "../axios";
+import axiosClient from "../axiosCustom";
 import { userStateContext } from "../context/ContextProvider";
 import { redirect } from "react-router-dom";
 
