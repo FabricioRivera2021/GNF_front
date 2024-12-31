@@ -3,7 +3,14 @@
  */
 import { useEffect, useState } from "react";
 import { userStateContext } from '../context/ContextProvider';
-import { fetchAllEstados, fetchAllNumbers, fetchCancelNumbers, fetchPausedNumbers, getCurrentSelectedNumber, setCancel, setNextState, setPause } from '../API/apiServices'
+import { 
+    fetchAllEstados, 
+    handleSetNextState, 
+    handlePauseNumber,
+    handleCancelNumber,
+    handleDerivateToPosition,
+    handleDerivateTo 
+} from '../API/apiServices'
 import axios from 'axios';
 import axiosClient from '../axiosCustom';
 import { FilterSideBar, LlamadorTabla } from '../components/index';
@@ -14,8 +21,6 @@ const API_URL = import.meta.env.VITE_API_BASE_URL
 
 export default function Llamador() {
 
-    const [showModal, setShowModal] = useState(false);
-    const [allDerivates, setAllDerivates] = useState([]);//posibles posiciones para derivar
     const [numeros, setNumeros] = useState([]);//numeros
     const [filtros, setFiltros] = useState([]);//filtros
     const [filterPaused, setFilterPaused] = useState(false);//cantidad numeros pausados
@@ -99,43 +104,42 @@ export default function Llamador() {
         setComparePosition(compare_position[0])
     }, [position]);
 
-    const handleOpenModal = () => setShowModal(true);
-    const handleCloseModal = () => setShowModal(false);
-
-    const handleDerivateTo = (number) => {
-        console.log("handleDerivateTo");
-        handleOpenModal();
-        axios
-            .get("http://localhost:8000/api/derivateTo", {
-                number: number,
-            })
-            .then(({data}) => {
-                console.log(data);
-                setAllDerivates(data);
-            })
-            .catch((error) => {
-                console.log(error);
-            })
+    const handleClickFilter = (id) => {
+        console.log("handleClickFilter");
+        setFilterPaused(false);
+        setFilterCancel(false);
+        setSelectedFilter(id);
     }
 
-    const handleDerivateToPosition = (number, position) => {
-        console.log("handleDerivateToPosition");
-        handleCloseModal();
+    //llama al numero, ademas de retomar pausado o cancelado
+    const handleLlamarNumero = (id, paused, canceled) => {
+        console.log("handleLlamarNumero");
         axios
-            .post("http://localhost:8000/api/derivateToPosition", {
-                number: number,
-                position: position
+            .post("http://localhost:8000/api/asignNumberToUser", {
+                id: id,
+                paused: paused,
+                canceled: canceled,
             })
             .then(({data}) => {
-                console.log(data);
-                setIsDerivating(false);
-                setNumero({
-                    'nro': null,
-                    'estado': "none",
-                    'fila': "none",
-                    'prefix': "none",
-                    'lugar': "none",
+                //logica nueva
+                const nuevoNumero = {
+                    'nro': data.nro,
+                    'estado': data.estado,
+                    'fila': data.fila,
+                    'prefix': data.prefix,
+                    'lugar': data.lugar
+                };
+                setNumero(nuevoNumero);
+
+                console.log(nuevoNumero);
+                setNumerosTV(prevNumeros => {   
+                    const nuevaLista = [nuevoNumero, ...prevNumeros];
+                    if (nuevaLista.length > 4) {
+                      nuevaLista.pop(); // Elimina el último número si la lista tiene más de 5
+                    }
+                    return nuevaLista
                 });
+                console.log(numerosTV);
             })
             .catch((error) => {
                 console.log(error);
@@ -165,14 +169,10 @@ export default function Llamador() {
                     {/* -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */}
                     <LlamadorPanel
                         numero={numero}
-                        handleSetNextState={(number) => handleSetNextState(number, setNextState)}
-                        handleDerivateTo={handleDerivateTo}
-                        handleDerivateToPosition={handleDerivateToPosition}
-                        handlePauseNumber={(number) => handlePauseNumber(number, setPause)}
-                        handleCancelNumber={(number) => handleCancelNumber(number, setCancel)}
-                        showModal={showModal}
-                        handleCloseModal={handleCloseModal}
-                        allDerivates={allDerivates}
+                        handleSetNextState={(number) => handleSetNextState(number, setNumero)}
+                        handleDerivateToPosition={(number, position) => handleDerivateToPosition(number, position, setShowModal, setIsDerivating, setNumero)}
+                        handlePauseNumber={(number) => handlePauseNumber(number, setNumero)}
+                        handleCancelNumber={(number) => handleCancelNumber(number, setNumero)}
                     />
                 </div>
                 {/* -----------------------------------------------------------*-------------------------------------------------------------------------------------------------------------------- */}

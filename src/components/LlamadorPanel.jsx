@@ -1,9 +1,17 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Modal from './Modal'
 import { ArrowRightCircleIcon } from "@heroicons/react/24/outline";
+import { handleDerivateTo } from '../API/apiServices';
 
-const LlamadorPanel = ({numero, handleSetNextState, handleDerivateTo, handleDerivateToPosition, handlePauseNumber, handleCancelNumber, showModal, handleCloseModal, allDerivates}) => {
-  return (
+
+const LlamadorPanel = ({numero, handleSetNextState, handleDerivateToPosition, handlePauseNumber, handleCancelNumber, setShowModal}) => {
+    const [allDerivates, setAllDerivates] = useState([]);//posibles posiciones para derivar
+    const [showModal, setShowModalState] = useState(false);
+
+    const handleOpenModal = () => setShowModalState(true);
+    const handleCloseModal = () => setShowModalState(false);
+    
+    return (
     <div className="w-full">
         {
             numero.nro != null && (
@@ -27,7 +35,7 @@ const LlamadorPanel = ({numero, handleSetNextState, handleDerivateTo, handleDeri
                                 <button className={`bg-slate-300 text-slate-700 px-2 rounded-md shadow-md
                                                 ${(numero.nro) ? '!bg-blue-400 !text-slate-100 hover:!bg-blue-500' : ''}`}
                                                 disabled={!numero.nro}
-                                                onClick={() => handleDerivateTo(numero.nro)}
+                                                onClick={() => handleDerivateTo(numero.nro, setShowModalState, setAllDerivates)}
                                 >Derivar a..</button>
                                 <Modal show={showModal} handleClose={handleCloseModal}>
                                     <h2 className="text-xl font-bold mb-2">Derivar a..</h2>
@@ -38,7 +46,7 @@ const LlamadorPanel = ({numero, handleSetNextState, handleDerivateTo, handleDeri
                                                     <td className="whitespace-nowrap px-1 py-1">{item.estado}</td>
                                                     <td className="whitespace-nowrap px-1 py-1">
                                                         <button
-                                                            onClick={() => handleDerivateToPosition(numero.nro, item.estado)}
+                                                            onClick={() => handleDerivateToPosition(numero.nro, item.estado, setShowModal)}
                                                         >
                                                             <ArrowRightCircleIcon 
                                                                 className="w-6 stroke-blue-500 hover:stroke-blue-400" 

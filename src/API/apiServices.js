@@ -25,29 +25,117 @@ export const assignNumberToUser = (id, paused, canceled) => axiosClient.post(
     'http://localhost:8000/api/asignNumberToUser', { id: id, paused: paused, canceled: canceled }
 );
 
-export const setNextState = async (number) => {
-    try {
-        const response = await axiosClient.post(`${API_URL}/setNextState`, { numero: number });
-        console.log(response.data); // Handle the successful response here
-        return response.data;
-    } catch (error) {
-        console.error("Error in setNextState:", error);
-        throw error;
-    }
-};
+// Cambia el estado del numero seleccionado al siguiente estado
+export const handleSetNextState = (number, setNumero) => {
+    console.log("handleSetNextState");
+    axios
+        .post("http://localhost:8000/api/setNextState", {
+            numero: number
+        })
+        .then(({data}) => {
+            console.log(data)
+            setNumero({
+                'nro': null,
+                'estado': "none",
+                'fila': "none",
+                'prefix': "none",
+                'lugar': "none",
+            })
+        })
+        .catch((error) => {
+            console.log(error);
+        })
+}
 
-export const setPause = (number) => axiosClient.post(
-    'http://localhost:8000/api/setPause', { numero: number }
-);
+// Setea el numero al estado de pausado
+export const handlePauseNumber = (number, setNumero) => {
+    console.log("handlePauseNumber");
+    axios
+        .post("http://localhost:8000/api/setPause", {
+            numero: number
+        })
+        .then(({data}) => {
+            console.log(data);
+            // setPausedCount++;
+            setNumero({
+                'nro': null,
+                'estado': "none",
+                'fila': "none",
+                'prefix': "none",
+                'lugar': "none",
+            });
+        })
+        .catch((error) => {
+            console.log(error);
+        })
+}
 
-export const setCancel = (number) => axiosClient.post(
-    'http://localhost:8000/api/setCanceled', { numero: number }
-);
+// Setea el numero al estado de cancelado
+export const handleCancelNumber = (number, setNumero) => {
+    console.log("handleCancelNumber");
+    axios
+        .post("http://localhost:8000/api/setCanceled", {
+            numero: number
+        })
+        .then(({data}) => {
+            console.log(data);
+            // setPausedCount++;
+            setNumero({
+                'nro': null,
+                'estado': "none",
+                'fila': "none",
+                'prefix': "none",
+                'lugar': "none",
+            });
+        })
+        .catch((error) => {
+            console.log(error);
+        })
+}
 
-export const fetchDerivateOptions = (number) => axiosClient.get(
-    'http://localhost:8000/api/derivateTo', { params: { number } }
-);
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+/** Estas dos funciones son de la parte de derivar el numero a una posicion cualquiera
+ * Funcionan en conjunto en el componente LlamadorPanel.jsx
+ */
+// Setea el modal para derivar el numero
+export const handleDerivateTo = (number, setShowModal, setAllDerivates) => {
+    console.log("handleDerivateTo");
+    setShowModal(true);
+    axios
+        .get("http://localhost:8000/api/derivateTo", {
+            number: number,
+        })
+        .then(({data}) => {
+            console.log(data);
+            setAllDerivates(data);
+        })
+        .catch((error) => {
+            console.log(error);
+        })
+}
 
-export const derivateToPosition = (number, position) => axiosClient.post(
-    'http://localhost:8000/api/derivateToPosition', { number, position }
-);
+// Deriva el numero a la posicion seleccionada
+export const handleDerivateToPosition = (number, position, setIsDerivating, setNumero, setShowModal) => {
+    console.log("handleDerivateToPosition");
+    setShowModal(false);
+    axios
+        .post("http://localhost:8000/api/derivateToPosition", {
+            number: number,
+            position: position
+        })
+        .then(({data}) => {
+            console.log(data);
+            setIsDerivating(false);
+            setNumero({
+                'nro': null,
+                'estado': "none",
+                'fila': "none",
+                'prefix': "none",
+                'lugar': "none",
+            });
+        })
+        .catch((error) => {
+            console.log(error);
+        })
+}
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
