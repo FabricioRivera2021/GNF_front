@@ -3,7 +3,14 @@
  */
 import { useEffect, useState } from "react";
 import { userStateContext } from '../context/ContextProvider';
-import { fetchAllEstados } from '../API/apiServices'
+import { 
+    fetchAllEstados, 
+    handleSetNextState, 
+    handlePauseNumber,
+    handleCancelNumber,
+    handleDerivateToPosition,
+    handleDerivateTo 
+} from '../API/apiServices'
 import axios from 'axios';
 import axiosClient from '../axios';
 import { Modal, FilterSideBar, LlamadorTabla } from '../components/index';
@@ -13,8 +20,6 @@ const API_URL = import.meta.env.VITE_API_BASE_URL
 
 export default function Llamador() {
 
-    const [showModal, setShowModal] = useState(false);
-    const [allDerivates, setAllDerivates] = useState([]);//posibles posiciones para derivar
     const [numeros, setNumeros] = useState([]);//numeros
     const [filtros, setFiltros] = useState([]);//filtros
     const [filterPaused, setFilterPaused] = useState(false);//cantidad numeros pausados
@@ -122,71 +127,6 @@ export default function Llamador() {
         setSelectedFilter(id);
     }
 
-    const handleSetNextState = (number) => {
-        console.log("handleSetNextState");
-        axios
-            .post("http://localhost:8000/api/setNextState", {
-                numero: number
-            })
-            .then(({data}) => {
-                console.log(data)
-                setNumero({
-                    'nro': null,
-                    'estado': "none",
-                    'fila': "none",
-                    'prefix': "none",
-                    'lugar': "none",
-                })
-            })
-            .catch((error) => {
-                console.log(error);
-            })
-    }
-
-    const handlePauseNumber = (number) => {
-        console.log("handlePauseNumber");
-        axios
-            .post("http://localhost:8000/api/setPause", {
-                numero: number
-            })
-            .then(({data}) => {
-                console.log(data);
-                // setPausedCount++;
-                setNumero({
-                    'nro': null,
-                    'estado': "none",
-                    'fila': "none",
-                    'prefix': "none",
-                    'lugar': "none",
-                });
-            })
-            .catch((error) => {
-                console.log(error);
-            })
-    }
-
-    const handleCancelNumber = (number) => {
-        console.log("handleCancelNumber");
-        axios
-            .post("http://localhost:8000/api/setCanceled", {
-                numero: number
-            })
-            .then(({data}) => {
-                console.log(data);
-                // setPausedCount++;
-                setNumero({
-                    'nro': null,
-                    'estado': "none",
-                    'fila': "none",
-                    'prefix': "none",
-                    'lugar': "none",
-                });
-            })
-            .catch((error) => {
-                console.log(error);
-            })
-    }
-
     //llama al numero, ademas de retomar pausado o cancelado
     const handleLlamarNumero = (id, paused, canceled) => {
         console.log("handleLlamarNumero");
@@ -222,49 +162,6 @@ export default function Llamador() {
             })
     }
 
-    const handleOpenModal = () => setShowModal(true);
-    const handleCloseModal = () => setShowModal(false);
-
-    const handleDerivateTo = (number) => {
-        console.log("handleDerivateTo");
-        handleOpenModal();
-        axios
-            .get("http://localhost:8000/api/derivateTo", {
-                number: number,
-            })
-            .then(({data}) => {
-                console.log(data);
-                setAllDerivates(data);
-            })
-            .catch((error) => {
-                console.log(error);
-            })
-    }
-
-    const handleDerivateToPosition = (number, position) => {
-        console.log("handleDerivateToPosition");
-        handleCloseModal();
-        axios
-            .post("http://localhost:8000/api/derivateToPosition", {
-                number: number,
-                position: position
-            })
-            .then(({data}) => {
-                console.log(data);
-                setIsDerivating(false);
-                setNumero({
-                    'nro': null,
-                    'estado': "none",
-                    'fila': "none",
-                    'prefix': "none",
-                    'lugar': "none",
-                });
-            })
-            .catch((error) => {
-                console.log(error);
-            })
-    }
-
     return (
         <>
             <div className="flex justify-between items-start">{/* Main */}
@@ -288,14 +185,10 @@ export default function Llamador() {
                     {/* -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */}
                     <LlamadorPanel
                         numero={numero}
-                        handleSetNextState={handleSetNextState}
-                        handleDerivateTo={handleDerivateTo}
-                        handleDerivateToPosition={handleDerivateToPosition}
-                        handlePauseNumber={handlePauseNumber}
-                        handleCancelNumber={handleCancelNumber}
-                        showModal={showModal}
-                        handleCloseModal={handleCloseModal}
-                        allDerivates={allDerivates}
+                        handleSetNextState={(number) => handleSetNextState(number, setNumero)}
+                        handleDerivateToPosition={(number, position) => handleDerivateToPosition(number, position, setShowModal, setIsDerivating, setNumero)}
+                        handlePauseNumber={(number) => handlePauseNumber(number, setNumero)}
+                        handleCancelNumber={(number) => handleCancelNumber(number, setNumero)}
                     />
                 </div>
                 {/* -----------------------------------------------------------*-------------------------------------------------------------------------------------------------------------------- */}
