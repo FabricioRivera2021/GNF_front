@@ -34,6 +34,7 @@ export default function Llamador() {
     const [comparePosition, setComparePosition] = useState('');
     const [currentTime, setCurrentTime] = useState(new Date());
     const {currentUser, position, numero, setNumero, isChangingPosition, numerosTV, setNumerosTV} = userStateContext();
+    const [showModal, setShowModal] = useState(false);
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -164,7 +165,9 @@ export default function Llamador() {
                     <LlamadorTabla
                         numeros={numeros}
                         comparePosition={comparePosition}
-                        handleLlamarNumero={(id, paused, canceled) => handleLlamarNumero(id, paused, canceled, setNumero, setNumerosTV)}
+                        handleLlamarNumero={
+                            (id, paused, canceled) => handleLlamarNumero(id, paused, canceled, setNumero, setNumerosTV)
+                        }
                         position={position}
                         isChangingPosition={isChangingPosition}
                         numero={numero}
@@ -176,7 +179,7 @@ export default function Llamador() {
                             (number) => handleSetNextState(number, setNumero)
                         }
                         handleDerivateToPosition={
-                            (number, position) => handleDerivateToPosition(number, position, setShowModal, setIsDerivating, setNumero)
+                            (number, position) => handleDerivateToPosition(number, position, setIsDerivating, setNumero, setShowModal)
                         }
                         handlePauseNumber={(number) => handlePauseNumber(number, setNumero)}
                         handleCancelNumber={(number) => handleCancelNumber(number, setNumero)}

@@ -96,7 +96,7 @@ export const handleCancelNumber = (number, setNumero) => {
 
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 /** Estas dos funciones son de la parte de derivar el numero a una posicion cualquiera
- * Funcionan en conjunto en el componente LlamadorPanel.jsx
+ * Funcionan en conjunto en el componente LlamadorPanel.jsx y el componente Llamador.jsx
  */
 // Setea el modal para derivar el numero
 export const handleDerivateTo = (number, setShowModal, setAllDerivates) => {

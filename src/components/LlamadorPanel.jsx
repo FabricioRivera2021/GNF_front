@@ -41,7 +41,7 @@ const LlamadorPanel = ({
                                         <button className={`bg-slate-300 text-slate-700 px-2 rounded-md shadow-md
                                                         ${(numero.nro) ? '!bg-blue-400 !text-slate-100 hover:!bg-blue-500' : ''}`}
                                                         disabled={!numero.nro}
-                                                        onClick={() => handleDerivateTo(numero.nro, setShowModalState, setAllDerivates)}
+                                                        onClick={() => handleDerivateTo(numero.nro, setShowModal, setAllDerivates)}
                                         >Derivar a..</button>
                                         <Modal show={showModal} handleClose={handleCloseModal}>
                                             <h2 className="text-xl font-bold mb-2">Derivar a..</h2>
