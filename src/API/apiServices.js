@@ -1,27 +1,28 @@
+import axios from "axios";
 import axiosClient from "../axiosCustom";
 const API_URL = import.meta.env.VITE_API_BASE_URL;
 
-export const fetchAllNumbers = (filter) => axiosClient.get(
+export const fetchAllNumbers = (filter) => axios.get(
     `${API_URL}/allNumbers/${filter}`
 );
 
-export const fetchPausedNumbers = () => axiosClient.get(
+export const fetchPausedNumbers = () => axios.get(
     'http://localhost:8000/api/filterPausedNumbers'
 );
 
-export const fetchCancelNumbers = () => axiosClient.get(
+export const fetchCancelNumbers = () => axios.get(
     'http://localhost:8000/api/filterCancelNumbers'
 );
 
-export const getCurrentSelectedNumber = () => axiosClient.get(
+export const getCurrentSelectedNumber = () => axios.get(
     'http://localhost:8000/api/getCurrentSelectedNumber'
 );
 
-export const fetchAllEstados = () => axiosClient.get(
+export const fetchAllEstados = () => axios.get(
     `${API_URL}/allEstados`
 );
 
-export const assignNumberToUser = (id, paused, canceled) => axiosClient.post(
+export const assignNumberToUser = (id, paused, canceled) => axios.post(
     'http://localhost:8000/api/asignNumberToUser', { id: id, paused: paused, canceled: canceled }
 );
 

@@ -9,13 +9,16 @@ import {
     handlePauseNumber,
     handleCancelNumber,
     handleDerivateToPosition,
-    handleDerivateTo 
+    handleDerivateTo, 
+    fetchAllNumbers,
+    getCurrentSelectedNumber,
+    fetchPausedNumbers,
+    fetchCancelNumbers
 } from '../API/apiServices'
 import axios from 'axios';
 import axiosClient from '../axiosCustom';
 import { FilterSideBar, LlamadorTabla } from '../components/index';
 import LlamadorPanel from "../components/LlamadorPanel";
-import { handleCancelNumber, handleClickFilter, handleLlamarNumero, handlePauseNumber, handleSetNextState } from "../handlers/llamadorHandlers";
 
 const API_URL = import.meta.env.VITE_API_BASE_URL
 
@@ -169,8 +172,12 @@ export default function Llamador() {
                     {/* -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */}
                     <LlamadorPanel
                         numero={numero}
-                        handleSetNextState={(number) => handleSetNextState(number, setNumero)}
-                        handleDerivateToPosition={(number, position) => handleDerivateToPosition(number, position, setShowModal, setIsDerivating, setNumero)}
+                        handleSetNextState={
+                            (number) => handleSetNextState(number, setNumero)
+                        }
+                        handleDerivateToPosition={
+                            (number, position) => handleDerivateToPosition(number, position, setShowModal, setIsDerivating, setNumero)
+                        }
                         handlePauseNumber={(number) => handlePauseNumber(number, setNumero)}
                         handleCancelNumber={(number) => handleCancelNumber(number, setNumero)}
                     />
