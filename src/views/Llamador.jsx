@@ -33,7 +33,7 @@ export default function Llamador() {
     const [error, setError] = useState(null);
     const [comparePosition, setComparePosition] = useState('');
     const [currentTime, setCurrentTime] = useState(new Date());
-    const {currentUser, position, numero, setNumero, isChangingPosition, numerosTV, setNumerosTV} = userStateContext();
+    const {currentUser, position, numero, setNumero, isChangingPosition, numerosTV, setNumerosTV, setAllDerivates, setShowModal} = userStateContext();
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -176,6 +176,9 @@ export default function Llamador() {
                         numero={numero}
                         handleSetNextState={
                             (number) => handleSetNextState(number, setNumero)
+                        }
+                        handleDerivateTo={
+                            (number) => handleDerivateTo(number, setShowModal, setAllDerivates)
                         }
                         handleDerivateToPosition={
                             (number, position) => handleDerivateToPosition(number, position, setIsDerivating, setNumero, setShowModal)

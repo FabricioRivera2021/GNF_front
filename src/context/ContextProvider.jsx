@@ -7,18 +7,24 @@ const StateContext = createContext({
   numero: {},
   isChangingPosition: false,
   numerosTV: [],
+  showModal: false,
+  allDerivates: [],
   setCurrentUser: () => {},
   setUserToken: () => {},
   setPosition: () => {},
   setNumero: () => {},
-  setNumerosTV: () => {}
+  setNumerosTV: () => {},
+  setShowModal: () => {},
+  setAllDerivates: () => {},
 });
 
 export const ContextProvider = ({children}) => {
   const [currentUser, setCurrentUser] = useState({});
   const [userToken, _setUserToken] = useState(localStorage.getItem('TOKEN') || '');
   const [position, setPosition] = useState('');
-  const [ isChangingPosition, setIsChangingPosition ] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [isChangingPosition, setIsChangingPosition] = useState(false);
+  const [allDerivates, setAllDerivates] = useState([]);//posibles posiciones para derivar
   const [numero, setNumero] = useState({
     'nro': null,
     'estado': "none",
@@ -51,7 +57,11 @@ export const ContextProvider = ({children}) => {
         numero,
         setNumero,
         numerosTV,
-        setNumerosTV
+        setNumerosTV,
+        showModal,
+        setShowModal,
+        allDerivates,
+        setAllDerivates
       }}
     >
       {children}

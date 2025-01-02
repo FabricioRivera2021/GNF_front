@@ -1,22 +1,21 @@
 import React, { useState } from 'react'
 import Modal from './Modal'
 import { ArrowRightCircleIcon } from "@heroicons/react/24/outline";
-import { handleDerivateTo } from '../API/apiServices';
-
+import { userStateContext } from '../context/ContextProvider';
 
 const LlamadorPanel = ({
     numero,
     handleSetNextState,
+    handleDerivateTo,
     handleDerivateToPosition,
     handlePauseNumber,
     handleCancelNumber
     })=>{
-            const [allDerivates, setAllDerivates] = useState([]);//posibles posiciones para derivar
-            const [showModal, setShowModal] = useState(false);
+            const {showModal, setShowModal, allDerivates, setAllDerivates} = userStateContext();
 
             const handleOpenModal = () => setShowModal(true);
             const handleCloseModal = () => setShowModal(false);
-            
+
             return (
             <div className="w-full">
                 {
