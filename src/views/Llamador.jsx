@@ -13,14 +13,13 @@ import {
     fetchAllNumbers,
     getCurrentSelectedNumber,
     fetchPausedNumbers,
-    fetchCancelNumbers
+    fetchCancelNumbers,
+    handleLlamarNumero
 } from '../API/apiServices'
 import axios from 'axios';
 import axiosClient from '../axiosCustom';
 import { FilterSideBar, LlamadorTabla } from '../components/index';
 import LlamadorPanel from "../components/LlamadorPanel";
-
-const API_URL = import.meta.env.VITE_API_BASE_URL
 
 export default function Llamador() {
 
@@ -33,7 +32,7 @@ export default function Llamador() {
     const [error, setError] = useState(null);
     const [comparePosition, setComparePosition] = useState('');
     const [currentTime, setCurrentTime] = useState(new Date());
-    const {currentUser, position, numero, setNumero, isChangingPosition, numerosTV, setNumerosTV, setAllDerivates, setShowModal} = userStateContext();
+    const {currentUser, position, numero, setNumero, isChangingPosition, setNumerosTV, setAllDerivates, setShowModal} = userStateContext();
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -115,39 +114,39 @@ export default function Llamador() {
     }
 
     //llama al numero, ademas de retomar pausado o cancelado
-    const handleLlamarNumero = (id, paused, canceled) => {
-        console.log("handleLlamarNumero");
-        axios
-            .post("http://localhost:8000/api/asignNumberToUser", {
-                id: id,
-                paused: paused,
-                canceled: canceled,
-            })
-            .then(({data}) => {
-                //logica nueva
-                const nuevoNumero = {
-                    'nro': data.nro,
-                    'estado': data.estado,
-                    'fila': data.fila,
-                    'prefix': data.prefix,
-                    'lugar': data.lugar
-                };
-                setNumero(nuevoNumero);
+    // const handleLlamarNumero = (id, paused, canceled) => {
+    //     console.log("handleLlamarNumero");
+    //     axios
+    //         .post("http://localhost:8000/api/asignNumberToUser", {
+    //             id: id,
+    //             paused: paused,
+    //             canceled: canceled,
+    //         })
+    //         .then(({data}) => {
+    //             //logica nueva
+    //             const nuevoNumero = {
+    //                 'nro': data.nro,
+    //                 'estado': data.estado,
+    //                 'fila': data.fila,
+    //                 'prefix': data.prefix,
+    //                 'lugar': data.lugar
+    //             };
+    //             setNumero(nuevoNumero);
 
-                console.log(nuevoNumero);
-                setNumerosTV(prevNumeros => {   
-                    const nuevaLista = [nuevoNumero, ...prevNumeros];
-                    if (nuevaLista.length > 4) {
-                      nuevaLista.pop(); // Elimina el último número si la lista tiene más de 5
-                    }
-                    return nuevaLista
-                });
-                console.log(numerosTV);
-            })
-            .catch((error) => {
-                console.log(error);
-            })
-    }
+    //             console.log(nuevoNumero);
+    //             setNumerosTV(prevNumeros => {   
+    //                 const nuevaLista = [nuevoNumero, ...prevNumeros];
+    //                 if (nuevaLista.length > 4) {
+    //                   nuevaLista.pop(); // Elimina el último número si la lista tiene más de 5
+    //                 }
+    //                 return nuevaLista
+    //             });
+    //             console.log(numerosTV);
+    //         })
+    //         .catch((error) => {
+    //             console.log(error);
+    //         })
+    // }
 
     return (
         <>
@@ -170,6 +169,7 @@ export default function Llamador() {
                         position={position}
                         isChangingPosition={isChangingPosition}
                         numero={numero}
+                        error={error}
                     />
                     {/* -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */}
                     <LlamadorPanel

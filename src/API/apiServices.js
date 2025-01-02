@@ -22,9 +22,43 @@ export const fetchAllEstados = () => axios.get(
     `${API_URL}/allEstados`
 );
 
-export const assignNumberToUser = (id, paused, canceled) => axios.post(
-    'http://localhost:8000/api/asignNumberToUser', { id: id, paused: paused, canceled: canceled }
-);
+// export const assignNumberToUser = (id, paused, canceled) => axios.post(
+//     'http://localhost:8000/api/asignNumberToUser', { id: id, paused: paused, canceled: canceled }
+// );
+
+export const handleLlamarNumero = (id, paused, canceled) => {
+    console.log("handleLlamarNumero");
+    axios
+        .post("http://localhost:8000/api/asignNumberToUser", {
+            id: id,
+            paused: paused,
+            canceled: canceled,
+        })
+        .then(({data}) => {
+            //logica nueva
+            const nuevoNumero = {
+                'nro': data.nro,
+                'estado': data.estado,
+                'fila': data.fila,
+                'prefix': data.prefix,
+                'lugar': data.lugar
+            };
+            setNumero(nuevoNumero);
+
+            console.log(nuevoNumero);
+            setNumerosTV(prevNumeros => {   
+                const nuevaLista = [nuevoNumero, ...prevNumeros];
+                if (nuevaLista.length > 4) {
+                  nuevaLista.pop(); // Elimina el último número si la lista tiene más de 5
+                }
+                return nuevaLista
+            });
+            console.log(numerosTV);
+        })
+        .catch((error) => {
+            console.log(error);
+        })
+}
 
 // Cambia el estado del numero seleccionado al siguiente estado
 export const handleSetNextState = (number, setNumero) => {
