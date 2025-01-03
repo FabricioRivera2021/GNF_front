@@ -2,8 +2,12 @@ import React from 'react'
 import renderLoadingLines from '../helpers/renderLoadingLines'
 import { calculateTimeDifference } from '../Utils/utils'
 import { CheckCircleIcon, XCircleIcon, PauseCircleIcon, SpeakerWaveIcon, SpeakerXMarkIcon } from "@heroicons/react/24/outline";
+import { userStateContext } from '../context/ContextProvider';
 
-export default function LlamadorTabla({ numeros, comparePosition, position, isChangingPosition, numero, error, handleLlamarNumero }){
+export default function LlamadorTabla({ numeros, comparePosition, position, isChangingPosition, error, handleLlamarNumero }){
+
+  const { numero } = userStateContext();
+
   return (
     <div className="min-h-20 pb-3 overflow-auto">
         <table  className="min-w-full text-left text-sm font-roboto font-medium text-slate-600 text-surface">

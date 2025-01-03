@@ -1,30 +1,107 @@
+/**
+ * Llamadas a la API de laravel
+ */
+
 import axios from "axios";
 import axiosClient from "../axiosCustom";
 const API_URL = import.meta.env.VITE_API_BASE_URL;
 
-export const fetchAllNumbers = (filter) => axios.get(
-    `${API_URL}/allNumbers/${filter}`
-);
+export const fetchAllNumbers = (filter, setNumeros, setError) => {
+    axios
+        .get(`${API_URL}/allNumbers/${filter}`)
+        .then(({ data }) => {
+            setNumeros(data);
+        })
+        .catch((error) => {
+            console.error('There was an error fetching the data!', error);
+            setError(error);
+        });
+}
 
-export const fetchPausedNumbers = () => axios.get(
-    'http://localhost:8000/api/filterPausedNumbers'
-);
+export const fetchPausedNumbers = (setNumeros) => {
+    axios
+        .get('http://localhost:8000/api/filterPausedNumbers')
+        .then(({ data }) => {
+            setNumeros(data);
+        })
+        .catch((error) => {
+            console.log(error);
+        });
+}
 
-export const fetchCancelNumbers = () => axios.get(
-    'http://localhost:8000/api/filterCancelNumbers'
-);
+export const fetchCancelNumbers = (setNumeros) => {
+    axios
+        .get('http://localhost:8000/api/filterCancelNumbers')
+        .then(({ data }) => {
+            setNumeros(data);
+        })
+        .catch((error) => {
+            console.log(error);
+        });
+}
 
-export const getCurrentSelectedNumber = () => axios.get(
-    'http://localhost:8000/api/getCurrentSelectedNumber'
-);
+export const getCurrentSelectedNumber = (setNumero) => {
+    axios
+        .get('http://localhost:8000/api/getCurrentSelectedNumber')
+        .then(({data}) => {
+            setNumero({
+                'nro': data.nro,
+                'estado': data.estado,
+                'fila': data.fila,
+                'prefix': data.prefix,
+                'lugar': data.lugar,
+            })
+        })
+        .catch((error) => {
+            console.log(error);
+        })
+}
 
-export const fetchAllEstados = () => axios.get(
-    `${API_URL}/allEstados`
-);
+export const fetchAllEstados = (setFiltros) => {
+    axios
+        .get(`${API_URL}/allEstados`)
+        .then(response => {
+            setFiltros(response.data); // Access the data from the response
+        })
+        .catch(error => {
+            console.error('Error fetching estados:', error);
+        });
+}
 
-export const assignNumberToUser = (id, paused, canceled) => axios.post(
-    'http://localhost:8000/api/asignNumberToUser', { id: id, paused: paused, canceled: canceled }
-);
+//! convertir esto a websocket
+export const handleLlamarNumero = (id, paused, canceled) => {
+    console.log("handleLlamarNumero");
+    axios
+        .post("http://localhost:8000/api/asignNumberToUser", {
+            id: id,
+            paused: paused,
+            canceled: canceled,
+        })
+        .then(({data}) => {
+            //logica nueva
+            const nuevoNumero = {
+                'nro': data.nro,
+                'estado': data.estado,
+                'fila': data.fila,
+                'prefix': data.prefix,
+                'lugar': data.lugar
+            };
+            setNumero(nuevoNumero);
+
+            console.log(nuevoNumero);
+            setNumerosTV(prevNumeros => {   
+                const nuevaLista = [nuevoNumero, ...prevNumeros];
+                if (nuevaLista.length > 4) {
+                  nuevaLista.pop(); // Elimina el último número si la lista tiene más de 5
+                }
+                return nuevaLista
+            });
+            console.log(numerosTV);
+        })
+        .catch((error) => {
+            console.log(error);
+        })
+}
 
 // Cambia el estado del numero seleccionado al siguiente estado
 export const handleSetNextState = (number, setNumero) => {
@@ -49,6 +126,7 @@ export const handleSetNextState = (number, setNumero) => {
 }
 
 // Setea el numero al estado de pausado
+// a websocket
 export const handlePauseNumber = (number, setNumero) => {
     console.log("handlePauseNumber");
     axios
@@ -72,6 +150,7 @@ export const handlePauseNumber = (number, setNumero) => {
 }
 
 // Setea el numero al estado de cancelado
+// a websocket
 export const handleCancelNumber = (number, setNumero) => {
     console.log("handleCancelNumber");
     axios

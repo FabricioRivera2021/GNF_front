@@ -7,18 +7,26 @@ const StateContext = createContext({
   numero: {},
   isChangingPosition: false,
   numerosTV: [],
+  showModal: false,
+  allDerivates: [],
+  filtros: [],
   setCurrentUser: () => {},
   setUserToken: () => {},
   setPosition: () => {},
   setNumero: () => {},
-  setNumerosTV: () => {}
+  setNumerosTV: () => {},
+  setShowModal: () => {},
+  setAllDerivates: () => {},
+  setFiltros: () => {}
 });
 
 export const ContextProvider = ({children}) => {
   const [currentUser, setCurrentUser] = useState({});
   const [userToken, _setUserToken] = useState(localStorage.getItem('TOKEN') || '');
   const [position, setPosition] = useState('');
-  const [ isChangingPosition, setIsChangingPosition ] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [isChangingPosition, setIsChangingPosition] = useState(false);
+  const [allDerivates, setAllDerivates] = useState([]);//posibles posiciones para derivar
   const [numero, setNumero] = useState({
     'nro': null,
     'estado': "none",
@@ -27,6 +35,7 @@ export const ContextProvider = ({children}) => {
     'lugar': "none",
   });
   const [numerosTV, setNumerosTV] = useState([]);//array para guardar los numeros que ya fueron llamados y mostarlos en la TV
+  const [filtros, setFiltros] = useState([]);//filtros para la tabla de llamador
 
   const setUserToken = (token) => {
     if (token) {
@@ -51,7 +60,13 @@ export const ContextProvider = ({children}) => {
         numero,
         setNumero,
         numerosTV,
-        setNumerosTV
+        setNumerosTV,
+        showModal,
+        setShowModal,
+        allDerivates,
+        setAllDerivates,
+        filtros,
+        setFiltros
       }}
     >
       {children}
