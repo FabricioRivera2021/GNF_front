@@ -1,6 +1,16 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { handleClickFilter } from '../Utils/utils'
+import { userStateContext } from '../context/ContextProvider'
+import { fetchAllEstados } from '../API/apiServices';
 
-export default function FilterSideBar({ filtros, selectedFilter, handleClickFilter, filterPausedNumber, filterCancelNumber }){
+export default function FilterSideBar({ selectedFilter, handleClickFilter, filterPausedNumber, filterCancelNumber }){
+
+  const { filtros, setFiltros } = userStateContext();
+
+  useEffect(() => {
+    fetchAllEstados(setFiltros)
+  }, []);
+
   return (
     <>
         <div className="w-[12rem] pl-2 h-[calc(100vh-4rem)] flex flex-col items-start bg-slate-800 z-50 shadow-slate-900 ">

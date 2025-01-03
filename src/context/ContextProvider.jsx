@@ -9,6 +9,7 @@ const StateContext = createContext({
   numerosTV: [],
   showModal: false,
   allDerivates: [],
+  filtros: [],
   setCurrentUser: () => {},
   setUserToken: () => {},
   setPosition: () => {},
@@ -16,6 +17,7 @@ const StateContext = createContext({
   setNumerosTV: () => {},
   setShowModal: () => {},
   setAllDerivates: () => {},
+  setFiltros: () => {}
 });
 
 export const ContextProvider = ({children}) => {
@@ -33,6 +35,7 @@ export const ContextProvider = ({children}) => {
     'lugar': "none",
   });
   const [numerosTV, setNumerosTV] = useState([]);//array para guardar los numeros que ya fueron llamados y mostarlos en la TV
+  const [filtros, setFiltros] = useState([]);//filtros para la tabla de llamador
 
   const setUserToken = (token) => {
     if (token) {
@@ -61,7 +64,9 @@ export const ContextProvider = ({children}) => {
         showModal,
         setShowModal,
         allDerivates,
-        setAllDerivates
+        setAllDerivates,
+        filtros,
+        setFiltros
       }}
     >
       {children}

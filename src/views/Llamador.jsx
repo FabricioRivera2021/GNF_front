@@ -20,11 +20,11 @@ import axios from 'axios';
 import axiosClient from '../axiosCustom';
 import { FilterSideBar, LlamadorTabla } from '../components/index';
 import LlamadorPanel from "../components/LlamadorPanel";
+import { handleClickFilter } from "../Utils/utils";
 
 export default function Llamador() {
 
     const [numeros, setNumeros] = useState([]);//numeros
-    const [filtros, setFiltros] = useState([]);//filtros
     const [filterPaused, setFilterPaused] = useState(false);//cantidad numeros pausados
     const [filterCancel, setFilterCancel] = useState(false);//cantidad numeros cancelados
     const [selectedFilter, setSelectedFilter] = useState(1); //filtro actual
@@ -45,58 +45,17 @@ export default function Llamador() {
     //Filtrar los numeros y mostrarlos en pantalla
     useEffect(() => {
         if (filterPaused) {
-            fetchPausedNumbers()
-                .then(({ data }) => {
-                    setNumeros(data);
-                })
-                .catch((error) => {
-                    console.log(error);
-                });
+            fetchPausedNumbers(setNumeros)
         } else if (filterCancel) {
-            fetchCancelNumbers()
-                .then(({ data }) => {
-                    setNumeros(data);
-                })
-                .catch((error) => {
-                    console.log(error);
-                });
+            fetchCancelNumbers(setNumeros)
         } else {
-            fetchAllNumbers(selectedFilter)
-                .then(({ data }) => {
-                    setNumeros(data);
-                })
-                .catch((error) => {
-                    console.error('There was an error fetching the data!', error);
-                    setError(error);
-                });
+            fetchAllNumbers(selectedFilter, setNumeros, setError)
         }
     }, [selectedFilter, numero, isDerivating, filterPaused, filterCancel]);
 
+    //get current selected number by the User
     useEffect(() => {
-        //get current selected number by the User
-        getCurrentSelectedNumber()
-        .then(({data}) => {
-            setNumero({
-                'nro': data.nro,
-                'estado': data.estado,
-                'fila': data.fila,
-                'prefix': data.prefix,
-                'lugar': data.lugar,
-            })
-        })
-        .catch((error) => {
-            console.log(error);
-        })
-    }, []);
-
-    useEffect(() => {
-        fetchAllEstados()
-            .then(response => {
-                setFiltros(response.data); // Access the data from the response
-            })
-            .catch(error => {
-                console.error('Error fetching estados:', error);
-            });
+        getCurrentSelectedNumber(setNumero)
     }, []);
 
     // comparar el estado del numero con la posicion del User
@@ -106,53 +65,10 @@ export default function Llamador() {
         setComparePosition(compare_position[0])
     }, [position]);
 
-    const handleClickFilter = (id) => {
-        console.log("handleClickFilter");
-        setFilterPaused(false);
-        setFilterCancel(false);
-        setSelectedFilter(id);
-    }
-
-    //llama al numero, ademas de retomar pausado o cancelado
-    // const handleLlamarNumero = (id, paused, canceled) => {
-    //     console.log("handleLlamarNumero");
-    //     axios
-    //         .post("http://localhost:8000/api/asignNumberToUser", {
-    //             id: id,
-    //             paused: paused,
-    //             canceled: canceled,
-    //         })
-    //         .then(({data}) => {
-    //             //logica nueva
-    //             const nuevoNumero = {
-    //                 'nro': data.nro,
-    //                 'estado': data.estado,
-    //                 'fila': data.fila,
-    //                 'prefix': data.prefix,
-    //                 'lugar': data.lugar
-    //             };
-    //             setNumero(nuevoNumero);
-
-    //             console.log(nuevoNumero);
-    //             setNumerosTV(prevNumeros => {   
-    //                 const nuevaLista = [nuevoNumero, ...prevNumeros];
-    //                 if (nuevaLista.length > 4) {
-    //                   nuevaLista.pop(); // Elimina el último número si la lista tiene más de 5
-    //                 }
-    //                 return nuevaLista
-    //             });
-    //             console.log(numerosTV);
-    //         })
-    //         .catch((error) => {
-    //             console.log(error);
-    //         })
-    // }
-
     return (
         <>
             <div className="flex justify-between items-start">{/* Main */}
                 <FilterSideBar
-                    filtros={filtros}
                     selectedFilter={selectedFilter}
                     handleClickFilter={(id) => handleClickFilter(id, setFilterCancel, setFilterPaused, setSelectedFilter)}
                     filterPausedNumber={() => setFilterPaused(true)}
@@ -163,9 +79,7 @@ export default function Llamador() {
                     <LlamadorTabla
                         numeros={numeros}
                         comparePosition={comparePosition}
-                        handleLlamarNumero={
-                            (id, paused, canceled) => handleLlamarNumero(id, paused, canceled, setNumero, setNumerosTV)
-                        }
+                        handleLlamarNumero={(id, paused, canceled) => handleLlamarNumero(id, paused, canceled, setNumero, setNumerosTV)}
                         position={position}
                         isChangingPosition={isChangingPosition}
                         numero={numero}
@@ -174,20 +88,14 @@ export default function Llamador() {
                     {/* -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */}
                     <LlamadorPanel
                         numero={numero}
-                        handleSetNextState={
-                            (number) => handleSetNextState(number, setNumero)
-                        }
-                        handleDerivateTo={
-                            (number) => handleDerivateTo(number, setShowModal, setAllDerivates)
-                        }
-                        handleDerivateToPosition={
-                            (number, position) => handleDerivateToPosition(number, position, setIsDerivating, setNumero, setShowModal)
-                        }
+                        handleSetNextState={(number) => handleSetNextState(number, setNumero)}
+                        handleDerivateTo={(number) => handleDerivateTo(number, setShowModal, setAllDerivates)}
+                        handleDerivateToPosition={(number, position) => handleDerivateToPosition(number, position, setIsDerivating, setNumero, setShowModal)}
                         handlePauseNumber={(number) => handlePauseNumber(number, setNumero)}
                         handleCancelNumber={(number) => handleCancelNumber(number, setNumero)}
                     />
                 </div>
-                {/* -----------------------------------------------------------*-------------------------------------------------------------------------------------------------------------------- */}
+                {/* -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */}
             </div>
         </>
     )
