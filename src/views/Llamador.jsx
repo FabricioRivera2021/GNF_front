@@ -21,6 +21,7 @@ import axiosClient from '../axiosCustom';
 import { FilterSideBar, LlamadorTabla } from '../components/index';
 import LlamadorPanel from "../components/LlamadorPanel";
 import { handleClickFilter } from "../Utils/utils";
+import Echo from 'laravel-echo';
 
 export default function Llamador() {
 
@@ -43,15 +44,15 @@ export default function Llamador() {
     }, []);
 
     //Filtrar los numeros y mostrarlos en pantalla
-    useEffect(() => {
-        if (filterPaused) {
-            fetchPausedNumbers(setNumeros)
-        } else if (filterCancel) {
-            fetchCancelNumbers(setNumeros)
-        } else {
-            fetchAllNumbers(selectedFilter, setNumeros, setError)
-        }
-    }, [selectedFilter, numero, isDerivating, filterPaused, filterCancel]);
+    // useEffect(() => {
+    //     if (filterPaused) {
+    //         fetchPausedNumbers(setNumeros)
+    //     } else if (filterCancel) {
+    //         fetchCancelNumbers(setNumeros)
+    //     } else {
+    //         fetchAllNumbers(selectedFilter, setNumeros, setError)
+    //     }
+    // }, [selectedFilter, numero, isDerivating, filterPaused, filterCancel]);
 
     //get current selected number by the User
     useEffect(() => {
@@ -64,6 +65,28 @@ export default function Llamador() {
         const compare_position = position.split(" ");
         setComparePosition(compare_position[0])
     }, [position]);
+
+    // WebSocket setup for real-time number updates
+    useEffect(() => {
+        const channel = window.Echo.channel('numbers');  // Listen to the "numbers" channel
+
+        // Listen for the "NumbersUpdated" event and update the state when it fires
+        channel.listen('NumbersUpdated', (event) => {
+            console.log(event.numeros);  // Handle the real-time updated numbers
+            setNumeros(event.numeros);  // Assuming the event carries the updated numbers
+        });
+
+        // Handle any errors with WebSocket connection
+        channel.error((error) => {
+            console.error('Error in WebSocket connection:', error);
+            setError(error);
+        });
+
+        // Clean up the WebSocket connection when the component is unmounted
+        return () => {
+            channel.stopListening('NumbersUpdated');
+        };
+    }, []);  // This effect only runs once, when the component mounts
 
     return (
         <>
