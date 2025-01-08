@@ -22,6 +22,7 @@ import { FilterSideBar, LlamadorTabla } from '../components/index';
 import LlamadorPanel from "../components/LlamadorPanel";
 import { handleClickFilter } from "../Utils/utils";
 import Echo from 'laravel-echo';
+import Pusher from "pusher-js";
 
 export default function Llamador() {
 
@@ -66,12 +67,28 @@ export default function Llamador() {
         setComparePosition(compare_position[0])
     }, [position]);
 
+
     // WebSocket setup for real-time number updates
     useEffect(() => {
-        const channel = window.Echo.channel('numbers');  // Listen to the "numbers" channel
+        
+        window.Pusher = Pusher;
+
+        window.Echo = new Echo({
+            broadcaster: 'reverb',
+            key: import.meta.env.VITE_REVERB_APP_KEY,
+            wsHost: import.meta.env.VITE_REVERB_HOST,
+            wsPort: import.meta.env.VITE_REVERB_PORT,
+            wsPath: '',
+            forceTLS: false,
+            wsProtocol: 'ws',  // Use 'ws' for non-secure WebSocket connection
+            enabledTransports: ['ws'],
+            disableStats: true,
+        });
+
+        const channel = window.Echo.channel('numeros');  // Listen to the "numbers" channel
 
         // Listen for the "NumbersUpdated" event and update the state when it fires
-        channel.listen('NumbersUpdated', (event) => {
+        channel.listen('updateNumbers', (event) => {
             console.log(event.numeros);  // Handle the real-time updated numbers
             setNumeros(event.numeros);  // Assuming the event carries the updated numbers
         });
@@ -84,7 +101,7 @@ export default function Llamador() {
 
         // Clean up the WebSocket connection when the component is unmounted
         return () => {
-            channel.stopListening('NumbersUpdated');
+            channel.stopListening('updateNumbers');
         };
     }, []);  // This effect only runs once, when the component mounts
 
