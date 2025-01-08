@@ -70,7 +70,7 @@ export default function Llamador() {
 
     // WebSocket setup for real-time number updates
     useEffect(() => {
-        
+        // Set up Echo with Reverb (or Pusher-like) configuration
         window.Pusher = Pusher;
 
         window.Echo = new Echo({
@@ -78,32 +78,41 @@ export default function Llamador() {
             key: import.meta.env.VITE_REVERB_APP_KEY,
             wsHost: import.meta.env.VITE_REVERB_HOST,
             wsPort: import.meta.env.VITE_REVERB_PORT,
-            wsPath: '',
             forceTLS: false,
-            wsProtocol: 'ws',  // Use 'ws' for non-secure WebSocket connection
+            wsProtocol: 'ws', // Non-secure WebSocket
             enabledTransports: ['ws'],
-            disableStats: true,
+            disableStats: true
+            //falta la url de autenticacion
         });
 
-        const channel = window.Echo.channel('numeros');  // Listen to the "numbers" channel
+        // Subscribe to the private "numeros" channel
+        const channel = window.Echo.private('numeros');
 
-        // Listen for the "NumbersUpdated" event and update the state when it fires
-        channel.listen('updateNumbers', (event) => {
-            console.log(event.numeros);  // Handle the real-time updated numbers
-            setNumeros(event.numeros);  // Assuming the event carries the updated numbers
+        // Listen for the "updateNumbers" event
+        channel.listen('App\\Events\\updateNumbers', (event) => {
+            console.log('Received updated numbers:', event.numeros);
+            setNumeros(event.numeros); // Update state with real-time data
         });
 
-        // Handle any errors with WebSocket connection
-        channel.error((error) => {
-            console.error('Error in WebSocket connection:', error);
+        // Handle any errors in WebSocket connection
+        window.Echo.connector.pusher.connection.bind('error', (error) => {
+            console.error('WebSocket connection error:', error);
             setError(error);
         });
 
-        // Clean up the WebSocket connection when the component is unmounted
+        // Clean up the connection when the component unmounts
         return () => {
-            channel.stopListening('updateNumbers');
+            channel.stopListening('App\\Events\\updateNumbers');
+            window.Echo.leaveChannel('numeros');
         };
-    }, []);  // This effect only runs once, when the component mounts
+    }, []);
+
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+        return null;
+    }
 
     return (
         <>
