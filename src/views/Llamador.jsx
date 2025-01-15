@@ -21,8 +21,21 @@ import axiosClient from '../axiosCustom';
 import { FilterSideBar, LlamadorTabla } from '../components/index';
 import LlamadorPanel from "../components/LlamadorPanel";
 import { handleClickFilter } from "../Utils/utils";
+ 
 import Echo from 'laravel-echo';
-import Pusher from "pusher-js";
+
+import Pusher from 'pusher-js';
+window.Pusher = Pusher;
+
+window.Echo = new Echo({
+    broadcaster: 'reverb',
+    key: import.meta.env.VITE_REVERB_APP_KEY,
+    wsHost: import.meta.env.VITE_REVERB_HOST,
+    wsPort: import.meta.env.VITE_REVERB_PORT ?? 8080,
+    wssPort: import.meta.env.VITE_REVERB_PORT ?? 443,
+    forceTLS: (import.meta.env.VITE_REVERB_SCHEME ?? 'https') === 'https',
+    enabledTransports: ['ws', 'wss'],
+});
 
 export default function Llamador() {
 
@@ -66,46 +79,17 @@ export default function Llamador() {
         const compare_position = position.split(" ");
         setComparePosition(compare_position[0])
     }, [position]);
+     
+     useEffect(() => {
+         const channel = window.Echo.channel('chat');
+     
+         channel.listen('Example', (event) => {
+             console.log('Evento recibido:', event);
+         });
+     
+         return () => channel.stopListening('chat');
+     }, []);
 
-
-    // WebSocket setup for real-time number updates
-    useEffect(() => {
-        // Set up Echo with Reverb (or Pusher-like) configuration
-        window.Pusher = Pusher;
-
-        window.Echo = new Echo({
-            broadcaster: 'reverb',
-            key: import.meta.env.VITE_REVERB_APP_KEY,
-            wsHost: import.meta.env.VITE_REVERB_HOST,
-            wsPort: import.meta.env.VITE_REVERB_PORT,
-            forceTLS: false,
-            wsProtocol: 'ws', // Non-secure WebSocket
-            enabledTransports: ['ws'],
-            disableStats: true
-            //falta la url de autenticacion
-        });
-
-        // Subscribe to the private "numeros" channel
-        const channel = window.Echo.private('numeros');
-
-        // Listen for the "updateNumbers" event
-        channel.listen('App\\Events\\updateNumbers', (event) => {
-            console.log('Received updated numbers:', event.numeros);
-            setNumeros(event.numeros); // Update state with real-time data
-        });
-
-        // Handle any errors in WebSocket connection
-        window.Echo.connector.pusher.connection.bind('error', (error) => {
-            console.error('WebSocket connection error:', error);
-            setError(error);
-        });
-
-        // Clean up the connection when the component unmounts
-        return () => {
-            channel.stopListening('App\\Events\\updateNumbers');
-            window.Echo.leaveChannel('numeros');
-        };
-    }, []);
 
     function getCookie(name) {
         const value = `; ${document.cookie}`;
