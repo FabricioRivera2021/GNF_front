@@ -30,7 +30,7 @@ export default function LlamadorTabla({ numeros, comparePosition, position, isCh
                     </tr>
                     ) : error ? (
                     <tr>
-                    <td> Error: {error.message} </td>
+                        <td> Error: {error.message} </td>
                     </tr>
                     ) : (numeros == '') ? (
                         <tr className="odd:bg-slate-50 even:bg-gray-300">

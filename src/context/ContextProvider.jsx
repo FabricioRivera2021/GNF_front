@@ -10,6 +10,8 @@ const StateContext = createContext({
   showModal: false,
   allDerivates: [],
   filtros: [],
+  filterPaused: false,
+  filterCancel: false,
   setCurrentUser: () => {},
   setUserToken: () => {},
   setPosition: () => {},
@@ -17,11 +19,15 @@ const StateContext = createContext({
   setNumerosTV: () => {},
   setShowModal: () => {},
   setAllDerivates: () => {},
-  setFiltros: () => {}
+  setFiltros: () => {},
+  filterPaused: () => {}, 
+  filterCancel: () => {},
 });
 
 export const ContextProvider = ({children}) => {
   const [currentUser, setCurrentUser] = useState({});
+  const [filterPaused, setFilterPaused] = useState(false);//cantidad numeros pausados
+  const [filterCancel, setFilterCancel] = useState(false);//cantidad numeros cancelados
   const [userToken, _setUserToken] = useState(localStorage.getItem('TOKEN') || '');
   const [position, setPosition] = useState('');
   const [showModal, setShowModal] = useState(false);
@@ -36,6 +42,13 @@ export const ContextProvider = ({children}) => {
   });
   const [numerosTV, setNumerosTV] = useState([]);//array para guardar los numeros que ya fueron llamados y mostarlos en la TV
   const [filtros, setFiltros] = useState([]);//filtros para la tabla de llamador
+
+  const addNumeroTV = (nuevoNumero) => {
+    setNumerosTV((prev) => {
+      const updatedArray = [...prev, nuevoNumero];
+      return updatedArray.length > 10 ? updatedArray.slice(-10) : updatedArray;
+    });
+  };
 
   const setUserToken = (token) => {
     if (token) {
@@ -66,7 +79,12 @@ export const ContextProvider = ({children}) => {
         allDerivates,
         setAllDerivates,
         filtros,
-        setFiltros
+        setFiltros,
+        filterCancel,
+        setFilterCancel,
+        filterPaused,
+        setFilterPaused,
+        addNumeroTV
       }}
     >
       {children}

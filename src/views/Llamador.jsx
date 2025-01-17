@@ -20,13 +20,11 @@ import axios from 'axios';
 import axiosClient from '../axiosCustom';
 import { FilterSideBar, LlamadorTabla } from '../components/index';
 import LlamadorPanel from "../components/LlamadorPanel";
-import { handleClickFilter } from "../Utils/utils";
  
+// websocket-------------------------------------------------------------------
 import Echo from 'laravel-echo';
-
 import Pusher from 'pusher-js';
 window.Pusher = Pusher;
-
 window.Echo = new Echo({
     broadcaster: 'reverb',
     key: import.meta.env.VITE_REVERB_APP_KEY,
@@ -36,18 +34,17 @@ window.Echo = new Echo({
     forceTLS: (import.meta.env.VITE_REVERB_SCHEME ?? 'https') === 'https',
     enabledTransports: ['ws', 'wss'],
 });
+//----------------------------------------------------------------------------
 
 export default function Llamador() {
 
     const [numeros, setNumeros] = useState([]);//numeros
-    const [filterPaused, setFilterPaused] = useState(false);//cantidad numeros pausados
-    const [filterCancel, setFilterCancel] = useState(false);//cantidad numeros cancelados
     const [selectedFilter, setSelectedFilter] = useState(1); //filtro actual
     const [isDerivating, setIsDerivating] = useState(false);
     const [error, setError] = useState(null);
     const [comparePosition, setComparePosition] = useState('');
     const [currentTime, setCurrentTime] = useState(new Date());
-    const {currentUser, position, numero, setNumero, isChangingPosition, setNumerosTV, setAllDerivates, setShowModal} = userStateContext();
+    const {currentUser, position, numero, setNumero, isChangingPosition, setNumerosTV, setAllDerivates, setShowModal, setFilterCancel, setFilterPaused, filterPaused, filterCancel} = userStateContext();
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -57,16 +54,16 @@ export default function Llamador() {
         return () => clearInterval(interval);
     }, []);
 
-    //Filtrar los numeros y mostrarlos en pantalla
-    // useEffect(() => {
-    //     if (filterPaused) {
-    //         fetchPausedNumbers(setNumeros)
-    //     } else if (filterCancel) {
-    //         fetchCancelNumbers(setNumeros)
-    //     } else {
-    //         fetchAllNumbers(selectedFilter, setNumeros, setError)
-    //     }
-    // }, [selectedFilter, numero, isDerivating, filterPaused, filterCancel]);
+    // Filtrar los numeros y mostrarlos en pantalla
+    useEffect(() => {
+        if (filterPaused) {
+            fetchPausedNumbers(setNumeros)
+        } else if (filterCancel) {
+            fetchCancelNumbers(setNumeros)
+        } else {
+            fetchAllNumbers(selectedFilter, setNumeros, setError)
+        }
+    }, [selectedFilter, numero, isDerivating, filterPaused, filterCancel]);
 
     //get current selected number by the User
     useEffect(() => {
@@ -90,6 +87,12 @@ export default function Llamador() {
          return () => channel.stopListening('chat');
      }, []);
 
+    const handleClickFilter = (id) => {
+        console.log("handleClickFilter");
+        setFilterPaused(false);
+        setFilterCancel(false);
+        setSelectedFilter(id);
+    }
 
     function getCookie(name) {
         const value = `; ${document.cookie}`;

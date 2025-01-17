@@ -13,10 +13,3 @@ export const calculateTimeDifference = (timestamp) => {
 
     return `${hours}:${minutes}:${seconds}`;
 };
-
-export const handleClickFilter = (id) => {
-    console.log("handleClickFilter");
-    setFilterPaused(false);
-    setFilterCancel(false);
-    setSelectedFilter(id);
-}

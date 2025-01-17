@@ -69,7 +69,7 @@ export const fetchAllEstados = (setFiltros) => {
 }
 
 //! convertir esto a websocket
-export const handleLlamarNumero = (id, paused, canceled) => {
+export const handleLlamarNumero = (id, paused, canceled, setNumero) => {
     console.log("handleLlamarNumero");
     axios
         .post("http://localhost:8000/api/asignNumberToUser", {
@@ -88,15 +88,7 @@ export const handleLlamarNumero = (id, paused, canceled) => {
             };
             setNumero(nuevoNumero);
 
-            console.log(nuevoNumero);
-            setNumerosTV(prevNumeros => {   
-                const nuevaLista = [nuevoNumero, ...prevNumeros];
-                if (nuevaLista.length > 4) {
-                  nuevaLista.pop(); // Elimina el último número si la lista tiene más de 5
-                }
-                return nuevaLista
-            });
-            console.log(numerosTV);
+            console.log("sending broadcast to llamador TV");
         })
         .catch((error) => {
             console.log(error);
