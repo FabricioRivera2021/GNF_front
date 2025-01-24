@@ -26,8 +26,8 @@ export const TV = () => {
   }, [numerosTV])
 
   return (
-    <div className='w-screen flex antialiased p-4'>
-      <div className='w-[73%] z-50 bg-slate-200'>
+    <div className='w-full flex antialiased p-4 gap-2 bg-slate-300'>
+      <div className='w-[73%] h-[100vh] z-50 p-5 bg-underConstruction'>
         <div className='w-full h-full py-1'>
           <p className='text-white w-fit py-3 px-4 text-6xl bg-blue-600 rounded-sm font-semibold'>12:45</p>
         </div>

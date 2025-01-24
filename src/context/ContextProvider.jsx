@@ -43,10 +43,11 @@ export const ContextProvider = ({children}) => {
   const [numerosTV, setNumerosTV] = useState([]);//array para guardar los numeros que ya fueron llamados y mostarlos en la TV
   const [filtros, setFiltros] = useState([]);//filtros para la tabla de llamador
 
+  //funcion para agregar un nuevo numero a la TV
   const addNumeroTV = (nuevoNumero) => {
     setNumerosTV((prev) => {
-      const updatedArray = [...prev, nuevoNumero];
-      return updatedArray.length > 10 ? updatedArray.slice(-10) : updatedArray;
+      const updatedArray = [nuevoNumero, ...prev];
+      return updatedArray.length > 5 ? updatedArray.slice(-5) : updatedArray;
     });
   };
 

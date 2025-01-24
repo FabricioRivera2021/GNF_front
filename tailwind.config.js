@@ -10,6 +10,9 @@ export default {
           roboto: ['Roboto']
         },
     },
+    backgroundImage: {
+      'underConstruction': "url('./src/images/underConstruction/underConstruction.jpg')",
+    },
   },
   plugins: [
     require('@tailwindcss/forms'),

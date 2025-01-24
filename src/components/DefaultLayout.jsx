@@ -18,7 +18,7 @@ const navigation = [
   { name: 'Dispensar medicacion', to: '/nuevoIngresoVentanilla'},
   { name: 'Consultas stock', to: '/consultasStock'},
   { name: 'Abastecimiento', to: '/abastecimiento'},
-  { name: 'Menu pedidos remotos', to: '/asd'},
+  { name: 'Menu pedidos remotos', to: '/pedidosRemotos'},
 ]
 
 const userNavigation = [

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { userStateContext } from '../context/ContextProvider'
 import { fetchAllEstados } from '../API/apiServices';
 
-export default function FilterSideBar({ selectedFilter, filterPausedNumber, filterCancelNumber }){
+export default function FilterSideBar({ selectedFilter, filterPausedNumber, filterCancelNumber, handleClickFilter }){
 
   const { filtros, setFiltros, setFilterPaused, setFilterCanceled } = userStateContext();
 
