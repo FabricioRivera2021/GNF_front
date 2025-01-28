@@ -5,7 +5,7 @@ export default function Modal({ show, handleClose, children }){
 
     return (
         <div className={showHideClassName}>
-            <div className="bg-white rounded-lg p-5 max-w-lg mx-auto shadow-lg">
+            <div className="bg-white rounded-lg p-5 shadow-lg">
                 {children}
                 <button 
                     onClick={handleClose} 
