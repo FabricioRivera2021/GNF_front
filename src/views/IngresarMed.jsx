@@ -3,6 +3,7 @@ import { FilterSideBar, Modal } from '../components/index';
 import LlamadorPanel from "../components/LlamadorPanel";
 import { userStateContext } from '../context/ContextProvider';
 import { ArrowUpTrayIcon, PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline'
+import IngresarMedSideBar from '../components/IngresarMedSideBar';
 
 export const IngresarMed = () => {
   const { setFilterCancel, setFilterPaused, setAllDerivates, setShowModal, showModal, numero, setNumero } = userStateContext();
@@ -50,22 +51,16 @@ export const IngresarMed = () => {
   return (
     <div className="flex">
       {/* Reutilizar sideFilter para que se puedan filtrar temas del ingreso de recetas */}
-      <FilterSideBar
-        selectedFilter={selectedFilter}
-        handleClickFilter={(id) => handleClickFilter(id, setFilterCancel, setFilterPaused, setSelectedFilter)}
-        filterPausedNumber={() => setFilterPaused(true)}
-        filterCancelNumber={() => setFilterCancel(true)}
-      />
 
       {/* Main div */}
       <div className='flex flex-col w-full h-[calc(100vh-4rem)] bg-blue-100 justify-between'>
         {/* Sub Div with medication */}
-        <div className='flex justify-between w-[calc(95%)] h-[calc(100vh-4rem)]'>
-          <div className='w-2/3 p-2'>
+        <div className='flex justify-between w-[calc(100%)] h-[calc(100vh-4rem)]'>
+          <div className='w-full p-2'>
             <div className="max-full mx-auto bg-white p-8 rounded-lg shadow-md whitespace-nowrap">
               <h2 className="text-2xl font-bold mb-6">Ingresar Medicación</h2>
               <form className='whitespace-nowrap'>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-3 gap-2">
                   <div className="mb-4">
                     <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="medicationName">
                       Medicación
@@ -134,7 +129,7 @@ export const IngresarMed = () => {
                   </Modal>
                   <div className="mb-4">
                     <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="medicationName">
-                      Nombre del medico tratante
+                      Médico tratante
                     </label>
                     <input
                       className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -227,7 +222,7 @@ export const IngresarMed = () => {
           <div className="w-full p-2 flex flex-col gap-2">
             <div className="bg-white p-8 rounded-lg shadow-md">
               <h2 className="text-2xl font-bold mb-6">Detalle medicación</h2>
-              <table className="min-w-full text-left text-sm font-roboto font-medium text-slate-600 whitespace-nowrap">
+              <table className="text-left text-sm font-roboto font-medium text-slate-600 whitespace-nowrap">
                 <thead>
                   <tr className='bg-blue-400'>
                     <th className="px-4 py-2 text-white">Medico</th>
@@ -280,33 +275,15 @@ export const IngresarMed = () => {
                     <td className="px-4 py-2 whitespace-nowrap"><button><TrashIcon className='w-6 text-red-400 hover:text-red-600' /></button></td>
                   </tr>
                 </tbody>
+                <button className="mt-4 ml-1 flex justify-center items-center bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                    type="button">Ver detale de retiro y generar factura <TrashIcon className='w-6 text-red-400 hover:text-red-600' /></button>
               </table>
             </div>
+            {/* --------------------------------------------------------------------------- */}
             <div className="max-full bg-white p-8 rounded-lg shadow-md">
-              <h2 className="text-2xl font-bold mb-6">Detalle retiro</h2>
-              <table className="min-w-full text-left text-sm font-roboto font-medium text-slate-600">
-                <thead>
-                  <tr className='bg-blue-400'>
-                    <th className="px-4 py-2 text-white">Cantidad cajas/frascos</th>
-                    <th className="px-4 py-2 text-white">Total facturación</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr className='odd:bg-slate-50 even:bg-gray-200'>
-                    <td className="px-4 py-2 whitespace-nowrap">2</td>
-                    <td className="px-4 py-2 whitespace-nowrap">$ 180.00</td>
-                  </tr>
-                  <div className="flex items-center justify-between">
-                    <button
-                      className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                      type="button"
-                    >
-                      Generar factura
-                    </button>
-                  </div>
-                </tbody>
-              </table>
+                
             </div>
+            {/* --------------------------------------------------------------------------- */}
           </div>
         </div>
 
