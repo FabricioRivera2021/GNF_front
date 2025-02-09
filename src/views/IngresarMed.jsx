@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FilterSideBar, Modal } from '../components/index';
 import LlamadorPanel from "../components/LlamadorPanel";
 import { userStateContext } from '../context/ContextProvider';
-import { ArrowUpTrayIcon, PencilSquareIcon, PlusCircleIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { ArrowUpTrayIcon, CheckBadgeIcon, CheckIcon, ExclamationTriangleIcon, PencilSquareIcon, PlusCircleIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import IngresarMedSideBar from '../components/IngresarMedSideBar';
+import { getCurrentSelectedNumber } from '../API/apiServices';
 
 export const IngresarMed = () => {
     const { setFilterCancel, setFilterPaused, setAllDerivates, setShowModal, showModal, numero, setNumero, showMedicoModal, setShowMedicoModal, showMedicationModal, setShowMedicationModal } = userStateContext();
@@ -12,6 +13,12 @@ export const IngresarMed = () => {
     const [frequency, setFrequency] = useState(1);
     const [retiro, setRetiro] = useState(0);
     const [searchTerm, setSearchTerm] = useState('');
+    const [searchTermMedico, setSearchTermMedico] = useState('');
+
+    //get current selected number by the User
+    useEffect(() => {
+        getCurrentSelectedNumber(setNumero)
+    }, []);
 
     const medications = [
         { comercialName: 'Dolosedol', drugName: 'Paracetamol', type: 'Comp', unit: '20 mg', category: 'Calmantes', ranurable: 'si', stock: 100 },
@@ -139,11 +146,11 @@ export const IngresarMed = () => {
     }, {});
 
     const filteredMedicos = medicos.filter(medico =>
-        medico.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        medico.apellido.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        medico.numeroRegistro.includes(searchTerm) ||
-        medico.numeroCajaMedica.includes(searchTerm) ||
-        medico.especialidad.some(especialidad => especialidad.toLowerCase().includes(searchTerm.toLowerCase()))
+        medico.nombre.toLowerCase().includes(searchTermMedico.toLowerCase()) ||
+        medico.apellido.toLowerCase().includes(searchTermMedico.toLowerCase()) ||
+        medico.numeroRegistro.includes(searchTermMedico) ||
+        medico.numeroCajaMedica.includes(searchTermMedico) ||
+        medico.especialidad.some(especialidad => especialidad.toLowerCase().includes(searchTermMedico.toLowerCase()))
     );
 
     const handleClickFilter = (id) => {
@@ -159,20 +166,38 @@ export const IngresarMed = () => {
     return (
         <div className="flex">
             <IngresarMedSideBar />
-            <div className='flex flex-col w-full h-48'>
+            <div className='flex flex-col w-full h-[calc(100vh-4rem)]'>
                 {/* Ingresar medicacion formulario */}
-                <div className="flex flex-col items-start w-full bg-slate-100 p-3 space-y-6">
-                    <h2 className="text-2xl font-bold mb-4">Ingresar Medicación</h2>
+                <div className="flex flex-col items-start w-full bg-slate-100 p-3 space-y-3">
+                    <h2 className="text-2xl font-bold mb-2">Ingresar Medicación</h2>
+                    <div className='flex items-end justify-start gap-2'>
+                      <input
+                        className="shadow appearance-none border rounded-md ml-4 py-2 px-2 text-gray-100 font-semibold leading-tight 
+                        focus:outline-none focus:shadow-outline bg-blue-400 cursor-pointer hover:bg-blue-500"
+                        id="medicationName"
+                        type="button"
+                        value="Buscar médico"
+                        onClick={() => {
+                          setSearchTermMedico('');
+                          setShowMedicoModal(true);}
+                        }
+                        />
+                      <div className='flex items-center gap-2'>
+                        <p className='text-slate-400 font-bold'>No se ingreso médico</p>
+                        <CheckBadgeIcon className='w-6 text-green-500' /> 
+                        <ExclamationTriangleIcon className='w-6 text-orange-400' />
+                      </div>
+                    </div>
                     <input
                         type="text"
-                        placeholder="Buscar..."
-                        className="mb-4 p-2 ml-4 w-1/2 border rounded text-sm"
+                        placeholder="Buscar medicamento..."
+                        className="p-2 ml-4 w-1/2 border rounded text-sm"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
                     <div className="rounded-lg w-full h-[calc(100vh-35rem)] overflow-auto">
                         <form className="space-y-4">
-                            <div className='min-h-20 p-4'>
+                            <div className='min-h-20 py-1 px-4'>
                             <table className="shadow-sm min-w-full text-left text-sm font-roboto font-medium text-slate-600 text-surface p-2">
                             <thead className='sticky top-0 bg-blue-400 text-white'>
                                 <tr>
@@ -216,21 +241,56 @@ export const IngresarMed = () => {
                             </div>
                         </form>
                     </div>
+                    <Modal show={showMedicoModal} handleClose={handleCloseMedicoModal}>
+                            <h2 className="text-xl font-bold mb-4">Buscar médico</h2>
+                            <input
+                                type="text"
+                                placeholder="Buscar..."
+                                className="mb-4 p-2 border rounded w-full text-sm"
+                                value={searchTermMedico}
+                                onChange={(e) => setSearchTermMedico(e.target.value)}
+                            />
+                            <table className="min-w-full text-left text-sm font-roboto font-medium text-slate-600">
+                            <thead>
+                                <tr>
+                                <th className="px-2 py-1 border-b">Nombre</th>
+                                <th className="px-2 py-1 border-b">Apellido</th>
+                                <th className="px-2 py-1 border-b">Número de Registro</th>
+                                <th className="px-2 py-1 border-b">Número de Caja Médica</th>
+                                <th className="px-2 py-1 border-b">Especialidad</th>
+                                <th className="px-2 py-1 border-b"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {filteredMedicos.map((medico, index) => (
+                                <tr key={index} className={index % 2 === 0 ? 'bg-gray-100' : 'bg-white'}>
+                                    <td className="px-2 py-1 border-b">{medico.nombre}</td>
+                                    <td className="px-2 py-1 border-b">{medico.apellido}</td>
+                                    <td className="px-2 py-1 border-b">{medico.numeroRegistro}</td>
+                                    <td className="px-2 py-1 border-b">{medico.numeroCajaMedica}</td>
+                                    <td className="px-2 py-1 border-b">{medico.especialidad.join(', ')}</td>
+                                    <td className="px-2 py-1 border-b"><button className='bg-blue-400 px-2 py-0.5 rounded-sm shadow-sm text-white hover:bg-blue-600'>Agregar</button></td>
+                                </tr>
+                                ))}
+                            </tbody>
+                            </table>
+                      </Modal>
                 </div>
-                <div className="items-start mx-8 mt-4 space-y-6">
-                    <div className='flex rounded-md shadow-md bg-orange-500 py-1 px-4 gap-10 text-xl'>
+                <div className="flex items-center mx-7 mt-4 gap-4">
+                    <div className='flex w-fit items-end rounded-md shadow-md border-orange-500 border-x-2 border-y-2 py-0.5 px-2 gap-5 text-lg'>
                         <div className='flex font-bold'>
-                            <p className='text-slate-100 mb-1'>Quetiapina</p>
+                            <p className='text-slate-700 mb-1'>Clonazepam</p>
                         </div>
-                        <div className='flex gap-4 font-normal'>
-                            <p className='text-slate-100 mb-1'>Psicofarmaco</p>
-                            <p className='text-slate-100 mb-1'>50mg</p>
-                            <p className='text-slate-100 mb-1'>20 Comprimidos</p>
-                            <p className='text-slate-100 mb-1'>CONTROLADO</p>
+                        <div className='flex gap-4 items-center font-normal'>
+                            <p className='text-slate-600 mb-1'>Psicofarmaco</p>
+                            <p className='text-slate-600 mb-1'>50mg</p>
+                            <p className='text-slate-600 mb-1'>20 Comprimidos</p>
+                            <p className='text-slate-600 mb-1'>CONTROLADO</p>
+                            <ExclamationTriangleIcon className='w-6 text-orange-400' />
                         </div>
                     </div>
                 </div>
-                <div className="items-start w-full bg-slate-100 p-3 space-y-6">
+                <div className="items-start w-full p-3 space-y-6">
                     <div className="rounded-lg w-full overflow-auto">
                         <form className="space-y-4">
                             <div className='min-h-20 p-4 flex gap-4'>
@@ -318,14 +378,16 @@ export const IngresarMed = () => {
                         </form>
                     </div>
                 </div>
-                <LlamadorPanel
+                <div className='bottom-0 fixed w-full'>
+                  <LlamadorPanel
                     numero={numero}
                     handleSetNextState={(number) => handleSetNextState(number, setNumero)}
                     handleDerivateTo={(number) => handleDerivateTo(number, setShowModal, setAllDerivates)}
                     handleDerivateToPosition={(number, position) => handleDerivateToPosition(number, position, setIsDerivating, setNumero, setShowModal)}
                     handlePauseNumber={(number) => handlePauseNumber(number, setNumero)}
                     handleCancelNumber={(number) => handleCancelNumber(number, setNumero)}
-                />
+                    />
+                </div>
             </div>
         </div>
     );
