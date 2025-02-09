@@ -19,8 +19,7 @@ export default function Login() {
     const data = await axios.get('http://localhost:8000/sanctum/csrf-cookie', {
         withCredentials: true
       })
-      // const csrfToken = document.querySelector('meta[name="XSRF-TOKEN"]');
-      // console.log(csrfToken);
+      console.log(data);
 
     await axios.post("http://localhost:8000/api/login",
       {
