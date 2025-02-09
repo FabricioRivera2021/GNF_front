@@ -12,6 +12,8 @@ const StateContext = createContext({
   filtros: [],
   filterPaused: false,
   filterCancel: false,
+  showMedicationModal: false,
+  showMedicoModal: false,
   setCurrentUser: () => {},
   setUserToken: () => {},
   setPosition: () => {},
@@ -22,6 +24,8 @@ const StateContext = createContext({
   setFiltros: () => {},
   filterPaused: () => {}, 
   filterCancel: () => {},
+  setShowMedicationModal: () => {},
+  setShowMedicoModal: () => {},
 });
 
 export const ContextProvider = ({children}) => {
@@ -42,6 +46,8 @@ export const ContextProvider = ({children}) => {
   });
   const [numerosTV, setNumerosTV] = useState([]);//array para guardar los numeros que ya fueron llamados y mostarlos en la TV
   const [filtros, setFiltros] = useState([]);//filtros para la tabla de llamador
+  const [showMedicationModal, setShowMedicationModal] = useState(false);
+  const [showMedicoModal, setShowMedicoModal] = useState(false);
 
   //funcion para agregar un nuevo numero a la TV
   const addNumeroTV = (nuevoNumero) => {
@@ -85,7 +91,11 @@ export const ContextProvider = ({children}) => {
         setFilterCancel,
         filterPaused,
         setFilterPaused,
-        addNumeroTV
+        addNumeroTV,
+        showMedicationModal,
+        setShowMedicationModal,
+        showMedicoModal,
+        setShowMedicoModal
       }}
     >
       {children}

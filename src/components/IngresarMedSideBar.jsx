@@ -7,14 +7,17 @@ export default function IngresarMedSideBar({ selectedFilter, filterPausedNumber,
 
   return (
     <SideBar>
-        <button>
+        <button className='rounded-sm py-1 text-left pl-1 hover:bg-blue-400 hover:text-slate-100 capitalize font-roboto text-sm bg-blue-500 text-white px-10'>
             Ingresar medicacion
         </button>
-        <button>
-            Ingresar med. desde CC
+        <button className='rounded-sm py-1 text-left pl-1 hover:bg-blue-400 hover:text-slate-100 capitalize font-roboto text-sm bg-slate-100 text-slate-700 px-10'>
+            Ingr. med. desde CC
         </button>
-        <button>
+        <button className='rounded-sm py-1 text-left pl-1 hover:bg-blue-400 hover:text-slate-100 capitalize font-roboto text-sm bg-slate-100 text-slate-700 px-10'>
             Ver ultimos retiros
+        </button>
+        <button className='rounded-sm py-1 text-left pl-1 hover:bg-blue-400 hover:text-slate-100 capitalize font-roboto text-sm bg-slate-100 text-slate-700 px-10'>
+            Ver Medicacion que retira
         </button>
     </SideBar>
   );
