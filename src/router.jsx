@@ -1,10 +1,9 @@
 import { Navigate, createBrowserRouter } from "react-router-dom";
-import { Login, Logout, Llamador, Dashboard, PanelNumerico } from "./views/index.js";
+import { Login, Logout, Llamador, Dashboard, PanelNumerico, IngresarMed, MedCC } from "./views/index.js";
 import { DefaultLayout, GuestLayout } from "./components/index.js";
 import { AdminLayout } from "./components/AdminLayout.jsx";
 import { TV } from "./views/TV.jsx";
 import { Supervisor } from "./views/Supervisor.jsx";
-import { IngresarMed } from "./views/IngresarMed.jsx";
 import { ConsultaStock } from "./views/ConsultaStock.jsx";
 import { Abastecimiento } from "./views/Abastecimiento.jsx";
 import { PedidosRemotos } from "./views/PedidosRemotos.jsx";
@@ -39,6 +38,10 @@ const router = createBrowserRouter([
             {
                 path: '/nuevoIngresoVentanilla', //cambiar esto despues de probar a guest
                 element: <IngresarMed />
+            },
+            {
+                path: '/nuevoIngresoVentanillaCC', //cambiar esto despues de probar a guest
+                element: <MedCC />
             },
             {
                 path: '/consultasStock', //cambiar esto despues de probar a guest

@@ -6,7 +6,7 @@ import { ArrowUpTrayIcon, CheckBadgeIcon, CheckIcon, ExclamationTriangleIcon, Pe
 import IngresarMedSideBar from '../components/IngresarMedSideBar';
 import { getCurrentSelectedNumber } from '../API/apiServices';
 
-export const IngresarMed = () => {
+export default function ngresarMed () {
     const { setFilterCancel, setFilterPaused, setAllDerivates, setShowModal, showModal, numero, setNumero, showMedicoModal, setShowMedicoModal, showMedicationModal, setShowMedicationModal } = userStateContext();
     const [selectedFilter, setSelectedFilter] = useState(1);
     const [duration, setDuration] = useState(1);
@@ -293,7 +293,7 @@ export const IngresarMed = () => {
                 <div className="items-start w-full p-3 space-y-6">
                     <div className="rounded-lg w-full overflow-auto">
                         <form className="space-y-4">
-                            <div className='min-h-20 p-4 flex gap-4'>
+                            <div className='min-h-20 p-4 flex gap-4 items-end'>
                                 <div>
                                     <label className="block text-gray-700 text-sm font-bold mb-1" htmlFor="duration">Duración tto.</label>
                                     <select
@@ -369,7 +369,7 @@ export const IngresarMed = () => {
                                     />
                                 </div>
                                 <div>
-                                <button className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button">
+                                <button className="mt-4 bg-blue-400 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button">
                                     Agregar medicacion a retiro
                                 </button>
                                 </div>
