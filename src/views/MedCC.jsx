@@ -33,12 +33,13 @@ export default function ngresarMed () {
           medic: 'Juan Perez', 
           especialidad: 'Cardiologia', 
           name: 'Losartan', 
+          tratamiento: '2 comp. x dia', 
           duration: '60 días', 
           f_inicio:'20/02/2025', 
           f_fin:'20/04/2025', 
           frequency: 'Cada 8 horas', 
           retiro: 1,
-          enFechaDeRetiro: 2,
+          puedeRetirar: 2,
           stock: 100,
           cantidadRetirada: 1
         },
@@ -46,12 +47,13 @@ export default function ngresarMed () {
           medic: 'Maria Gomez', 
           especialidad: 'Pediatría', 
           name: 'Paracetamol', 
+          tratamiento: '1 comp. x dia',
           duration: '7 días', 
           f_inicio:'20/02/2025', 
           f_fin:'27/02/2025', 
           frequency: 'Cada 8 horas', 
           retiro: 0,
-          enFechaDeRetiro: 1,
+          puedeRetirar: 1,
           stock: 100,
           cantidadRetirada: 1
         },
@@ -59,12 +61,13 @@ export default function ngresarMed () {
           medic: 'Carlos Lopez', 
           especialidad: 'Dermatología', 
           name: 'Ibuprofeno', 
+          tratamiento: '1 comp. x dia',
           duration: '7 días', 
           f_inicio:'20/02/2025', 
           f_fin:'27/02/2025', 
           frequency: 'Cada 8 horas', 
           retiro: 1,
-          enFechaDeRetiro: 0,
+          puedeRetirar: 0,
           stock: 100,
           cantidadRetirada: 0
         },
@@ -147,7 +150,7 @@ export default function ngresarMed () {
             <IngresarMedSideBar />
             <div className='flex flex-col w-full h-[calc(100vh-4rem)]'>
                 {/* Ingresar medicacion formulario */}
-                <div className="flex flex-col items-start w-full bg-slate-100 p-3 space-y-3">
+                <div className="flex flex-col items-start w-full p-3 space-y-3">
                     <h2 className="text-2xl font-bold mb-2">Cuenta corriente</h2>
                     <div className="rounded-lg w-full h-[calc(100vh-35rem)] overflow-auto">
                         <form className="space-y-4">
@@ -155,11 +158,12 @@ export default function ngresarMed () {
                             <table className="shadow-sm min-w-full text-left text-sm font-roboto font-medium text-slate-600 text-surface p-2">
                             <thead className='sticky top-0 bg-blue-400 text-white whitespace-nowrap'>
                                 <tr>
+                                <th className="px-2 py-1 border-b">Fecha inicio tto.</th>
+                                <th className="px-2 py-1 border-b">Fecha fin tto.</th>
                                 <th className="px-2 py-1 border-b">Médico</th>
                                 <th className="px-2 py-1 border-b">Especialidad</th>
                                 <th className="px-2 py-1 border-b">Droga</th>
-                                <th className="px-2 py-1 border-b">Fecha inicio tto.</th>
-                                <th className="px-2 py-1 border-b">Fecha fin tto.</th>
+                                <th className="px-2 py-1 border-b">Tratamiento</th>
                                 <th className="px-2 py-1 border-b">Duracion</th>
                                 <th className="px-2 py-1 border-b">Mes que retira</th>
                                 <th className="px-2 py-1 border-b">Puede retirar</th>
@@ -172,23 +176,24 @@ export default function ngresarMed () {
                             <tbody className='whitespace-nowrap'>
                                 {ttos.map((tto, index) => (
                                         <tr key={index}>
+                                        <td className="px-2 py-1 border-b">{tto.f_inicio}</td>
+                                        <td className="px-2 py-1 border-b">{tto.f_fin}</td>
                                         <td className="px-2 py-1 border-b">{tto.medic}</td>
                                         <td className="px-2 py-1 border-b">{tto.especialidad}</td>
                                         <td className="px-2 py-1 border-b">{tto.name}</td>
-                                        <td className="px-2 py-1 border-b">{tto.f_inicio}</td>
-                                        <td className="px-2 py-1 border-b">{tto.f_fin}</td>
+                                        <td className="px-2 py-1 border-b">{tto.tratamiento}</td>
                                         <td className="px-2 py-1 border-b">{tto.duration}</td>
                                         <td className="px-2 py-1 border-b">{tto.retiro}</td>
-                                        <td className="px-2 py-1 border-b">{tto.enFechaDeRetiro}</td>
+                                        <td className="px-2 py-1 border-b">{tto.puedeRetirar} caja/s</td>
                                         <td className="px-2 py-1 border-b">{tto.stock}</td>
                                         <td className="px-2 py-1 border-b flex gap-4">
-                                            <button>-</button>
-                                            <p>0</p>
-                                            <button>+</button>
+                                            <button className='bg-blue-400 hover:bg-blue-600 rounded px-2 text-white'>-</button>
+                                            <p className='px-2 bg-white border border-slate-700 rounded-sm shadow-sm'>0</p>
+                                            <button className='bg-blue-400 hover:bg-blue-600 rounded px-2 text-white'>+</button>
                                         </td>
                                         <td className="px-2 py-1 border-b"><button className='bg-blue-400 px-2 py-0.5 rounded-sm shadow-sm text-white hover:bg-blue-600'>Agregar a retiro</button></td>
-                                        <td className="px-2 py-1 border-b">
-                                            <button className='bg-blue-400 px-2 py-0.5 rounded-sm shadow-sm text-white hover:bg-blue-600'>Editar</button>
+                                        <td className="px-2 py-1 border-b flex gap-4">
+                                            <button className='bg-blue-400 px-2 py-0.5 rounded-sm shadow-sm text-white hover:bg-blue-600'>Editar CC</button>
                                             <button className='bg-red-400 px-2 py-0.5 rounded-sm shadow-sm text-white hover:bg-red-600'>Cancelar CC</button>
                                         </td>
                                         </tr>

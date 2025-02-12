@@ -14,6 +14,7 @@ const StateContext = createContext({
   filterCancel: false,
   showMedicationModal: false,
   showMedicoModal: false,
+  medications: [],
   setCurrentUser: () => {},
   setUserToken: () => {},
   setPosition: () => {},
@@ -26,6 +27,7 @@ const StateContext = createContext({
   filterCancel: () => {},
   setShowMedicationModal: () => {},
   setShowMedicoModal: () => {},
+  setMedications: () => {},
 });
 
 export const ContextProvider = ({children}) => {
@@ -48,6 +50,7 @@ export const ContextProvider = ({children}) => {
   const [filtros, setFiltros] = useState([]);//filtros para la tabla de llamador
   const [showMedicationModal, setShowMedicationModal] = useState(false);
   const [showMedicoModal, setShowMedicoModal] = useState(false);
+  const [medications, setMedications] = useState([]);
 
   //funcion para agregar un nuevo numero a la TV
   const addNumeroTV = (nuevoNumero) => {
@@ -95,7 +98,9 @@ export const ContextProvider = ({children}) => {
         showMedicationModal,
         setShowMedicationModal,
         showMedicoModal,
-        setShowMedicoModal
+        setShowMedicoModal,
+        medications,
+        setMedications
       }}
     >
       {children}

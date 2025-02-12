@@ -211,3 +211,15 @@ export const handleDerivateToPosition = (number, position, setIsDerivating, setN
         })
 }
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+//trae todos los medicamentos de la base de datos
+export const fetchAllMedicamentos = (setMedicamentos) => {
+    axios
+        .get(`${API_URL}/allMedications`)
+        .then(response => {
+            setMedicamentos(response.data);
+        })
+        .catch(error => {
+            console.error('Error fetching medicamentos:', error);
+        });
+}
