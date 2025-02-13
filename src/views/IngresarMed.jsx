@@ -205,11 +205,16 @@ export default function ngresarMed () {
                             <thead className='sticky top-0 bg-blue-400 text-white'>
                                 <tr>
                                 <th className="px-2 py-1 border-b">Droga</th>
+                                <th className="px-2 py-1 border-b">F. venc.</th>
                                 <th className="px-2 py-1 border-b">Nombre comercial</th>
+                                <th className="px-2 py-1 border-b">Concentración</th>
                                 <th className="px-2 py-1 border-b">Presentación</th>
                                 <th className="px-2 py-1 border-b">Unidad</th>
+                                <th className="px-2 py-1 border-b">Via administración</th>
+                                <th className="px-2 py-1 border-b">Tipo</th>
+                                <th className="px-2 py-1 border-b">Estado</th>
                                 <th className="px-2 py-1 border-b">Ranurable</th>
-                                <th className="px-2 py-1 border-b">Categoria</th>
+                                <th className="px-2 py-1 border-b">Laboratorio</th>
                                 <th className="px-2 py-1 border-b">Stock</th>
                                 <th className="px-2 py-1 border-b"></th>
                                 </tr>
@@ -225,12 +230,17 @@ export default function ngresarMed () {
                                         </td>
                                         )} */}
                                         <td className="px-2 py-1 border-b">{medication.droga}</td>
+                                        <td className="px-2 py-1 border-b">{medication.fecha_vencimiento}</td>
                                         <td className="px-2 py-1 border-b">{medication.nombre_comercial}</td>
-                                        <td className="px-2 py-1 border-b">{medication.grupo_terapeutico}</td>
-                                        <td className="px-2 py-1 border-b">{medication.unidad_medida}</td>
-                                        <td className="px-2 py-1 border-b">{medication.ranurable}</td>
+                                        <td className="px-2 py-1 border-b">{medication.droga_concentracion}</td>
                                         <td className="px-2 py-1 border-b">{medication.presentacion_farmaceutica}</td>
+                                        <td className="px-2 py-1 border-b">{medication.unidad_medida}</td>
+                                        <td className="px-2 py-1 border-b">{medication.via_administracion}</td>
+                                        <td className="px-2 py-1 border-b">{medication.tipo_medicamento}</td>
+                                        <td className="px-2 py-1 border-b">{medication.estado}</td>
+                                        <td className="px-2 py-1 border-b">{medication.ranurable}</td>
                                         <td className="px-2 py-1 border-b">{medication.laboratorio}</td>
+                                        <td className="px-2 py-1 border-b">{medication.stock}</td>
                                         <td className="px-2 py-1 border-b">
                                             <button className='bg-blue-400 px-2 py-0.5 rounded-sm shadow-sm text-white hover:bg-blue-600'>Agregar</button>
                                         </td>
