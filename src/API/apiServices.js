@@ -223,3 +223,17 @@ export const fetchAllMedicamentos = (setMedicamentos) => {
             console.error('Error fetching medicamentos:', error);
         });
 }
+
+//trae todos los tratamiendos de un usuario en particular
+export const fetchTratamiento = (customer_id, setTratamientos) => {
+    axios
+        .get(`${API_URL}/allTreatments/${customer_id}`)
+        .then(response => {
+            setTratamientos(response.data);
+            console.log(response.data);
+            
+        })
+        .catch(error => {
+            console.error('Error fetching tratamientos:', error);
+        });
+}

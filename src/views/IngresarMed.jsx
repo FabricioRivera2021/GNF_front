@@ -25,43 +25,6 @@ export default function ngresarMed () {
         fetchAllMedicamentos(setMedications);
     }, []);
 
-    // const medications = [
-    //     { comercialName: 'Dolosedol', drugName: 'Paracetamol', type: 'Comp', unit: '20 mg', category: 'Calmantes', ranurable: 'si', stock: 100 },
-    //     { comercialName: 'Paracetamol Szabo', drugName: 'Paracetamol', type: 'Comp', unit: '20 mg', category: 'Calmantes', ranurable: 'si', stock: 80 },
-    //     { comercialName: 'Metasedin', drugName: 'Metadona', type: 'Comp', unit: '10 mg', category: 'Calmantes', ranurable: 'si', stock: 50 },
-    //     { comercialName: 'Primperan', drugName: 'Metoclopramida', type: 'Gotas', unit: '1 ml', category: 'Gastroenterologia', ranurable: '--', stock: 200 },
-    //     { comercialName: 'Rivotril', drugName: 'Clonazepam', type: 'Comp', unit: '15 mg', category: 'Psicofarmaco', ranurable: 'No', stock: 150 },
-    //     { comercialName: 'Clonotine', drugName: 'Clonazepam', type: 'Comp', unit: '10 mg', category: 'Psicofarmaco', ranurable: 'No', stock: 120 },
-    //     { comercialName: 'Regulapres', drugName: 'Losartan', type: 'Capsula', unit: '50 mg', category: 'Cardiologia', ranurable: 'si', stock: 75 },
-    //     { comercialName: 'Aspirina Bayer', drugName: 'Ácido Acetilsalicílico', type: 'Comp', unit: '100 mg', category: 'Antiinflamatorio', ranurable: 'si', stock: 300 },
-    //     { comercialName: 'Omeprazol Actavis', drugName: 'Omeprazol', type: 'Capsula', unit: '40 mg', category: 'Gastroenterologia', ranurable: 'si', stock: 180 },
-    //     { comercialName: 'Ibuprofeno Bago', drugName: 'Ibuprofeno', type: 'Comp', unit: '400 mg', category: 'Antiinflamatorio', ranurable: 'si', stock: 220 },
-    //     { comercialName: 'Amoxicilina MK', drugName: 'Amoxicilina', type: 'Capsula', unit: '500 mg', category: 'Antibiotico', ranurable: 'si', stock: 140 },
-    //     { comercialName: 'Zitromax', drugName: 'Azitromicina', type: 'Suspensión', unit: '200 mg/5ml', category: 'Antibiotico', ranurable: 'No', stock: 90 },
-    //     { comercialName: 'Diclofenaco Sandoz', drugName: 'Diclofenaco', type: 'Comp', unit: '50 mg', category: 'Antiinflamatorio', ranurable: 'si', stock: 175 },
-    //     { comercialName: 'Loratadina Genfar', drugName: 'Loratadina', type: 'Jarabe', unit: '5 mg/5ml', category: 'Antihistaminico', ranurable: 'si', stock: 130 },
-    //     { comercialName: 'Cetirizina Medley', drugName: 'Cetirizina', type: 'Comp', unit: '10 mg', category: 'Antihistaminico', ranurable: 'si', stock: 90 },
-    //     { comercialName: 'Atorvastatina Pfizer', drugName: 'Atorvastatina', type: 'Comp', unit: '20 mg', category: 'Cardiologia', ranurable: 'si', stock: 110 },
-    //     { comercialName: 'Metformina Teva', drugName: 'Metformina', type: 'Comp', unit: '850 mg', category: 'Diabetes', ranurable: 'si', stock: 200 },
-    //     { comercialName: 'Insulina Lantus', drugName: 'Insulina Glargina', type: 'Inyeccion', unit: '100 UI/ml', category: 'Diabetes', ranurable: 'No', stock: 50 },
-    //     { comercialName: 'Sertralina Almus', drugName: 'Sertralina', type: 'Comp', unit: '50 mg', category: 'Psicofarmaco', ranurable: 'No', stock: 85 },
-    //     { comercialName: 'Fluoxetina Arrow', drugName: 'Fluoxetina', type: 'Comp', unit: '20 mg', category: 'Psicofarmaco', ranurable: 'No', stock: 95 },
-    //     { comercialName: 'Salbutamol MDI', drugName: 'Salbutamol', type: 'Inhalador', unit: '100 mcg/dosis', category: 'Neumologia', ranurable: 'si', stock: 160 },
-    //     { comercialName: 'Budesonida Nebu', drugName: 'Budesonida', type: 'Nebulizador', unit: '0.5 mg/ml', category: 'Neumologia', ranurable: 'si', stock: 130 },
-    //     { comercialName: 'Montelukast Pensa', drugName: 'Montelukast', type: 'Comp', unit: '10 mg', category: 'Neumologia', ranurable: 'si', stock: 95 },
-    //     { comercialName: 'Enalapril Cinfa', drugName: 'Enalapril', type: 'Comp', unit: '10 mg', category: 'Cardiologia', ranurable: 'si', stock: 120 },
-    //     { comercialName: 'Levotiroxina Normon', drugName: 'Levotiroxina', type: 'Comp', unit: '100 mcg', category: 'Endocrinologia', ranurable: 'si', stock: 140 },
-    //     { comercialName: 'Hidrocortisona Braun', drugName: 'Hidrocortisona', type: 'Inyeccion', unit: '100 mg', category: 'Endocrinologia', ranurable: 'No', stock: 60 },
-    //     { comercialName: 'Furosemida Lasix', drugName: 'Furosemida', type: 'Comp', unit: '40 mg', category: 'Diuretico', ranurable: 'si', stock: 90 },
-    //     { comercialName: 'Espironolactona Ratiopharm', drugName: 'Espironolactona', type: 'Comp', unit: '25 mg', category: 'Diuretico', ranurable: 'si', stock: 85 },
-    //     { comercialName: 'Gabapentina Aristo', drugName: 'Gabapentina', type: 'Capsula', unit: '300 mg', category: 'Neurologia', ranurable: 'No', stock: 80 },
-    //     { comercialName: 'Pregabalina Almus', drugName: 'Pregabalina', type: 'Capsula', unit: '75 mg', category: 'Neurologia', ranurable: 'No', stock: 75 },
-    //     { comercialName: 'Carbamazepina Normon', drugName: 'Carbamazepina', type: 'Comp', unit: '200 mg', category: 'Neurologia', ranurable: 'No', stock: 95 },
-    //     { comercialName: 'Duloxetina Sandoz', drugName: 'Duloxetina', type: 'Capsula', unit: '60 mg', category: 'Psicofarmaco', ranurable: 'No', stock: 70 },
-    //     { comercialName: 'Risperidona Almus', drugName: 'Risperidona', type: 'Comp', unit: '2 mg', category: 'Psicofarmaco', ranurable: 'No', stock: 65 },
-    //     { comercialName: 'Quetiapina Teva', drugName: 'Quetiapina', type: 'Comp', unit: '100 mg', category: 'Psicofarmaco', ranurable: 'No', stock: 60 }
-    // ];
-
     const medicos = [
         {
             nombre: 'Juan',

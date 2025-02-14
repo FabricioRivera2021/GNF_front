@@ -2,12 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { FilterSideBar, Modal } from '../components/index';
 import LlamadorPanel from "../components/LlamadorPanel";
 import { userStateContext } from '../context/ContextProvider';
-import { ArrowUpTrayIcon, CheckBadgeIcon, CheckIcon, ExclamationTriangleIcon, PencilSquareIcon, PlusCircleIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { ArrowDownCircleIcon, ArrowUpCircleIcon, ArrowUpTrayIcon, CheckBadgeIcon, CheckIcon, ExclamationTriangleIcon, PencilSquareIcon, PlusCircleIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import IngresarMedSideBar from '../components/IngresarMedSideBar';
-import { getCurrentSelectedNumber } from '../API/apiServices';
+import { fetchTratamiento, getCurrentSelectedNumber } from '../API/apiServices';
 
 export default function ngresarMed () {
-    const { setFilterCancel, setFilterPaused, setAllDerivates, setShowModal, showModal, numero, setNumero, showMedicoModal, setShowMedicoModal, showMedicationModal, setShowMedicationModal } = userStateContext();
+    const { setFilterCancel, setFilterPaused, setAllDerivates, setShowModal, showModal, numero, setNumero, showMedicoModal, setShowMedicoModal, showMedicationModal, setShowMedicationModal, tratamientos, setTratamientos } = userStateContext();
     const [selectedFilter, setSelectedFilter] = useState(1);
     const [duration, setDuration] = useState(1);
     const [frequency, setFrequency] = useState(1);
@@ -20,120 +20,35 @@ export default function ngresarMed () {
         getCurrentSelectedNumber(setNumero)
     }, []);
 
-    const medications = [
-        { comercialName: 'Dolosedol', drugName: 'Paracetamol', type: 'Comp', unit: '20 mg', category: 'Calmantes', ranurable: 'si', stock: 100 },
-        { comercialName: 'Paracetamol Szabo', drugName: 'Paracetamol', type: 'Comp', unit: '20 mg', category: 'Calmantes', ranurable: 'si', stock: 80 },
-        { comercialName: 'Metasedin', drugName: 'Metadona', type: 'Comp', unit: '10 mg', category: 'Calmantes', ranurable: 'si', stock: 50 },
-        { comercialName: 'Primperan', drugName: 'Metoclopramida', type: 'Gotas', unit: '1 ml', category: 'Gastroenterologia', ranurable: '--', stock: 200 },
-        { comercialName: 'Rivotril', drugName: 'Clonazepam', type: 'Comp', unit: '15 mg', category: 'Psicofarmaco', ranurable: 'No', stock: 150 },
-    ];
+    const customer_id = 1;
+    //traer todos los medicamentos
+    useEffect(() => {
+        fetchTratamiento(customer_id, setTratamientos);
+    }, []);
 
-    const ttos = [
-        { id: 1, 
-          medic: 'Juan Perez', 
-          especialidad: 'Cardiologia', 
-          name: 'Losartan', 
-          tratamiento: '2 comp. x dia', 
-          duration: '60 días', 
-          f_inicio:'20/02/2025', 
-          f_fin:'20/04/2025', 
-          frequency: 'Cada 8 horas', 
-          retiro: 1,
-          puedeRetirar: 2,
-          stock: 100,
-          cantidadRetirada: 1
-        },
-        { id: 2, 
-          medic: 'Maria Gomez', 
-          especialidad: 'Pediatría', 
-          name: 'Paracetamol', 
-          tratamiento: '1 comp. x dia',
-          duration: '7 días', 
-          f_inicio:'20/02/2025', 
-          f_fin:'27/02/2025', 
-          frequency: 'Cada 8 horas', 
-          retiro: 0,
-          puedeRetirar: 1,
-          stock: 100,
-          cantidadRetirada: 1
-        },
-        { id: 3, 
-          medic: 'Carlos Lopez', 
-          especialidad: 'Dermatología', 
-          name: 'Ibuprofeno', 
-          tratamiento: '1 comp. x dia',
-          duration: '7 días', 
-          f_inicio:'20/02/2025', 
-          f_fin:'27/02/2025', 
-          frequency: 'Cada 8 horas', 
-          retiro: 1,
-          puedeRetirar: 0,
-          stock: 100,
-          cantidadRetirada: 0
-        },
-    ]
+    // const filteredMedications = medications.filter(medication =>
+    //     medication.comercialName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    //     medication.drugName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    //     medication.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    //     medication.unit.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    //     medication.category.toLowerCase().includes(searchTerm.toLowerCase())
+    // );
 
-    const medicos = [
-        {
-            nombre: 'Juan',
-            apellido: 'Perez',
-            numeroRegistro: '123456',
-            numeroCajaMedica: '987654',
-            especialidad: ['Cardiología', 'Medicina Interna']
-        },
-        {
-            nombre: 'Maria',
-            apellido: 'Gomez',
-            numeroRegistro: '654321',
-            numeroCajaMedica: '123987',
-            especialidad: ['Pediatría']
-        },
-        {
-            nombre: 'Carlos',
-            apellido: 'Lopez',
-            numeroRegistro: '112233',
-            numeroCajaMedica: '445566',
-            especialidad: ['Dermatología', 'Alergología']
-        },
-        {
-            nombre: 'Ana',
-            apellido: 'Martinez',
-            numeroRegistro: '223344',
-            numeroCajaMedica: '556677',
-            especialidad: ['Ginecología', 'Obstetricia']
-        },
-        {
-            nombre: 'Luis',
-            apellido: 'Rodriguez',
-            numeroRegistro: '334455',
-            numeroCajaMedica: '667788',
-            especialidad: ['Neurología']
-        },
-    ];
+    // const groupedMedications = filteredMedications.reduce((acc, medication) => {
+    //     if (!acc[medication.drugName]) {
+    //         acc[medication.drugName] = [];
+    //     }
+    //     acc[medication.drugName].push(medication);
+    //     return acc;
+    // }, {});
 
-    const filteredMedications = medications.filter(medication =>
-        medication.comercialName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        medication.drugName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        medication.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        medication.unit.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        medication.category.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-
-    const groupedMedications = filteredMedications.reduce((acc, medication) => {
-        if (!acc[medication.drugName]) {
-            acc[medication.drugName] = [];
-        }
-        acc[medication.drugName].push(medication);
-        return acc;
-    }, {});
-
-    const filteredMedicos = medicos.filter(medico =>
-        medico.nombre.toLowerCase().includes(searchTermMedico.toLowerCase()) ||
-        medico.apellido.toLowerCase().includes(searchTermMedico.toLowerCase()) ||
-        medico.numeroRegistro.includes(searchTermMedico) ||
-        medico.numeroCajaMedica.includes(searchTermMedico) ||
-        medico.especialidad.some(especialidad => especialidad.toLowerCase().includes(searchTermMedico.toLowerCase()))
-    );
+    // const filteredMedicos = medicos.filter(medico =>
+    //     medico.nombre.toLowerCase().includes(searchTermMedico.toLowerCase()) ||
+    //     medico.apellido.toLowerCase().includes(searchTermMedico.toLowerCase()) ||
+    //     medico.numeroRegistro.includes(searchTermMedico) ||
+    //     medico.numeroCajaMedica.includes(searchTermMedico) ||
+    //     medico.especialidad.some(especialidad => especialidad.toLowerCase().includes(searchTermMedico.toLowerCase()))
+    // );
 
     const handleClickFilter = (id) => {
         setFilterPaused(false);
@@ -158,6 +73,8 @@ export default function ngresarMed () {
                             <table className="shadow-sm min-w-full text-left text-sm font-roboto font-medium text-slate-600 text-surface p-2">
                             <thead className='sticky top-0 bg-blue-400 text-white whitespace-nowrap'>
                                 <tr>
+                                <th className="px-2 py-1 border-b">Vigencia</th>
+                                <th className="px-2 py-1 border-b">Tipo Cuenta</th>
                                 <th className="px-2 py-1 border-b">Fecha inicio tto.</th>
                                 <th className="px-2 py-1 border-b">Fecha fin tto.</th>
                                 <th className="px-2 py-1 border-b">Médico</th>
@@ -165,27 +82,31 @@ export default function ngresarMed () {
                                 <th className="px-2 py-1 border-b">Droga</th>
                                 <th className="px-2 py-1 border-b">Tratamiento</th>
                                 <th className="px-2 py-1 border-b">Duracion</th>
-                                <th className="px-2 py-1 border-b">Mes que retira</th>
+                                <th className="px-2 py-1 border-b">Retiros pendientes</th>
                                 <th className="px-2 py-1 border-b">Puede retirar</th>
                                 <th className="px-2 py-1 border-b">Stock</th>
+                                <th className="px-2 py-1 border-b">Funcionario</th>
                                 <th className="px-2 py-1 border-b">Cantidad que retira</th>
                                 <th className="px-2 py-1 border-b"></th>
                                 <th className="px-2 py-1 border-b"></th>
                                 </tr>
                             </thead>
                             <tbody className='whitespace-nowrap'>
-                                {ttos.map((tto, index) => (
+                                {tratamientos.map((tto, index) => (
                                         <tr key={index}>
-                                        <td className="px-2 py-1 border-b">{tto.f_inicio}</td>
-                                        <td className="px-2 py-1 border-b">{tto.f_fin}</td>
-                                        <td className="px-2 py-1 border-b">{tto.medic}</td>
-                                        <td className="px-2 py-1 border-b">{tto.especialidad}</td>
-                                        <td className="px-2 py-1 border-b">{tto.name}</td>
-                                        <td className="px-2 py-1 border-b">{tto.tratamiento}</td>
-                                        <td className="px-2 py-1 border-b">{tto.duration}</td>
-                                        <td className="px-2 py-1 border-b">{tto.retiro}</td>
-                                        <td className="px-2 py-1 border-b">{tto.puedeRetirar} caja/s</td>
-                                        <td className="px-2 py-1 border-b">{tto.stock}</td>
+                                        <td className="px-2 py-1 border-b">{tto.activo ? <ArrowUpCircleIcon className='w-6 text-green-400' /> : <ArrowDownCircleIcon className='w-6 text-red-400' />}</td>
+                                        <td className="px-2 py-1 border-b">AGUDO</td>
+                                        <td className="px-2 py-1 border-b">{tto.fecha_inicio}</td>
+                                        <td className="px-2 py-1 border-b">{tto.fecha_fin}</td>
+                                        <td className="px-2 py-1 border-b">PEPE PEPE</td>
+                                        <td className="px-2 py-1 border-b">CARDIOLOGIA</td>
+                                        <td className="px-2 py-1 border-b">PARACETAMOL</td>
+                                        <td className="px-2 py-1 border-b">2 comp/dia</td>
+                                        <td className="px-2 py-1 border-b">{tto.total_tto_dias} dias</td>
+                                        <td className="px-2 py-1 border-b">{tto.retiros_pendientes} caja/s</td>
+                                        <td className="px-2 py-1 border-b">{tto.retiros_por_mes} caja/s</td>
+                                        <td className="px-2 py-1 border-b">20000</td>
+                                        <td className="px-2 py-1 border-b">FUNCIONARIO</td>
                                         <td className="px-2 py-1 border-b flex gap-4">
                                             <button className='bg-blue-400 hover:bg-blue-600 rounded px-2 text-white'>-</button>
                                             <p className='px-2 bg-white border border-slate-700 rounded-sm shadow-sm'>0</p>
