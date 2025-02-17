@@ -23,7 +23,8 @@ export default function ngresarMed () {
     const customer_id = 1;
     //traer todos los medicamentos
     useEffect(() => {
-        fetchTratamiento(customer_id, setTratamientos);
+        const data = fetchTratamiento(customer_id, setTratamientos);
+        console.log(data);
     }, []);
 
     // const filteredMedications = medications.filter(medication =>
@@ -74,18 +75,18 @@ export default function ngresarMed () {
                             <thead className='sticky top-0 bg-blue-400 text-white whitespace-nowrap'>
                                 <tr>
                                 <th className="px-2 py-1 border-b">Vigencia</th>
-                                <th className="px-2 py-1 border-b">Tipo Cuenta</th>
-                                <th className="px-2 py-1 border-b">Fecha inicio tto.</th>
-                                <th className="px-2 py-1 border-b">Fecha fin tto.</th>
-                                <th className="px-2 py-1 border-b">Médico</th>
-                                <th className="px-2 py-1 border-b">Especialidad</th>
                                 <th className="px-2 py-1 border-b">Droga</th>
                                 <th className="px-2 py-1 border-b">Tratamiento</th>
                                 <th className="px-2 py-1 border-b">Duracion</th>
+                                <th className="px-2 py-1 border-b">Médico</th>
+                                <th className="px-2 py-1 border-b">Especialidad</th>
+                                <th className="px-2 py-1 border-b">Tipo Cuenta</th>
                                 <th className="px-2 py-1 border-b">Retiros pendientes</th>
                                 <th className="px-2 py-1 border-b">Puede retirar</th>
-                                <th className="px-2 py-1 border-b">Stock</th>
                                 <th className="px-2 py-1 border-b">Funcionario</th>
+                                <th className="px-2 py-1 border-b">Fecha inicio tto.</th>
+                                <th className="px-2 py-1 border-b">Fecha fin tto.</th>
+                                <th className="px-2 py-1 border-b">Stock</th>
                                 <th className="px-2 py-1 border-b">Cantidad que retira</th>
                                 <th className="px-2 py-1 border-b"></th>
                                 <th className="px-2 py-1 border-b"></th>
@@ -95,18 +96,18 @@ export default function ngresarMed () {
                                 {tratamientos.map((tto, index) => (
                                         <tr key={index}>
                                         <td className="px-2 py-1 border-b">{tto.activo ? <ArrowUpCircleIcon className='w-6 text-green-400' /> : <ArrowDownCircleIcon className='w-6 text-red-400' />}</td>
-                                        <td className="px-2 py-1 border-b">AGUDO</td>
-                                        <td className="px-2 py-1 border-b">{tto.fecha_inicio}</td>
-                                        <td className="px-2 py-1 border-b">{tto.fecha_fin}</td>
-                                        <td className="px-2 py-1 border-b">PEPE PEPE</td>
-                                        <td className="px-2 py-1 border-b">CARDIOLOGIA</td>
-                                        <td className="px-2 py-1 border-b">PARACETAMOL</td>
-                                        <td className="px-2 py-1 border-b">2 comp/dia</td>
+                                        <td className="px-2 py-1 border-b">{tto.medication.droga}</td>
+                                        <td className="px-2 py-1 border-b">2 comp/dia!!!</td>
                                         <td className="px-2 py-1 border-b">{tto.total_tto_dias} dias</td>
+                                        <td className="px-2 py-1 border-b">{tto.medicos.nombre} {tto.medicos.apellido}</td>
+                                        <td className="px-2 py-1 border-b">{tto.medicos.especialidad}</td>
+                                        <td className="px-2 py-1 border-b">{tto.tipo_tto}</td>
                                         <td className="px-2 py-1 border-b">{tto.retiros_pendientes} caja/s</td>
                                         <td className="px-2 py-1 border-b">{tto.retiros_por_mes} caja/s</td>
-                                        <td className="px-2 py-1 border-b">20000</td>
-                                        <td className="px-2 py-1 border-b">FUNCIONARIO</td>
+                                        <td className="px-2 py-1 border-b">{tto.user.name}</td>
+                                        <td className="px-2 py-1 border-b">{tto.fecha_inicio}</td>
+                                        <td className="px-2 py-1 border-b">{tto.fecha_fin}</td>
+                                        <td className="px-2 py-1 border-b">{tto.medication.stock}</td>
                                         <td className="px-2 py-1 border-b flex gap-4">
                                             <button className='bg-blue-400 hover:bg-blue-600 rounded px-2 text-white'>-</button>
                                             <p className='px-2 bg-white border border-slate-700 rounded-sm shadow-sm'>0</p>

@@ -226,8 +226,9 @@ export const fetchAllMedicamentos = (setMedicamentos) => {
 
 //trae todos los tratamiendos de un usuario en particular
 export const fetchTratamiento = (customer_id, setTratamientos) => {
+    console.log(`${API_URL}/allTreatments/${customer_id}`);
     axios
-        .get(`${API_URL}/allTreatments/${customer_id}`)
+        .get(`${API_URL}/allTreatments/${customer_id}`)   
         .then(response => {
             setTratamientos(response.data);
             console.log(response.data);

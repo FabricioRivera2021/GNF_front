@@ -7,13 +7,58 @@ import IngresarMedSideBar from '../components/IngresarMedSideBar';
 import { fetchAllMedicamentos, getCurrentSelectedNumber } from '../API/apiServices';
 
 export default function ngresarMed () {
-    const { setFilterCancel, setFilterPaused, setAllDerivates, setShowModal, showModal, numero, setNumero, showMedicoModal, setShowMedicoModal, showMedicationModal, setShowMedicationModal, medications, setMedications } = userStateContext();
+    const { 
+        setFilterCancel, 
+        setFilterPaused, 
+        setAllDerivates, 
+        setShowModal, 
+        showModal, 
+        numero, 
+        setNumero, 
+        showMedicoModal, 
+        setShowMedicoModal, 
+        showMedicationModal, 
+        setShowMedicationModal, 
+        medications, 
+        setMedications,
+        addMedication,
+        setAddMedication
+    } = userStateContext();
     const [selectedFilter, setSelectedFilter] = useState(1);
     const [duration, setDuration] = useState(1);
     const [frequency, setFrequency] = useState(1);
-    const [retiro, setRetiro] = useState(0);
+    const [retiro, setRetiro] = useState('');
+    const [cajasRetiro , setCajasRetiro] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
     const [searchTermMedico, setSearchTermMedico] = useState('');
+
+    const handleAddMedication = (event, id, droga, nombre_comercial, tipo_medicamento, droga_concentracion, unidades_caja, presentacion_farmaceutica) => {
+        event.preventDefault();
+        setAddMedication({
+            id: id,
+            droga: droga,
+            nombre_comercial: nombre_comercial,
+            tipo_medicamento: tipo_medicamento,
+            droga_concentracion: droga_concentracion,
+            unidades_caja: unidades_caja,
+            presentacion_farmaceutica: presentacion_farmaceutica
+        });
+
+        console.log(addMedication);
+        
+    }
+
+    const handleClearAddMedication = () => {
+        setAddMedication({
+            id: null,
+            droga: null,
+            nombre_comercial: null,
+            tipo_medicamento: null,
+            droga_concentracion: null,
+            unidades_caja: null,
+            presentacion_farmaceutica: null
+        });
+    }
 
     //get current selected number by the User
     useEffect(() => {
@@ -145,8 +190,8 @@ export default function ngresarMed () {
                         value="Buscar médico"
                         onClick={() => {
                           setSearchTermMedico('');
-                          setShowMedicoModal(true);}
-                        }
+                          setShowMedicoModal(true);
+                        }}
                         />
                       <div className='flex items-center gap-2'>
                         <p className='text-slate-400 font-bold'>No se ingreso médico</p>
@@ -168,6 +213,7 @@ export default function ngresarMed () {
                             <thead className='sticky top-0 bg-blue-400 text-white'>
                                 <tr>
                                 <th className="px-2 py-1 border-b">Droga</th>
+                                <th className="px-2 py-1 border-b">Lote</th>
                                 <th className="px-2 py-1 border-b">F. venc.</th>
                                 <th className="px-2 py-1 border-b">Nombre comercial</th>
                                 <th className="px-2 py-1 border-b">Concentración</th>
@@ -178,6 +224,7 @@ export default function ngresarMed () {
                                 <th className="px-2 py-1 border-b">Estado</th>
                                 <th className="px-2 py-1 border-b">Ranurable</th>
                                 <th className="px-2 py-1 border-b">Laboratorio</th>
+                                <th className="px-2 py-1 border-b">Unidades por caja</th>
                                 <th className="px-2 py-1 border-b">Stock</th>
                                 <th className="px-2 py-1 border-b"></th>
                                 </tr>
@@ -193,6 +240,7 @@ export default function ngresarMed () {
                                         </td>
                                         )} */}
                                         <td className="px-2 py-1 border-b">{medication.droga}</td>
+                                        <td className="px-2 py-1 border-b">{medication.lote}</td>
                                         <td className="px-2 py-1 border-b">{medication.fecha_vencimiento}</td>
                                         <td className="px-2 py-1 border-b">{medication.nombre_comercial}</td>
                                         <td className="px-2 py-1 border-b">{medication.droga_concentracion}</td>
@@ -203,9 +251,26 @@ export default function ngresarMed () {
                                         <td className="px-2 py-1 border-b">{medication.estado}</td>
                                         <td className="px-2 py-1 border-b">{medication.ranurable}</td>
                                         <td className="px-2 py-1 border-b">{medication.laboratorio}</td>
+                                        <td className="px-2 py-1 border-b">30 {medication.presentacion_farmaceutica}s</td>
                                         <td className="px-2 py-1 border-b">{medication.stock}</td>
                                         <td className="px-2 py-1 border-b">
-                                            <button className='bg-blue-400 px-2 py-0.5 rounded-sm shadow-sm text-white hover:bg-blue-600'>Agregar</button>
+                                            <button 
+                                                className={` px-2 py-0.5 rounded-sm shadow-sm text-white ${addMedication.droga ? 'cursor-not-allowed bg-gray-500' : 'bg-blue-400 hover:bg-blue-600'}`}
+                                                disabled={addMedication.droga != null}
+                                                onClick={(event) => {
+                                                    handleAddMedication(
+                                                                    event,
+                                                                    medication.id, 
+                                                                    medication.droga,
+                                                                    medication.nombre_comercial,
+                                                                    medication.tipo_medicamento,
+                                                                    medication.droga_concentracion, 
+                                                                    medication.unidades_caja, 
+                                                                    medication.presentacion_farmaceutica
+                                                    )
+                                                }}>
+                                                Agregar
+                                            </button>
                                         </td>
                                     </tr>
                                     ))}
@@ -214,7 +279,6 @@ export default function ngresarMed () {
                             </tbody>
                             </table>
                                 {/* FIN Modal para buscar medicación -------------------------------------- */}
-                                
                             </div>
                         </form>
                     </div>
@@ -254,17 +318,32 @@ export default function ngresarMed () {
                       </Modal>
                 </div>
                 <div className="flex items-center mx-7 mt-4 gap-4">
-                    <div className='flex w-fit items-end rounded-md shadow-md border-orange-500 border-x-2 border-y-2 py-0.5 px-2 gap-5 text-lg'>
+                    <div 
+                        className={`flex w-fit items-end rounded-md
+                        ${(addMedication.droga != null) ? ((addMedication.tipo_medicamento === 'Controlado') ? 'border-orange-500 border-x-2 border-y-2 shadow-md' : 'border-blue-500 border-x-2 border-y-2 shadow-md') : '' } 
+                        py-0.5 px-2 gap-5 text-lg`}>
                         <div className='flex font-bold'>
-                            <p className='text-slate-700 mb-1'>Clonazepam</p>
+                            <p className='text-slate-700 mb-1'>{addMedication.droga}</p> {/* medication.droga */}
                         </div>
                         <div className='flex gap-4 items-center font-normal'>
-                            <p className='text-slate-600 mb-1'>Psicofarmaco</p>
-                            <p className='text-slate-600 mb-1'>50mg</p>
-                            <p className='text-slate-600 mb-1'>20 Comprimidos</p>
-                            <p className='text-slate-600 mb-1'>CONTROLADO</p>
-                            <ExclamationTriangleIcon className='w-6 text-orange-400' />
+                            <p className='text-slate-700 mb-1 font-semibold'>{addMedication.nombre_comercial}</p> {/* medication.tipo_medicamento */}
+                            <p className='text-slate-600 mb-1'>{addMedication.droga_concentracion}</p> {/* medication.droga_concentracion */}
+                            <p className='text-slate-600 mb-1'>{addMedication.unidades_caja} {addMedication.presentacion_farmaceutica}</p> {/* medication.unidades_caja */}
+                            {
+                                ((addMedication.tipo_medicamento === 'Controlado') 
+                                    ?
+                                    <div className='flex gap-2'>
+                                        <p>Medicación CONTROLADA</p>
+                                        <ExclamationTriangleIcon className='w-6 text-orange-400' />
+                                    </div>
+                                    :
+                                    '')
+                            }
                         </div>
+                        <button 
+                            className={`bg-red-400 rounded-md shadow-sm px-2 py-0.5 text-white ${addMedication.droga != null ? 'hover:bg-red-600' : 'hidden'}`}
+                            onClick={() => handleClearAddMedication()}
+                        >Cancelar</button>
                     </div>
                 </div>
                 <div className="items-start w-full p-3 space-y-6">
@@ -310,7 +389,6 @@ export default function ngresarMed () {
                                         value={frequency}
                                         onChange={(e) => setFrequency(e.target.value)}
                                     >
-                                        <option value="hora">Por hora</option>
                                         <option value="dia">Por dia</option>
                                         <option value="dias">Cada x dias</option>
                                         <option value="evento">Sobre evento</option>
@@ -322,27 +400,28 @@ export default function ngresarMed () {
                                         className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                         id="frequency"
                                         type="number"
-                                        value={0}
+                                        value={retiro}
+                                        onChange={(e) => setRetiro(e.target.value)}
                                     />
                                 </div>
-
                                 <div>
                                     <label className="block text-gray-700 text-sm font-bold mb-1" htmlFor="weeklyDosage">Puede retirar</label>
                                     <input
-                                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-500 leading-tight focus:outline-none focus:shadow-outline"
                                         id="weeklyDosage"
                                         type="text"
                                         readOnly
-                                        value="3 cajas"
+                                        value="--"
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-gray-700 text-sm font-bold mb-1" htmlFor="quantity">Cantidad que retira</label>
+                                    <label className="block text-gray-700 text-sm font-bold mb-1" htmlFor="quantity">Cajas/frascos que retira</label>
                                     <input
                                         className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                         id="quantity"
                                         type="number"
-                                        value={0}
+                                        value={cajasRetiro}
+                                        onChange={(e) => setCajasRetiro(e.target.value)}
                                     />
                                 </div>
                                 <div>
