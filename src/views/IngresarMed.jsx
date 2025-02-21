@@ -6,7 +6,7 @@ import { ArrowUpTrayIcon, CheckBadgeIcon, CheckIcon, ExclamationTriangleIcon, Pe
 import IngresarMedSideBar from '../components/IngresarMedSideBar';
 import { fetchAllMedicamentos, getCurrentSelectedNumber } from '../API/apiServices';
 
-export default function ngresarMed () {
+export default function IngresarMed () {
     const { 
         setFilterCancel, 
         setFilterPaused, 

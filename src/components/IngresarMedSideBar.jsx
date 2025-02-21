@@ -27,7 +27,7 @@ export default function IngresarMedSideBar() {
         Ingr. med. desde CC
       </NavLink>
       <NavLink
-        to="/nuevoIngresoVentanillaUltimosRetiros"
+        to="/historialRetiros"
         className={({ isActive }) =>
           isActive
             ? 'rounded-sm py-1 text-left pl-1 bg-blue-500 text-white px-10'

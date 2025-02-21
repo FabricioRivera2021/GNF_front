@@ -5,3 +5,4 @@ export {default as Llamador} from './Llamador';
 export {default as Logout} from './Logout';
 export {default as IngresarMed} from './IngresarMed';
 export {default as MedCC} from './MedCC';
+export {default as HistorialRetiros} from './HistorialRetiros';
