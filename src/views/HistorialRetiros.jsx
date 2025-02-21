@@ -4,7 +4,7 @@ import LlamadorPanel from "../components/LlamadorPanel";
 import { userStateContext } from '../context/ContextProvider';
 import { ArrowUpTrayIcon, CheckBadgeIcon, CheckIcon, ExclamationTriangleIcon, PencilSquareIcon, PlusCircleIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import IngresarMedSideBar from '../components/IngresarMedSideBar';
-import { fetchAllMedicamentos, getCurrentSelectedNumber } from '../API/apiServices';
+import { fetchAllMedicamentos, fetchHistoricoRetiros, getCurrentSelectedNumber } from '../API/apiServices';
 
 export default function HistorialRetiros() {
     const { 
@@ -12,17 +12,14 @@ export default function HistorialRetiros() {
         setFilterPaused, 
         setAllDerivates, 
         setShowModal, 
-        showModal, 
         numero, 
         setNumero, 
-        showMedicoModal, 
-        setShowMedicoModal, 
-        showMedicationModal, 
-        setShowMedicationModal, 
         medications, 
         setMedications,
         addMedication,
-        setAddMedication
+        setAddMedication,
+        historicoRetiros,
+        setHistoricoRetiros
     } = userStateContext();
     const [selectedFilter, setSelectedFilter] = useState(1);
     const [duration, setDuration] = useState(1);
@@ -48,15 +45,18 @@ export default function HistorialRetiros() {
         console.log(addMedication);
     }
 
-    const handleClearAddMedication = () => {
-        setAddMedication({
-            id: null,
-            droga: null,
-            nombre_comercial: null,
-            tipo_medicamento: null,
-            droga_concentracion: null,
-            unidades_caja: null,
-            presentacion_farmaceutica: null
+    const handleSetHistoricoRetiros = () => {
+        setHistoricoRetiros({
+            droga: droga,
+            nombre_comercial: nombre_comercial,
+            medico: medico,
+            especialidad: especialidad,
+            tipo_cuenta: tipo_cuenta,
+            retiros_pendientes: retiros_pendientes,
+            funcionario: funcionario,
+            fecha_inicio_tto: fecha_inicio_tto,
+            fecha_fin_tto: fecha_fin_tto,
+            cantidad_retirada: cantidad_retirada
         });
     }
 
@@ -65,9 +65,12 @@ export default function HistorialRetiros() {
         getCurrentSelectedNumber(setNumero)
     }, []);
 
-    //traer todos los medicamentos
+
+    const customer_id = 1; //! cambiar por el id del customer que este siendo atendido
+    //traer los registros de retiros
     useEffect(() => {
-        fetchAllMedicamentos(setMedications);
+        const data = fetchHistoricoRetiros(customer_id, setHistoricoRetiros);
+        console.log(data);
     }, []);
 
     const medicos = [
@@ -179,45 +182,46 @@ export default function HistorialRetiros() {
                     <h2 className="text-2xl font-bold mb-2">Historial retiros</h2>
                     <div className="rounded-lg w-full h-[calc(100vh-35rem)] overflow-auto">
                         <form className="space-y-4">
-                            <div className='flex flex-col'>
-                                <label htmlFor="f_inic" className="px-2 py-0.5 ml-3 text-sm font-roboto font-medium text-slate-600">
-                                    Fecha inicio
-                                </label>
-                                <input
-                                    id='f_inic'
-                                    type="date"
-                                    placeholder="Buscar medicamento..."
-                                    className="px-2 py-0.5 ml-4 w-1/3 border rounded text-sm"
-                                    value={searchTerm}
-                                    onChange={(e) => setSearchTerm(e.target.value)}
-                                />
-                            </div>
-                            <div className='flex flex-col'>
-                                <label htmlFor="f_fin" className="px-2 py-0.5 ml-3 text-sm font-roboto font-medium text-slate-600">
-                                    Fecha fin
-                                </label>
-                                <input
-                                    id='f_fin'
-                                    type="date"
-                                    placeholder="Buscar medicamento..."
-                                    className="px-2 py-0.5 ml-4 w-1/3 border rounded text-sm"
-                                    value={searchTerm}
-                                    onChange={(e) => setSearchTerm(e.target.value)}
-                                />
+                            <div className='flex'>
+                                <div className='flex w-1/3'>
+                                    <label htmlFor="f_inic" className="px-2 py-0.5 ml-3 text-sm font-roboto font-medium text-slate-600">
+                                        Fecha inicio
+                                    </label>
+                                    <input
+                                        id='f_inic'
+                                        type="date"
+                                        placeholder="Buscar medicamento..."
+                                        className="px-2 py-0.5 ml-4 w-2/3 border rounded text-sm"
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                    />
+                                </div> 
+                                <div className='flex w-1/3'>
+                                    <label htmlFor="f_fin" className="px-2 py-0.5 ml-3 text-sm font-roboto font-medium text-slate-600">
+                                        Fecha fin
+                                    </label>
+                                    <input
+                                        id='f_fin'
+                                        type="date"
+                                        placeholder="Buscar medicamento..."
+                                        className="px-2 py-0.5 ml-4 w-2/3 border rounded text-sm"
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                    />
+                                </div>
                             </div>
                             <div className='min-h-20 py-1 px-4'>
                                 <table className="shadow-sm min-w-full text-left text-sm font-roboto font-medium text-slate-600 text-surface p-2">
                                 <thead className='sticky top-0 bg-blue-400 text-white whitespace-nowrap'>
                                     <tr>
+                                        <th className="px-2 py-1 border-b">MOVIMIENTO_ID</th>
+                                        <th className="px-2 py-1 border-b">FECHA</th>
                                         <th className="px-2 py-1 border-b">Droga</th>
                                         <th className="px-2 py-1 border-b">Marca comercial</th>
                                         <th className="px-2 py-1 border-b">Médico</th>
                                         <th className="px-2 py-1 border-b">Especialidad</th>
                                         <th className="px-2 py-1 border-b">Tipo Cuenta</th>
-                                        <th className="px-2 py-1 border-b">Retiros pendientes</th>
                                         <th className="px-2 py-1 border-b">Funcionario</th>
-                                        <th className="px-2 py-1 border-b">Fecha inicio tto.</th>
-                                        <th className="px-2 py-1 border-b">Fecha fin tto.</th>
                                         <th className="px-2 py-1 border-b">Cantidad retirada</th>
                                     </tr>
                                 </thead>
@@ -225,14 +229,13 @@ export default function HistorialRetiros() {
                                     {filteredMedications.map((medication, index) => (
                                         <tr key={index} className='hover:bg-gray-100 cursor-pointer'>
                                             <td className="px-2 py-1 border-b">{medication.droga}</td>
+                                            <td className="px-2 py-1 border-b">{medication.droga}</td>
+                                            <td className="px-2 py-1 border-b">{medication.droga}</td>
                                             <td className="px-2 py-1 border-b">{medication.nombre_comercial}</td>
                                             <td className="px-2 py-1 border-b">{medication.medico}</td>
                                             <td className="px-2 py-1 border-b">{medication.especialidad}</td>
                                             <td className="px-2 py-1 border-b">{medication.tipo_cuenta}</td>
-                                            <td className="px-2 py-1 border-b">{medication.retiros_pendientes}</td>
                                             <td className="px-2 py-1 border-b">{medication.funcionario}</td>
-                                            <td className="px-2 py-1 border-b">{medication.fecha_inicio_tto}</td>
-                                            <td className="px-2 py-1 border-b">{medication.fecha_fin_tto}</td>
                                             <td className="px-2 py-1 border-b">{medication.cantidad_retirada}</td>
                                         </tr>
                                     ))}

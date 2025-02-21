@@ -20,7 +20,7 @@ export default function MedCC () {
         getCurrentSelectedNumber(setNumero)
     }, []);
 
-    const customer_id = 1;
+    const customer_id = 1; //! cambiar por el id del customer que este siendo atendido
     //traer todos los medicamentos
     useEffect(() => {
         const data = fetchTratamiento(customer_id, setTratamientos);

@@ -238,3 +238,15 @@ export const fetchTratamiento = (customer_id, setTratamientos) => {
             console.error('Error fetching tratamientos:', error);
         });
 }
+
+export const fetchHistoricoRetiros = (customer_id, setHistoricoRetiros) => {
+    console.log(`${API_URL}/historicoRetiros/${customer_id}`);
+    axios
+        .get(`${API_URL}/historicoRetiros/${customer_id}`)
+        .then(response => {
+            setHistoricoRetiros(response.data);
+        })
+        .catch(error => {
+            console.error('Error fetching historico retiros:', error);
+        });
+}
