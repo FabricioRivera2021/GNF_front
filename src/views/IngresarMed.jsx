@@ -320,7 +320,7 @@ export default function IngresarMed () {
                 <div className="flex items-center mx-7 mt-4 gap-4">
                     <div 
                         className={`flex w-fit items-end rounded-md
-                        ${(addMedication.droga != null) ? ((addMedication.tipo_medicamento === 'Controlado') ? 'border-orange-500 border-x-2 border-y-2 shadow-md' : 'border-blue-500 border-x-2 border-y-2 shadow-md') : '' } 
+                        ${(addMedication.droga != null) ? ((addMedication.tipo_medicamento === 'Controlado') ? 'py-4 px-4 border-orange-500 border-x-2 shadow-md bg-orange-200' : 'py-4 px-4 border-blue-500 bg-blue-50 border-x-2 shadow-md') : '' } 
                         py-0.5 px-2 gap-5 text-lg`}>
                         <div className='flex font-bold'>
                             <p className='text-slate-700 mb-1'>{addMedication.droga}</p> {/* medication.droga */}
@@ -332,16 +332,16 @@ export default function IngresarMed () {
                             {
                                 ((addMedication.tipo_medicamento === 'Controlado') 
                                     ?
-                                    <div className='flex gap-2'>
+                                    <div className='flex gap-2 mb-1'>
                                         <p>Medicación CONTROLADA</p>
-                                        <ExclamationTriangleIcon className='w-6 text-orange-400' />
+                                        <ExclamationTriangleIcon className='w-6 text-red-500' />
                                     </div>
                                     :
                                     '')
                             }
                         </div>
                         <button 
-                            className={`bg-red-400 rounded-md shadow-sm px-2 py-0.5 text-white ${addMedication.droga != null ? 'hover:bg-red-600' : 'hidden'}`}
+                            className={`bg-red-400 rounded-md shadow-sm px-2 py-0.5 mb-1 text-white ${addMedication.droga != null ? 'hover:bg-red-600' : 'hidden'}`}
                             onClick={() => handleClearAddMedication()}
                         >Cancelar</button>
                     </div>
