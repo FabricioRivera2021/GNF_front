@@ -5,6 +5,7 @@ import { userStateContext } from '../context/ContextProvider';
 import { ArrowUpTrayIcon, CheckBadgeIcon, CheckIcon, ExclamationTriangleIcon, PencilSquareIcon, PlusCircleIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import IngresarMedSideBar from '../components/IngresarMedSideBar';
 import { fetchAllMedicamentos, getCurrentSelectedNumber } from '../API/apiServices';
+import { Checkbox } from '@headlessui/react';
 
 export default function IngresarMed () {
     const { 
@@ -22,7 +23,9 @@ export default function IngresarMed () {
         medications, 
         setMedications,
         addMedication,
-        setAddMedication
+        setAddMedication,
+        showTreatmentModal,
+        setShowTreatmentModal
     } = userStateContext();
     const [selectedFilter, setSelectedFilter] = useState(1);
     const [duration, setDuration] = useState(1);
@@ -58,6 +61,11 @@ export default function IngresarMed () {
             unidades_caja: null,
             presentacion_farmaceutica: null
         });
+    }
+
+    //show the treatment modal to input the treatment
+    const handleInputMedicationTreatment = () => {
+        setShowTreatmentModal(true);
     }
 
     //get current selected number by the User
@@ -174,6 +182,27 @@ export default function IngresarMed () {
     const handleCloseMedicationModal = () => setShowMedicaitonModal(false);
     const handleCloseMedicoModal = () => setShowMedicoModal(false);
 
+    const [open, setOpen] = useState(false);
+    const [days, setDays] = useState(1);
+    const [everyday, setEveryday] = useState(true);
+    const [selectedDays, setSelectedDays] = useState([]);
+    const [interval, setInterval] = useState(24);
+    const [totalDoses, setTotalDoses] = useState(0);
+
+    const daysOfWeek = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"];
+
+    const toggleDay = (day) => {
+      setSelectedDays((prev) =>
+        prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day]
+      );
+    };
+  
+    const calculateDoses = () => {
+      let dosesPerDay = 24 / interval;
+      let total = everyday ? days * dosesPerDay : selectedDays.length * dosesPerDay * (days / 7);
+      setTotalDoses(Math.ceil(total));
+    };
+
     return (
         <div className="flex">
             <IngresarMedSideBar />
@@ -182,22 +211,31 @@ export default function IngresarMed () {
                 <div className="flex flex-col items-start w-full bg-slate-100 p-3 space-y-3">
                     <h2 className="text-2xl font-bold mb-2">Ingresar Medicación</h2>
                     <div className='flex items-end justify-start gap-2'>
-                      <input
-                        className="shadow appearance-none border rounded-md ml-4 py-2 px-2 text-gray-100 font-semibold leading-tight 
-                        focus:outline-none focus:shadow-outline bg-blue-400 cursor-pointer hover:bg-blue-500"
-                        id="medicationName"
-                        type="button"
-                        value="Buscar médico"
-                        onClick={() => {
-                          setSearchTermMedico('');
-                          setShowMedicoModal(true);
-                        }}
-                        />
-                      <div className='flex items-center gap-2'>
-                        <p className='text-slate-400 font-bold'>No se ingreso médico</p>
-                        <CheckBadgeIcon className='w-6 text-green-500' /> 
-                        <ExclamationTriangleIcon className='w-6 text-orange-400' />
-                      </div>
+                        <div className='ml-4 py-2'>
+                            <input
+                                className="shadow appearance-none border py-1.5 px-2 rounded-md text-gray-100 font-semibold leading-tight 
+                                focus:outline-none focus:shadow-outline bg-blue-400 cursor-pointer hover:bg-blue-500"
+                                id="medicationName"
+                                type="button"
+                                value="Buscar médico"
+                                onClick={() => {
+                                setSearchTermMedico('');
+                                setShowMedicoModal(true);
+                                }}
+                                />
+                            <div className='flex items-center gap-2 px-1'>
+                                <p className='text-slate-400 font-semibold'>No se ingreso médico</p>
+                                <ExclamationTriangleIcon className='w-6 text-orange-400' />
+                            </div>
+                            <div className='flex flex-col px-1 text-slate-500 items-start font-semibold'>
+                                <p>Medico medico</p>
+                                <div className='flex gap-3'>
+                                    <p>Cardiología</p>
+                                    <p>Cardiología</p>
+                                </div>
+                                <p>Nro RRMM: 225487</p>
+                            </div>
+                        </div>
                     </div>
                     <input
                         type="text"
@@ -319,20 +357,24 @@ export default function IngresarMed () {
                 </div>
                 <div className="flex items-center mx-7 mt-4 gap-4">
                     <div 
-                        className={`flex w-fit items-end rounded-md
-                        ${(addMedication.droga != null) ? ((addMedication.tipo_medicamento === 'Controlado') ? 'py-4 px-4 border-orange-500 border-x-2 shadow-md bg-orange-200' : 'py-4 px-4 border-blue-500 bg-blue-50 border-x-2 shadow-md') : '' } 
-                        py-0.5 px-2 gap-5 text-lg`}>
+                        className={`flex w-fit items-end rounded-md px-2 gap-5 text-lg ${(addMedication.droga != null) 
+                                                                                            ? ((addMedication.tipo_medicamento === 'Controlado') 
+                                                                                                ? 'py-1 px-4 border-orange-500 border-x-2 shadow-md bg-orange-200' 
+                                                                                                : 'py-1 px-4 border-blue-500 bg-blue-50 border-x-2 shadow-md') 
+                                                                                            : '' 
+                                                                                        } 
+                                    `}>
                         <div className='flex font-bold'>
-                            <p className='text-slate-700 mb-1'>{addMedication.droga}</p> {/* medication.droga */}
+                            <p className='text-slate-700'>{addMedication.droga}</p> {/* medication.droga */}
                         </div>
                         <div className='flex gap-4 items-center font-normal'>
-                            <p className='text-slate-700 mb-1 font-semibold'>{addMedication.nombre_comercial}</p> {/* medication.tipo_medicamento */}
-                            <p className='text-slate-600 mb-1'>{addMedication.droga_concentracion}</p> {/* medication.droga_concentracion */}
-                            <p className='text-slate-600 mb-1'>{addMedication.unidades_caja} {addMedication.presentacion_farmaceutica}</p> {/* medication.unidades_caja */}
+                            <p className='text-slate-700 font-semibold'>{addMedication.nombre_comercial}</p> {/* medication.tipo_medicamento */}
+                            <p className='text-slate-600'>{addMedication.droga_concentracion}</p> {/* medication.droga_concentracion */}
+                            <p className='text-slate-600'>{addMedication.unidades_caja} {addMedication.presentacion_farmaceutica}</p> {/* medication.unidades_caja */}
                             {
                                 ((addMedication.tipo_medicamento === 'Controlado') 
                                     ?
-                                    <div className='flex gap-2 mb-1'>
+                                    <div className='flex gap-2'>
                                         <p>Medicación CONTROLADA</p>
                                         <ExclamationTriangleIcon className='w-6 text-red-500' />
                                     </div>
@@ -340,17 +382,63 @@ export default function IngresarMed () {
                                     '')
                             }
                         </div>
-                        <button 
-                            className={`bg-red-400 rounded-md shadow-sm px-2 py-0.5 mb-1 text-white ${addMedication.droga != null ? 'hover:bg-red-600' : 'hidden'}`}
-                            onClick={() => handleClearAddMedication()}
-                        >Cancelar</button>
                     </div>
+                    <button 
+                        className={`bg-blue-400 rounded-md shadow-sm px-2 py-0.5 text-white ${addMedication.droga != null ? 'hover:bg-blue-600' : 'hidden'}`}
+                        onClick={() => handleInputMedicationTreatment()}
+                    >Ingresar tto.</button>
+                    <Modal show={showTreatmentModal} handleClose={() => setShowTreatmentModal(false)}>
+                        <div>
+                            <div>
+                                <h2 className='text-2xl font-semibold text-slate-600'>Posología</h2>
+                            </div>
+                            <div className="space-y-4">
+                                <div>
+                                    <label>Días de tratamiento:</label>
+                                    <input className='border-none mx-3' type="number" min="1" value={days} onChange={(e) => setDays(Number(e.target.value))} />
+                                </div>
+                                <div>
+                                    <input type="checkbox" checked={everyday} onChange={(e) => setEveryday(e.target.checked)} />
+                                    <label className="ml-2">Todos los días</label>
+                                </div>
+                                    {!everyday && (
+                                    <div className="grid grid-cols-3 gap-2">
+                                        {daysOfWeek.map((day) => (
+                                        <label key={day} className="flex items-center">
+                                            <input type="checkbox" checked={selectedDays.includes(day)} onChange={() => toggleDay(day)} />
+                                            <span className="ml-2">{day}</span>
+                                        </label>
+                                        ))}
+                                </div>
+                                )}
+                                <div>
+                                    <label>Cada cuántas horas:</label>
+                                    <select value={interval} onChange={(e) => setInterval(Number(e.target.value))}>
+                                        {[24, 12, 8, 6, 3].map((h) => (
+                                        <option key={h} value={h}>{`${h} horas`}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                                <div className='flex gap-4 pt-5'>
+                                    <button className='bg-blue-400 shadow-sm px-3 py-0.5 rounded-sm text-white hover:bg-blue-500' onClick={calculateDoses}>Calcular Dosis</button>
+                                    {totalDoses > 0 && <p className="text-lg font-semibold">Comprimidos: {totalDoses}</p>}
+                                </div>
+                                <div>
+                                    <button className='bg-blue-400 shadow-sm px-3 py-0.5 rounded-sm text-white hover:bg-blue-500'>Ingresar tto.</button>
+                                </div>
+                            </div>
+                        </div>
+                    </Modal>
+                    <button 
+                        className={`bg-red-400 rounded-md shadow-sm px-2 py-0.5 text-white ${addMedication.droga != null ? 'hover:bg-red-600' : 'hidden'}`}
+                        onClick={() => handleClearAddMedication()}
+                    >Cancelar</button>
                 </div>
                 <div className="items-start w-full p-3 space-y-6">
                     <div className="rounded-lg w-full overflow-auto">
                         <form className="space-y-4">
                             <div className='min-h-20 p-4 flex gap-4 items-end'>
-                                <div>
+                                {/* <div>
                                     <label className="block text-gray-700 text-sm font-bold mb-1" htmlFor="duration">Duración tto.</label>
                                     <select
                                         className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -430,7 +518,7 @@ export default function IngresarMed () {
                                 </button>
                                 </div>
                                 {/* ###################################################################################################################### */}
-                            </div>
+                            </div> 
                         </form>
                     </div>
                 </div>

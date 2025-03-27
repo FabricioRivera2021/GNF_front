@@ -74,7 +74,7 @@ export default function MedCC () {
                             <table className="shadow-sm min-w-full text-left text-sm font-roboto font-medium text-slate-600 text-surface p-2">
                             <thead className='sticky top-0 bg-blue-400 text-white whitespace-nowrap'>
                                 <tr>
-                                <th className="px-2 py-1 border-b">Vigencia Tto</th>
+                                <th className="px-2 py-1 border-b">Tto</th>
                                 <th className="px-2 py-1 border-b">Droga</th>
                                 <th className="px-2 py-1 border-b">Tratamiento</th>
                                 <th className="px-2 py-1 border-b">Duracion</th>
@@ -108,7 +108,7 @@ export default function MedCC () {
                                         <td className="px-2 py-1 border-b">{tto.fecha_inicio}</td>
                                         <td className="px-2 py-1 border-b">{tto.fecha_fin}</td>
                                         <td className="px-2 py-1 border-b">{tto.medication.stock}</td>
-                                        <td className="px-2 py-1 border-b flex gap-4">
+                                        <td className="px-2 py-1 border-b flex gap-1">
                                             <button className='bg-blue-400 hover:bg-blue-600 rounded px-2 text-white'>-</button>
                                             <p className='px-2 bg-white border border-slate-700 rounded-sm shadow-sm'>0</p>
                                             <button className='bg-blue-400 hover:bg-blue-600 rounded px-2 text-white'>+</button>

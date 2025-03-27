@@ -14,6 +14,7 @@ const StateContext = createContext({
   filterCancel: false,
   showMedicationModal: false,
   showMedicoModal: false,
+  showTreatmentModal: false,
   medications: [],
   tratamientos: [],
   addMedication: {},
@@ -30,6 +31,7 @@ const StateContext = createContext({
   filterCancel: () => {},
   setShowMedicationModal: () => {},
   setShowMedicoModal: () => {},
+  setShowTreatmentModal: () => {},
   setMedications: () => {},
   setTratamientos: () => {},
   setAddMedication: () => {},
@@ -57,6 +59,7 @@ export const ContextProvider = ({children}) => {
   const [showMedicationModal, setShowMedicationModal] = useState(false);
   const [showMedicoModal, setShowMedicoModal] = useState(false);
   const [medications, setMedications] = useState([]);
+  const [showTreatmentModal, setShowTreatmentModal] = useState(false);
   const [tratamientos, setTratamientos] = useState([]);
   const [addMedication, setAddMedication] = useState({});
   const [historicoRetiros, setHistoricoRetiros] = useState([]);
@@ -115,7 +118,9 @@ export const ContextProvider = ({children}) => {
         addMedication,
         setAddMedication,
         historicoRetiros,
-        setHistoricoRetiros
+        setHistoricoRetiros,
+        showTreatmentModal,
+        setShowTreatmentModal
       }}
     >
       {children}
