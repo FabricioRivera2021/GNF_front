@@ -35,7 +35,7 @@ export default function IngresarMed () {
     const [searchTerm, setSearchTerm] = useState('');
     const [searchTermMedico, setSearchTermMedico] = useState('');
 
-    const handleAddMedication = (event, id, droga, nombre_comercial, tipo_medicamento, droga_concentracion, unidades_caja, presentacion_farmaceutica) => {
+    const handleAddMedication = (event, id, droga, nombre_comercial, tipo_medicamento, droga_concentracion, unidades_caja, presentacion_farmaceutica, lab, lote, fecha_vencimiento) => {
         event.preventDefault();
         setAddMedication({
             id: id,
@@ -44,11 +44,12 @@ export default function IngresarMed () {
             tipo_medicamento: tipo_medicamento,
             droga_concentracion: droga_concentracion,
             unidades_caja: unidades_caja,
-            presentacion_farmaceutica: presentacion_farmaceutica
+            presentacion_farmaceutica: presentacion_farmaceutica,
+            lote: lote,
+            laboratorio: lab,
+            fecha_vencimiento: fecha_vencimiento
         });
-
         console.log(addMedication);
-        
     }
 
     const handleClearAddMedication = () => {
@@ -189,7 +190,7 @@ export default function IngresarMed () {
     const [interval, setInterval] = useState(24);
     const [totalDoses, setTotalDoses] = useState(0);
 
-    const daysOfWeek = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"];
+    const diasDeLaSemana = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"];
 
     const toggleDay = (day) => {
       setSelectedDays((prev) =>
@@ -197,10 +198,34 @@ export default function IngresarMed () {
       );
     };
   
-    const calculateDoses = () => {
-      let dosesPerDay = 24 / interval;
-      let total = everyday ? days * dosesPerDay : selectedDays.length * dosesPerDay * (days / 7);
-      setTotalDoses(Math.ceil(total));
+    const calculateDoses = (days, dosesPerDay, selectedDays, everyday) => {
+      console.log(everyday, "dias", days, "dosis por dia", dosesPerDay, "dias seleccionados", selectedDays.map(day => diasDeLaSemana.indexOf(day) + 1));
+      let selectedDayIndexes = selectedDays.map(day => diasDeLaSemana.indexOf(day));
+      let weeks = Math.floor(days / 8);
+      // console.log("semanas", weeks);
+      let extraDays = days % 8;
+      // console.log("dias extra", extraDays);
+      let totalDoses = 0;
+      // console.log("dosis total", totalDoses);
+
+      if (everyday){
+        totalDoses = days * dosesPerDay;
+      } else {
+
+        if(selectedDayIndexes.length > days) {
+          console.log("no se puede seleccionar mas dias de los que dura el tratamiento");
+          return;
+        }else{
+          console.log("dias seleccionados", selectedDayIndexes, "dias del tratamiento", days, "dosis por dia", dosesPerDay, "semanas", weeks, "dias extra", extraDays);
+        }
+        selectedDayIndexes.forEach(dayIndex => {
+          let totalOcurrences = weeks + (extraDays >= dayIndex ? 1 : 0);
+          totalDoses += totalOcurrences * dosesPerDay;
+        }
+      );
+    }
+
+      setTotalDoses(totalDoses);
     };
 
     return (
@@ -304,7 +329,10 @@ export default function IngresarMed () {
                                                                     medication.tipo_medicamento,
                                                                     medication.droga_concentracion, 
                                                                     medication.unidades_caja, 
-                                                                    medication.presentacion_farmaceutica
+                                                                    medication.presentacion_farmaceutica,
+                                                                    medication.laboratorio,
+                                                                    medication.lote,
+                                                                    medication.fecha_vencimiento
                                                     )
                                                 }}>
                                                 Agregar
@@ -387,25 +415,41 @@ export default function IngresarMed () {
                         className={`bg-blue-400 rounded-md shadow-sm px-2 py-0.5 text-white ${addMedication.droga != null ? 'hover:bg-blue-600' : 'hidden'}`}
                         onClick={() => handleInputMedicationTreatment()}
                     >Ingresar tto.</button>
+
+
+
+
+                    {/* ----------------------------------------------------------------------------------------------------------------------------------------- */}
                     <Modal show={showTreatmentModal} handleClose={() => setShowTreatmentModal(false)}>
                         <div>
-                            <div>
-                                <h2 className='text-2xl font-semibold text-slate-600'>Posología</h2>
+                            <div className='bg-yellow-100 mb-3 font-semibold text-slate-600 p-2 rounded-md'>
+                              <p className='text-center'>Medicación</p>
+                              <p>Nombre: {addMedication.droga}</p>
+                              <p>Nombre comercial: {addMedication.nombre_comercial}</p>
+                              <p>Lab: {addMedication.laboratorio}</p>
+                              <p>Lote: {addMedication.lote}</p>
+                              <p>F. venc: {addMedication.fecha_vencimiento}</p>
+                              <p>Notas: notas</p>
                             </div>
-                            <div className="space-y-4">
-                                <div>
+                            <div>
+                              <h2 className='text-xl mb-4 font-semibold bg-blue-500 text-white text-center py-1.5'>Tratamiento</h2>
+                            </div>
+                            <div className="space-y-3 text-xl font-semibold">
+                                <div className='flex gap-2 items-center'>
                                     <label>Días de tratamiento:</label>
-                                    <input className='border-none mx-3' type="number" min="1" value={days} onChange={(e) => setDays(Number(e.target.value))} />
+                                    <input className='border-none mx-2 text-slate-600 bg-slate-200' type="number" min="1" defaultValue={1} value={days} onChange={(e) => setDays(Number(e.target.value))} />
                                 </div>
                                 <div>
-                                    <input type="checkbox" checked={everyday} onChange={(e) => setEveryday(e.target.checked)} />
-                                    <label className="ml-2">Todos los días</label>
+                                    <label>
+                                      <input className='border-none bg-slate-200 hover:bg-blue-200' type="checkbox" checked={everyday} onChange={(e) => setEveryday(e.target.checked)} />
+                                      <span className='ml-2'>Todos los días</span>
+                                    </label>
                                 </div>
                                     {!everyday && (
                                     <div className="grid grid-cols-3 gap-2">
-                                        {daysOfWeek.map((day) => (
+                                        {diasDeLaSemana.map((day) => (
                                         <label key={day} className="flex items-center">
-                                            <input type="checkbox" checked={selectedDays.includes(day)} onChange={() => toggleDay(day)} />
+                                            <input className='border-none bg-slate-50 hover:bg-blue-200' type="checkbox" checked={selectedDays.includes(day)} onChange={() => toggleDay(day)} />
                                             <span className="ml-2">{day}</span>
                                         </label>
                                         ))}
@@ -413,15 +457,15 @@ export default function IngresarMed () {
                                 )}
                                 <div>
                                     <label>Cada cuántas horas:</label>
-                                    <select value={interval} onChange={(e) => setInterval(Number(e.target.value))}>
+                                    <select className='ml-2 border-none bg-slate-200' value={interval} onChange={(e) => setInterval(Number(e.target.value))}>
                                         {[24, 12, 8, 6, 3].map((h) => (
-                                        <option key={h} value={h}>{`${h} horas`}</option>
+                                        <option className='border-none' key={h} value={h}>{`${h} horas`}</option>
                                         ))}
                                     </select>
                                 </div>
                                 <div className='flex gap-4 pt-5'>
-                                    <button className='bg-blue-400 shadow-sm px-3 py-0.5 rounded-sm text-white hover:bg-blue-500' onClick={calculateDoses}>Calcular Dosis</button>
-                                    {totalDoses > 0 && <p className="text-lg font-semibold">Comprimidos: {totalDoses}</p>}
+                                    <button className='bg-blue-400 shadow-sm px-3 py-0.5 rounded-sm text-white hover:bg-blue-500' onClick={() => calculateDoses(days, (24 / interval), selectedDays, everyday)}>Calcular Dosis</button>
+                                    {totalDoses > 0 && <p className="text-lg font-semibold">{totalDoses} Comprimidos</p>}
                                 </div>
                                 <div>
                                     <button className='bg-blue-400 shadow-sm px-3 py-0.5 rounded-sm text-white hover:bg-blue-500'>Ingresar tto.</button>
