@@ -16,7 +16,8 @@ export default {
   },
   plugins: [
     require('@tailwindcss/forms'),
-    require('@tailwindcss/typography')
+    require('@tailwindcss/typography'),
+    require('moment/locale/es.js'), // 🔥 Asegura que Vite incluya el idioma español
   ],
 }
 

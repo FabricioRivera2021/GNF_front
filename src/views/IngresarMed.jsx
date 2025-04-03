@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { FilterSideBar, Modal } from '../components/index';
+import { FilterSideBar, Modal, CalendarTreatment } from '../components/index';
 import LlamadorPanel from "../components/LlamadorPanel";
 import { userStateContext } from '../context/ContextProvider';
 import { ArrowUpTrayIcon, CheckBadgeIcon, CheckIcon, ExclamationTriangleIcon, PencilSquareIcon, PlusCircleIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
@@ -495,6 +495,7 @@ export default function IngresarMed () {
                                 </div>
                                 <div className='flex flex-col gap-2 items-start'>
                                     <label>Dia de inicio:</label>
+                                    <CalendarTreatment />
                                     <div className='flex gap-2 items-center'>
                                       <label><input type="radio" value={'today'} name='currentDay' checked={!currentDay} onChange={() => setCurrentDay(false)} /> Hoy</label>
                                       <label>
