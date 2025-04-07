@@ -1,3 +1,4 @@
+import { set } from "date-fns";
 import { createContext, useContext, useState } from "react";
 
 const StateContext = createContext({
@@ -19,6 +20,9 @@ const StateContext = createContext({
   tratamientos: [],
   addMedication: {},
   historicoRetiros: [],
+  startDate: 1,
+  treatmentDays: 0,
+  events: [],
   setCurrentUser: () => {},
   setUserToken: () => {},
   setPosition: () => {},
@@ -36,6 +40,9 @@ const StateContext = createContext({
   setTratamientos: () => {},
   setAddMedication: () => {},
   setHistoricoRetiros: () => {},
+  setStartDate: () => {},
+  setTreatmentDays: () => {},
+  setEvents: () => {},
 });
 
 export const ContextProvider = ({children}) => {
@@ -63,6 +70,10 @@ export const ContextProvider = ({children}) => {
   const [tratamientos, setTratamientos] = useState([]);
   const [addMedication, setAddMedication] = useState({});
   const [historicoRetiros, setHistoricoRetiros] = useState([]);
+  //set start date as today
+  const [startDate, setStartDate] = useState(new Date());
+  const [treatmentDays, setTreatmentDays] = useState(0)
+  const [events, setEvents] = useState([])
 
   //funcion para agregar un nuevo numero a la TV
   const addNumeroTV = (nuevoNumero) => {
@@ -120,7 +131,13 @@ export const ContextProvider = ({children}) => {
         historicoRetiros,
         setHistoricoRetiros,
         showTreatmentModal,
-        setShowTreatmentModal
+        setShowTreatmentModal,
+        startDate,
+        setStartDate,
+        treatmentDays,
+        setTreatmentDays,
+        events,
+        setEvents,
       }}
     >
       {children}
