@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { FilterSideBar, Modal, CalendarTreatment } from '../components/index';
+import { Modal, CalendarTreatment } from '../components/index';
 import LlamadorPanel from "../components/LlamadorPanel";
 import { userStateContext } from '../context/ContextProvider';
-import { ArrowUpTrayIcon, CheckBadgeIcon, CheckIcon, ExclamationTriangleIcon, PencilSquareIcon, PlusCircleIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import IngresarMedSideBar from '../components/IngresarMedSideBar';
 import { fetchAllMedicamentos, getCurrentSelectedNumber } from '../API/apiServices';
-import { Checkbox } from '@headlessui/react';
 
 export default function IngresarMed () {
     const { 
@@ -32,21 +31,85 @@ export default function IngresarMed () {
         setEvents
     } = userStateContext();
     const [selectedFilter, setSelectedFilter] = useState(1);
-    const [duration, setDuration] = useState(1);
-    const [frequency, setFrequency] = useState(1);
-    const [retiro, setRetiro] = useState('');
-    const [cajasRetiro , setCajasRetiro] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
     const [searchTermMedico, setSearchTermMedico] = useState('');
-
-    const [open, setOpen] = useState(false);
     const [days, setDays] = useState(1);
     const [everyday, setEveryday] = useState(true);
     const [selectedDays, setSelectedDays] = useState([]);
     const [interval, setInterval] = useState(24);
     const [totalDoses, setTotalDoses] = useState(0);
-    const [startTtoDay, setStartTtoDay] = useState(new Date().toLocaleString('es-ES', { weekday: 'long' }));
-    const [currentDay, setCurrentDay] = useState(false);
+
+    const medicos = [
+      {
+          nombre: 'Juan',
+          apellido: 'Perez',
+          numeroRegistro: '123456',
+          numeroCajaMedica: '987654',
+          especialidad: ['Cardiología', 'Medicina Interna']
+      },
+      {
+          nombre: 'Maria',
+          apellido: 'Gomez',
+          numeroRegistro: '654321',
+          numeroCajaMedica: '123987',
+          especialidad: ['Pediatría']
+      },
+      {
+          nombre: 'Carlos',
+          apellido: 'Lopez',
+          numeroRegistro: '112233',
+          numeroCajaMedica: '445566',
+          especialidad: ['Dermatología', 'Alergología']
+      },
+      {
+          nombre: 'Ana',
+          apellido: 'Martinez',
+          numeroRegistro: '223344',
+          numeroCajaMedica: '556677',
+          especialidad: ['Ginecología', 'Obstetricia']
+      },
+      {
+          nombre: 'Luis',
+          apellido: 'Rodriguez',
+          numeroRegistro: '334455',
+          numeroCajaMedica: '667788',
+          especialidad: ['Neurología']
+      },
+      {
+          nombre: 'Laura',
+          apellido: 'Fernandez',
+          numeroRegistro: '445566',
+          numeroCajaMedica: '778899',
+          especialidad: ['Psiquiatría']
+      },
+      {
+          nombre: 'Miguel',
+          apellido: 'Garcia',
+          numeroRegistro: '556677',
+          numeroCajaMedica: '889900',
+          especialidad: ['Oftalmología']
+      },
+      {
+          nombre: 'Sofia',
+          apellido: 'Hernandez',
+          numeroRegistro: '667788',
+          numeroCajaMedica: '990011',
+          especialidad: ['Endocrinología']
+      },
+      {
+          nombre: 'Diego',
+          apellido: 'Ramirez',
+          numeroRegistro: '778899',
+          numeroCajaMedica: '110022',
+          especialidad: ['Urología']
+      },
+      {
+          nombre: 'Elena',
+          apellido: 'Torres',
+          numeroRegistro: '889900',
+          numeroCajaMedica: '220033',
+          especialidad: ['Reumatología']
+      }];
 
     const diasDeLaSemana = ["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"];
 
@@ -66,7 +129,7 @@ export default function IngresarMed () {
             fecha_vencimiento: fecha_vencimiento
         });
         console.log(addMedication);
-    }
+    };
 
     const handleClearAddMedication = () => {
         setAddMedication({
@@ -78,13 +141,103 @@ export default function IngresarMed () {
             unidades_caja: null,
             presentacion_farmaceutica: null
         });
-    }
+    };
+
+    const generateEventsByWeekday = (startDate, totalDays, targetWeekdays) => {
+      const events = []
+      const dayInMs = 24 * 60 * 60 * 1000
+    
+      for (let i = 0; i < totalDays; i++) {
+        const currentDate = new Date(startDate.getTime() + i * dayInMs)
+        const dayOfWeek = currentDate.getDay() // 0 = Domingo, 1 = Lunes, ...
+    
+        if (targetWeekdays.includes(dayOfWeek)) {
+          events.push({
+            title: '💊 Medicación',
+            start: currentDate,
+            end: currentDate,
+            allDay: true,
+          })
+        }
+      }
+    
+      return events
+    };
 
     //show the treatment modal to input the treatment
     const handleInputMedicationTreatment = () => {
         setShowTreatmentModal(true);
-    }
+    };
 
+    // const handleClickFilter = (id) => {
+    //   setFilterPaused(false);
+    //   setFilterCancel(false);
+    //   setSelectedFilter(id);
+    // };
+
+    // const handleCloseModal = () => setShowModal(false);
+
+    // const handleCloseMedicationModal = () => setShowMedicaitonModal(false);
+
+    const handleCloseMedicoModal = () => setShowMedicoModal(false);
+
+    const toggleDay = (day) => {
+      setSelectedDays((prev) =>
+        prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day]
+      );
+    };
+
+    // const calculateRemainingDays = (diasDeLaSemana) => {
+    //   const currentDay = new Date().toLocaleString('es-ES', { weekday: 'long' });
+    //   const currentDayIndex = diasDeLaSemana.indexOf(currentDay) + 1; // +1 to match the 1-7 range
+
+    //   const remainingDays = 7 - currentDayIndex;
+    //   return remainingDays;
+    // }
+
+    const calculateDoses = (days, dosesPerDay, selectedDays, everyday) => {
+      let selectedDayIndexes = selectedDays.map(day => diasDeLaSemana.indexOf(day) + 1); //selected day index 
+      // selectedDays.map(day => {
+      //   console.log(diasDeLaSemana.indexOf(day) + 1);
+      // })
+      let startDayIndex = diasDeLaSemana.indexOf(startDate.toLocaleString('es-ES', { weekday: 'long' })) + 1; // +1 to match the 1-7 range
+      console.log("startDayIndex", startDayIndex);
+      if (!Number.isInteger(days) || days <= 0) {
+          console.error("Valor invalido de dias. Debe ser un número entero positivo.");
+          return;
+      }
+      let weeks = Math.floor(days / 7);
+      console.log("weeks", weeks);
+      let extraDays = days % 7;
+      console.log("extraDays", extraDays);
+      let totalDoses = 0;
+      if (everyday) {
+        totalDoses = days * dosesPerDay;
+      } else {
+        if (selectedDayIndexes.length > days) {
+          console.error("No se puede seleccionar más días de los que dura el tratamiento");
+          return;
+        }
+        console.log(selectedDayIndexes);
+        selectedDayIndexes.forEach(dayIndex => {
+          console.log(`Día ${dayIndex}---------`);
+          
+          let occurrences = weeks;
+          // Verificamos si el día seleccionado cae en los días extras después de las semanas completas
+          let adjustedIndex = (dayIndex - startDayIndex + 7) % 7; // Ajuste si el tratamiento no empieza en domingo
+          console.log("adjustedIndex", dayIndex - startDayIndex + 7 % 7);
+          if (adjustedIndex <= extraDays) {
+            occurrences++;
+          }
+          console.log(`Día ${diasDeLaSemana[dayIndex - 1]} aparece ${occurrences} veces`);
+          totalDoses += occurrences * dosesPerDay;
+        });
+      }
+      console.log("Total de dosis:", totalDoses);
+      setTotalDoses(totalDoses);
+    };
+
+    //USE EFFECTS
     //get current selected number by the User
     useEffect(() => {
         getCurrentSelectedNumber(setNumero)
@@ -124,99 +277,6 @@ export default function IngresarMed () {
       setEvents(newEvents)
     }, [startDate, treatmentDays, selectedDays])
 
-    const generateEventsByWeekday = (startDate, totalDays, targetWeekdays) => {
-      const events = []
-      const dayInMs = 24 * 60 * 60 * 1000
-    
-      for (let i = 0; i < totalDays; i++) {
-        const currentDate = new Date(startDate.getTime() + i * dayInMs)
-        const dayOfWeek = currentDate.getDay() // 0 = Domingo, 1 = Lunes, ...
-    
-        if (targetWeekdays.includes(dayOfWeek)) {
-          events.push({
-            title: '💊 Medicación',
-            start: currentDate,
-            end: currentDate,
-            allDay: true,
-          })
-        }
-      }
-    
-      return events
-    }
-
-    const medicos = [
-        {
-            nombre: 'Juan',
-            apellido: 'Perez',
-            numeroRegistro: '123456',
-            numeroCajaMedica: '987654',
-            especialidad: ['Cardiología', 'Medicina Interna']
-        },
-        {
-            nombre: 'Maria',
-            apellido: 'Gomez',
-            numeroRegistro: '654321',
-            numeroCajaMedica: '123987',
-            especialidad: ['Pediatría']
-        },
-        {
-            nombre: 'Carlos',
-            apellido: 'Lopez',
-            numeroRegistro: '112233',
-            numeroCajaMedica: '445566',
-            especialidad: ['Dermatología', 'Alergología']
-        },
-        {
-            nombre: 'Ana',
-            apellido: 'Martinez',
-            numeroRegistro: '223344',
-            numeroCajaMedica: '556677',
-            especialidad: ['Ginecología', 'Obstetricia']
-        },
-        {
-            nombre: 'Luis',
-            apellido: 'Rodriguez',
-            numeroRegistro: '334455',
-            numeroCajaMedica: '667788',
-            especialidad: ['Neurología']
-        },
-        {
-            nombre: 'Laura',
-            apellido: 'Fernandez',
-            numeroRegistro: '445566',
-            numeroCajaMedica: '778899',
-            especialidad: ['Psiquiatría']
-        },
-        {
-            nombre: 'Miguel',
-            apellido: 'Garcia',
-            numeroRegistro: '556677',
-            numeroCajaMedica: '889900',
-            especialidad: ['Oftalmología']
-        },
-        {
-            nombre: 'Sofia',
-            apellido: 'Hernandez',
-            numeroRegistro: '667788',
-            numeroCajaMedica: '990011',
-            especialidad: ['Endocrinología']
-        },
-        {
-            nombre: 'Diego',
-            apellido: 'Ramirez',
-            numeroRegistro: '778899',
-            numeroCajaMedica: '110022',
-            especialidad: ['Urología']
-        },
-        {
-            nombre: 'Elena',
-            apellido: 'Torres',
-            numeroRegistro: '889900',
-            numeroCajaMedica: '220033',
-            especialidad: ['Reumatología']
-        }];
-
     const filteredMedications = medications.filter(medication =>
         medication.nombre_comercial.toLowerCase().includes(searchTerm.toLowerCase()) ||
         medication.droga.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -238,93 +298,6 @@ export default function IngresarMed () {
         medico.numeroCajaMedica.includes(searchTermMedico) ||
         medico.especialidad.some(especialidad => especialidad.toLowerCase().includes(searchTermMedico.toLowerCase()))
     );
-
-    const handleClickFilter = (id) => {
-        setFilterPaused(false);
-        setFilterCancel(false);
-        setSelectedFilter(id);
-    };
-
-    const handleCloseModal = () => setShowModal(false);
-    const handleCloseMedicationModal = () => setShowMedicaitonModal(false);
-    const handleCloseMedicoModal = () => setShowMedicoModal(false);
-
-    const toggleDay = (day) => {
-      setSelectedDays((prev) =>
-        prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day]
-      );
-    };
-
-    const calculateRemainingDays = (diasDeLaSemana) => {
-      const currentDay = new Date().toLocaleString('es-ES', { weekday: 'long' });
-      const currentDayIndex = diasDeLaSemana.indexOf(currentDay) + 1; // +1 to match the 1-7 range
-
-      const remainingDays = 7 - currentDayIndex;
-      return remainingDays;
-    }
-    
-    // const calculateDoses = (days, dosesPerDay, selectedDays, everyday) => {
-    //   const currentDay = new Date().toLocaleString('es-ES', { weekday: 'long' }); console.log("currentDay", currentDay);
-    //   let selectedDayIndexes = selectedDays.map(day => diasDeLaSemana.indexOf(day) + 1); console.log("selectedDayIndexes", selectedDayIndexes);
-    //   let currentDayIndex = diasDeLaSemana.indexOf(currentDay) + 1;
-    //   let weeks = Math.floor(days / 7); console.log("weeks", weeks);
-    //   let extraDays = days % 7; console.log("extraDays", extraDays);
-    //   let totalDoses = 0;
-
-    //   let remainingDaysTillEndOfWeek = calculateRemainingDays(diasDeLaSemana); console.log("remainingDaysTillEndOfWeek", remainingDaysTillEndOfWeek);
-
-    //   if (everyday){
-    //     totalDoses = days * dosesPerDay;
-    //   } else {
-
-    //     if(selectedDayIndexes.length > days) {
-    //       console.log("no se puede seleccionar mas dias de los que dura el tratamiento");
-    //       return;
-    //     }
-
-    //     selectedDayIndexes.forEach(dayIndex => {
-    //       let totalOcurrences = weeks + (extraDays >= dayIndex ? 1 : 0); console.log("totalOcurrences", totalOcurrences);
-    //       totalDoses += totalOcurrences * dosesPerDay; console.log("totalDoses", totalDoses);
-    //     }
-    //   );
-    // }
-
-    //   setTotalDoses(totalDoses);
-    // };
-
-    const calculateDoses = (days, dosesPerDay, selectedDays, everyday) => {
-      console.log("start day", startDate.toLocaleString('es-ES', { weekday: 'long' }));
-      
-      let selectedDayIndexes = selectedDays.map(day => diasDeLaSemana.indexOf(day) + 1); 
-      console.log("selectedDayIndexes", selectedDayIndexes);
-      let startDayIndex = diasDeLaSemana.indexOf(startDate.toLocaleString('es-ES', { weekday: 'long' })) + 1; // +1 to match the 1-7 range
-      console.log("startDayIndex", startDayIndex);
-      let weeks = Math.floor(days / 7);
-      console.log("weeks", weeks);
-      let extraDays = days % 7;
-      console.log("extraDays", extraDays);
-      let totalDoses = 0;
-      if (everyday) {
-        totalDoses = days * dosesPerDay;
-      } else {
-        if (selectedDayIndexes.length > days) {
-          console.log("No se puede seleccionar más días de los que dura el tratamiento");
-          return;
-        }
-        selectedDayIndexes.forEach(dayIndex => {
-          let occurrences = weeks;
-          // Verificamos si el día seleccionado cae en los días extras después de las semanas completas
-          let adjustedIndex = (dayIndex - startDayIndex + 7) % 7; // Ajuste si el tratamiento no empieza en domingo
-          if (adjustedIndex < extraDays) {
-            occurrences++;
-          }
-          console.log(`Día ${diasDeLaSemana[dayIndex - 1]} aparece ${occurrences} veces`);
-          totalDoses += occurrences * dosesPerDay;
-        });
-      }
-      console.log("Total de dosis:", totalDoses);
-      setTotalDoses(totalDoses);
-    };
 
     return (
         <div className="flex">
@@ -603,37 +576,7 @@ export default function IngresarMed () {
                                 </div>
                               </div>
                             </div>
-                            {/* <div>
-                              <h2 className='text-lg mb-4 font-semibold bg-blue-500 text-white text-center shadow-md rounded-sm'>Tratamiento</h2>
-                            </div> */}
                           </div>
-                          {/* <div className="space-y-3 text-sm">
-                              <div className='flex gap-2 items-center'>
-                                <div className='flex flex-col items-start'>
-                                    {/* ! pendiente hasta ver si se puede resolver con el calendario */}
-                                    {/* <div className='flex gap-2 items-center'>
-                                      <label><input type="radio" value={'today'} name='currentDay' checked={!currentDay} onChange={() => setCurrentDay(false)} /> Hoy</label>
-                                      <label>
-                                        <input type="radio" value={'today'} name='currentDay' checked={currentDay} onChange={() => setCurrentDay(true)} /> Otro dia
-                                        {/* only show the select if the radio is selected */}
-                                        {/* {currentDay && (<select 
-                                          className='ml-2 border-none bg-slate-200' 
-                                          value={diasDeLaSemana.indexOf(startTtoDay[0])} 
-                                          onChange={(e) => setStartTtoDay([diasDeLaSemana[parseInt(e.target.value, 10)]])}>
-                                            {diasDeLaSemana.map((day, index) => (
-                                              <option key={index} value={index}>{day}</option>
-                                            ))}
-                                        </select>)} */}
-                                        {/*}
-                                      </label>
-                                    </div>*/}
-                                    {/* <CalendarTreatment /> */}
-                                {/*</div>
-                              </div>
-                              <div>
-                                  <button className='bg-blue-400 shadow-sm px-3 py-0.5 rounded-sm text-white hover:bg-blue-500'>Ingresar tto.</button>
-                              </div>
-                          </div> */}
                         </div>
                     </Modal>
                     <button 
@@ -645,86 +588,7 @@ export default function IngresarMed () {
                     <div className="rounded-lg w-full overflow-auto">
                         <form className="space-y-4">
                             <div className='min-h-20 p-4 flex gap-4 items-end'>
-                                {/* <div>
-                                    <label className="block text-gray-700 text-sm font-bold mb-1" htmlFor="duration">Duración tto.</label>
-                                    <select
-                                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                        id="duration"
-                                        value={duration}
-                                        onChange={(e) => setDuration(e.target.value)}
-                                    >
-                                        <optgroup label="1 dia hasta 6 dias">
-                                            {Array.from({ length: 6 }, (_, i) => i + 1).map((value) => (
-                                                <option key={value} value={value}>
-                                                    {value} {value === 1 ? 'dia' : 'dias'}
-                                                </option>
-                                            ))}
-                                        </optgroup>
-                                        <optgroup label="1 semana a 3 semanas">
-                                            {Array.from({ length: 3 }, (_, i) => i + 1).map((value) => (
-                                                <option key={value + 6} value={value + 6}>
-                                                    {value} {value === 1 ? 'semana' : 'semanas'}
-                                                </option>
-                                            ))}
-                                        </optgroup>
-                                        <optgroup label="1 mes a 6 meses">
-                                            {Array.from({ length: 6 }, (_, i) => i + 1).map((value) => (
-                                                <option key={value + 9} value={value + 9}>
-                                                    {value} {value === 1 ? 'mes' : 'meses'}
-                                                </option>
-                                            ))}
-                                        </optgroup>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label className="block text-gray-700 text-sm font-bold mb-1" htmlFor="frequency">Frecuencia</label>
-                                    <select
-                                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                        id="duration"
-                                        value={frequency}
-                                        onChange={(e) => setFrequency(e.target.value)}
-                                    >
-                                        <option value="dia">Por dia</option>
-                                        <option value="dias">Cada x dias</option>
-                                        <option value="evento">Sobre evento</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label className="block text-gray-700 text-sm font-bold mb-1" htmlFor="frequency">Frecuencia x dia</label>
-                                    <input
-                                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                        id="frequency"
-                                        type="number"
-                                        value={retiro}
-                                        onChange={(e) => setRetiro(e.target.value)}
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-gray-700 text-sm font-bold mb-1" htmlFor="weeklyDosage">Puede retirar</label>
-                                    <input
-                                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-500 leading-tight focus:outline-none focus:shadow-outline"
-                                        id="weeklyDosage"
-                                        type="text"
-                                        readOnly
-                                        value="--"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-gray-700 text-sm font-bold mb-1" htmlFor="quantity">Cajas/frascos que retira</label>
-                                    <input
-                                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                        id="quantity"
-                                        type="number"
-                                        value={cajasRetiro}
-                                        onChange={(e) => setCajasRetiro(e.target.value)}
-                                    />
-                                </div>
-                                <div>
-                                <button className="mt-4 bg-blue-400 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button">
-                                    Agregar medicacion a retiro
-                                </button>
-                                </div>
-                                {/* ###################################################################################################################### */}
+                              {/* no se que iba aca */}
                             </div> 
                         </form>
                     </div>
@@ -743,220 +607,3 @@ export default function IngresarMed () {
         </div>
     );
 };
-
-
-{/* <div>
-        <label className="block text-gray-700 text-sm font-bold mb-1" htmlFor="medicationName">Médico tratante</label>
-        <input
-            className="shadow appearance-none border rounded-md w-full py-2 px-3 text-gray-100 font-semibold leading-tight focus:outline-none focus:shadow-outline bg-blue-400 cursor-pointer hover:bg-blue-500"
-            id="medicationName"
-            type="button"
-            value="Buscar médico"
-            onClick={() => setShowModal(true)}
-        />
-
-        <label className="flex items-center justify-start gap-2 text-sm mt-2" htmlFor="sinMedico">
-            <input type="checkbox" name="sin_medico" id="sin_medico" />
-            Sin médico
-        </label>
-    </div>
-    <Modal show={showModal} handleClose={handleCloseModal}>
-        <h2 className="text-xl font-bold mb-4">Buscar médico</h2>
-        <input
-            type="text"
-            placeholder="Buscar..."
-            className="mb-4 p-2 border rounded w-full text-sm"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-        />
-        <table className="min-w-full text-left text-sm font-roboto font-medium text-slate-600">
-        <thead>
-            <tr>
-            <th className="px-2 py-1 border-b">Nombre</th>
-            <th className="px-2 py-1 border-b">Apellido</th>
-            <th className="px-2 py-1 border-b">Número de Registro</th>
-            <th className="px-2 py-1 border-b">Número de Caja Médica</th>
-            <th className="px-2 py-1 border-b">Especialidad</th>
-            <th className="px-2 py-1 border-b"></th>
-            </tr>
-        </thead>
-        <tbody>
-            {filteredMedicos.map((medico, index) => (
-            <tr key={index} className={index % 2 === 0 ? 'bg-gray-100' : 'bg-white'}>
-                <td className="px-2 py-1 border-b">{medico.nombre}</td>
-                <td className="px-2 py-1 border-b">{medico.apellido}</td>
-                <td className="px-2 py-1 border-b">{medico.numeroRegistro}</td>
-                <td className="px-2 py-1 border-b">{medico.numeroCajaMedica}</td>
-                <td className="px-2 py-1 border-b">{medico.especialidad.join(', ')}</td>
-                <td className="px-2 py-1 border-b"><button className='bg-blue-400 px-2 py-0.5 rounded-sm shadow-sm text-white hover:bg-blue-600'>Agregar</button></td>
-            </tr>
-            ))}
-        </tbody>
-        </table>
-    </Modal>
-    <div>
-        <label className="block text-gray-700 text-sm font-bold mb-1" htmlFor="frequency">Frecuencia x dia</label>
-        <input
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            id="frequency"
-            type="number"
-            value={0}
-        />
-    </div>
-    <div>
-        <label className="block text-gray-700 text-sm font-bold mb-1" htmlFor="duration">Duración tto.</label>
-        <select
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            id="duration"
-            value={duration}
-            onChange={(e) => setDuration(e.target.value)}
-        >
-            <optgroup label="1 dia hasta 6 dias">
-                {Array.from({ length: 6 }, (_, i) => i + 1).map((value) => (
-                    <option key={value} value={value}>
-                        {value} {value === 1 ? 'dia' : 'dias'}
-                    </option>
-                ))}
-            </optgroup>
-            <optgroup label="1 semana a 3 semanas">
-                {Array.from({ length: 3 }, (_, i) => i + 1).map((value) => (
-                    <option key={value + 6} value={value + 6}>
-                        {value} {value === 1 ? 'semana' : 'semanas'}
-                    </option>
-                ))}
-            </optgroup>
-            <optgroup label="1 mes a 6 meses">
-                {Array.from({ length: 6 }, (_, i) => i + 1).map((value) => (
-                    <option key={value + 9} value={value + 9}>
-                        {value} {value === 1 ? 'mes' : 'meses'}
-                    </option>
-                ))}
-            </optgroup>
-        </select>
-    </div>
-    <div>
-        <label className="block text-gray-700 text-sm font-bold mb-1" htmlFor="weeklyDosage">Puede retirar</label>
-        <input
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            id="weeklyDosage"
-            type="text"
-            readOnly
-            value="3 cajas"
-        />
-    </div>
-    <div>
-        <label className="block text-gray-700 text-sm font-bold mb-1" htmlFor="quantity">Cantidad que retira</label>
-        <input
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            id="quantity"
-            type="number"
-            value={0}
-        />
-    </div> */}
-
-
-
-
-{/* Ver medicacion antes de agregar
-<div className='p-5'>
-<div className="p-4 bg-blue-400 rounded-lg shadow-md">
-<table className="text-left text-sm font-roboto font-medium text-white">
-<tbody>
-    <tr>
-    <td className="px-2 py-1 border-b uppercase"><strong>Nombre Comercial:</strong></td>
-    <td className="px-2 py-1 border-b">Paracetamol</td>
-    </tr>
-    <tr>
-    <td className="px-2 py-1 border-b uppercase"><strong>Droga:</strong></td>
-    <td className="px-2 py-1 border-b">Paracetamol</td>
-    </tr>
-    <tr>
-    <td className="px-2 py-1 border-b uppercase"><strong>Presentación:</strong></td>
-    <td className="px-2 py-1 border-b">Comp.</td>
-    </tr>
-    <tr>
-    <td className="px-2 py-1 border-b uppercase"><strong>Unidad:</strong></td>
-    <td className="px-2 py-1 border-b">mg</td>
-    </tr>
-    <tr>
-    <td className="px-2 py-1 border-b uppercase"><strong>Categoría:</strong></td>
-    <td className="px-2 py-1 border-b">Analgesico</td>
-    </tr>
-    <tr>
-    <td className="px-2 py-1 border-b uppercase"><strong>Ranurable:</strong></td>
-    <td className="px-2 py-1 border-b">SI</td>
-    </tr>
-    <tr>
-    <td className="px-2 py-1 border-b uppercase"><strong>Stock:</strong></td>
-    <td className="px-2 py-1 border-b">150</td>
-    </tr>
-</tbody>
-</table>
-</div>
-</div> */}
-
-
-
-
-
-{/* Ver detalle de medicacion agregada
-<div className="bg-white p-6 rounded-lg shadow-md">
-    <h2 className="text-2xl font-bold mb-4">Detalle medicación</h2>
-    <table className="min-w-full text-left text-sm font-roboto font-medium text-slate-600">
-        <thead>
-            <tr className="bg-blue-400 text-white">
-                <th className="px-4 py-2">Medico</th>
-                <th className="px-4 py-2">Medicamento</th>
-                <th className="px-4 py-2">Frecuencia</th>
-                <th className="px-4 py-2">Duración</th>
-                <th className="px-4 py-2">Tipo de retiro</th>
-                <th className="px-4 py-2">Cantidad</th>
-                <th className="px-4 py-2">Cantidad cajas/fcos</th>
-                <th className="px-4 py-2">Retira</th>
-                <th className="px-4 py-2"></th>
-                <th className="px-4 py-2"></th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr className="odd:bg-slate-50 even:bg-gray-200">
-                <td className="px-4 py-2">Sin médico</td>
-                <td className="px-4 py-2">Medicamento 1</td>
-                <td className="px-4 py-2">2 comp. x dia</td>
-                <td className="px-4 py-2">30 dias</td>
-                <td className="px-4 py-2">Receta</td>
-                <td className="px-4 py-2">60 comp</td>
-                <td className="px-4 py-2">2 cajas</td>
-                <td className="px-4 py-2">1 caja</td>
-                <td className="px-4 py-2"><button><PencilSquareIcon className="text-blue-400 hover:text-blue-600 w-6" /></button></td>
-                <td className="px-4 py-2"><button><TrashIcon className="w-6 text-red-400 hover:text-red-600" /></button></td>
-            </tr>
-            <tr className="odd:bg-slate-50 even:bg-gray-200">
-                <td className="px-4 py-2">Juan Perez</td>
-                <td className="px-4 py-2">Medicamento 2</td>
-                <td className="px-4 py-2">1 comp. x dia</td>
-                <td className="px-4 py-2">1 semana</td>
-                <td className="px-4 py-2">Receta</td>
-                <td className="px-4 py-2">7 comp</td>
-                <td className="px-4 py-2">1 caja</td>
-                <td className="px-4 py-2">No retira</td>
-                <td className="px-4 py-2"><button><PencilSquareIcon className="text-blue-400 hover:text-blue-600 w-6" /></button></td>
-                <td className="px-4 py-2"><button><TrashIcon className="w-6 text-red-400 hover:text-red-600" /></button></td>
-            </tr>
-            <tr className="odd:bg-slate-50 even:bg-gray-200">
-                <td className="px-4 py-2">Maria Rodriguez</td>
-                <td className="px-4 py-2">Medicamento 3</td>
-                <td className="px-4 py-2">20 gts. x dia</td>
-                <td className="px-4 py-2">3 meses restantes</td>
-                <td className="px-4 py-2">Cuenta cronicos</td>
-                <td className="px-4 py-2">150 gts.</td>
-                <td className="px-4 py-2">1 fco.</td>
-                <td className="px-4 py-2">1 fco.</td>
-                <td className="px-4 py-2"><button><PencilSquareIcon className="text-blue-400 hover:text-blue-600 w-6" /></button></td>
-                <td className="px-4 py-2"><button><TrashIcon className="w-6 text-red-400 hover:text-red-600" /></button></td>
-            </tr>
-        </tbody>
-    </table>
-    <button className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button">
-        Ver detalle de retiro y generar factura
-    </button>
-</div> */}
