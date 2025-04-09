@@ -11,7 +11,8 @@ import {
   handlePauseNumber,
   handleCancelNumber,
   handleDerivateToPosition,
-  handleDerivateTo
+  handleDerivateTo,
+  fetchAllMedicos
 } from '../API/apiServices';
 
 export default function IngresarMed () {
@@ -33,7 +34,9 @@ export default function IngresarMed () {
         startDate,
         setEvents,
         medico,
-        setMedico
+        setMedico,
+        allMedicos,
+        setAllMedicos
     } = userStateContext();
     const [selectedFilter, setSelectedFilter] = useState(1);
     const [searchTerm, setSearchTerm] = useState('');
@@ -137,12 +140,12 @@ export default function IngresarMed () {
         console.log(addMedication);
     };
 
-    const handleSetMedico = (nombre, apellido, numeroRegistro, numeroCajaMedica, especialidad) => {
+    const handleSetMedico = (nombre, apellido, numeroRegistro, nro_caja, especialidad) => {
         setMedico({
             nombre: nombre,
             apellido: apellido,
-            numeroRegistro: numeroRegistro,
-            numeroCajaMedica: numeroCajaMedica,
+            numeroRegistro: 111, //hardcodear por ahora
+            nro_caja: nro_caja,
             especialidad: especialidad
         });
     }
@@ -241,6 +244,11 @@ export default function IngresarMed () {
         fetchAllMedicamentos(setMedications);
     }, []);
 
+    //trae los medicos de la bd
+    useEffect(() => {
+      fetchAllMedicos(setAllMedicos);
+    }, []);
+  
     useEffect(() => {
       if (!startDate || treatmentDays <= 0) return;
     
@@ -284,12 +292,13 @@ export default function IngresarMed () {
         return acc;
     }, {});
 
-    const filteredMedicos = medicos.filter(medico =>
+    const filteredMedicos = allMedicos.filter(medico =>
         medico.nombre.toLowerCase().includes(searchTermMedico.toLowerCase()) ||
         medico.apellido.toLowerCase().includes(searchTermMedico.toLowerCase()) ||
-        medico.numeroRegistro.includes(searchTermMedico) ||
-        medico.numeroCajaMedica.includes(searchTermMedico) ||
-        medico.especialidad.some(especialidad => especialidad.toLowerCase().includes(searchTermMedico.toLowerCase()))
+        // ! need to fix this
+        // medico.numeroRegistro.includes(searchTermMedico) ||
+        String(medico.nro_caja).includes(searchTermMedico) 
+        // medico.especialidad.some(especialidad => especialidad.toLowerCase().includes(searchTermMedico.toLowerCase()))
     );
 
     return (
@@ -313,16 +322,25 @@ export default function IngresarMed () {
                                 }}
                                 />
                             <div className='flex items-center gap-2 px-1'>
-                                <p className='text-slate-400 font-semibold'>No se ingreso médico</p>
-                                <ExclamationTriangleIcon className='w-6 text-orange-400' />
-                            </div>
-                            <div className='flex flex-col px-1 text-slate-500 items-start font-semibold'>
-                                <p>Medico medico</p>
-                                <div className='flex gap-3'>
-                                    <p>Cardiología</p>
-                                    <p>Cardiología</p>
-                                </div>
-                                <p>Nro RRMM: 225487</p>
+                              {
+                                (medico.nombre) 
+                                ?  (
+                                      <div className='flex flex-col px-1 text-slate-500 items-start font-semibold'>
+                                        {/* <div className='flex gap-3'> */}
+                                        <p>{medico.nombre} {medico.apellido}</p>
+                                        <p className='text-slate-400 font-semibold'>{medico.especialidad}</p>
+                                        <p className='text-slate-400 font-semibold'>CJP: {medico.nro_caja}</p>
+                                        {/* </div> */}
+                                        <p className='text-slate-400 font-semibold'>Reg: 225487</p>
+                                      </div>
+                                    )
+                                : (
+                                    <div className='flex px-1 text-slate-500 items-start font-semibold'>
+                                      <p className='text-slate-400 font-semibold'>No se ingreso médico</p>
+                                      <ExclamationTriangleIcon className='w-6 text-orange-400' />
+                                    </div>
+                                  )
+                              }
                             </div>
                         </div>
                     </div>
@@ -438,13 +456,13 @@ export default function IngresarMed () {
                                     <td className="px-2 py-1 border-b">{medico.nombre}</td>
                                     <td className="px-2 py-1 border-b">{medico.apellido}</td>
                                     {/* <td className="px-2 py-1 border-b">{medico.numeroRegistro}</td> */}
-                                    <td className="px-2 py-1 border-b">{medico.numeroCajaMedica}</td>
-                                    <td className="px-2 py-1 border-b">{medico.especialidad.join(', ')}</td>
+                                    <td className="px-2 py-1 border-b">{medico.nro_caja}</td>
+                                    <td className="px-2 py-1 border-b">{medico.especialidad}</td>
                                     <td className="px-2 py-1 border-b">
                                       <button 
                                         className='bg-blue-400 px-2 py-0.5 rounded-sm shadow-sm text-white hover:bg-blue-600'
                                         onClick={() => {
-                                            handleSetMedico(medico.nombre, medico.apellido, medico.numeroRegistro, medico.numeroCajaMedica, medico.especialidad);
+                                            handleSetMedico(medico.nombre, medico.apellido, medico.numeroRegistro, medico.nro_caja, medico.especialidad);
                                             setShowMedicoModal(false);
                                             // setMedico
                                           }

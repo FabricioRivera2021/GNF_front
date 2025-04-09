@@ -224,6 +224,18 @@ export const fetchAllMedicamentos = (setMedicamentos) => {
         });
 }
 
+//trae todos los medicos
+export const fetchAllMedicos = (setAllMedicos) => {
+    axios
+        .get(`${API_URL}/allMedicos`)
+        .then(response => {
+            setAllMedicos(response.data);
+        })
+        .catch(error => {
+            console.error('Error fetching medicos:', error);
+        });
+}
+
 //trae todos los tratamiendos de un usuario en particular
 export const fetchTratamiento = (customer_id, setTratamientos) => {
     console.log(`${API_URL}/allTreatments/${customer_id}`);
