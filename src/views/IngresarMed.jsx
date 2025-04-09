@@ -4,40 +4,12 @@ import LlamadorPanel from "../components/LlamadorPanel";
 import { userStateContext } from '../context/ContextProvider';
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import IngresarMedSideBar from '../components/IngresarMedSideBar';
-import { 
-  fetchAllMedicamentos, 
-  getCurrentSelectedNumber,
-  handleSetNextState, 
-  handlePauseNumber,
-  handleCancelNumber,
-  handleDerivateToPosition,
-  handleDerivateTo,
-  fetchAllMedicos
-} from '../API/apiServices';
+import { fetchAllMedicamentos, getCurrentSelectedNumber,handleSetNextState, handlePauseNumber,handleCancelNumber,handleDerivateToPosition,handleDerivateTo,fetchAllMedicos} from '../API/apiServices';
 
+//COMPONENTE PRINCIPAL
 export default function IngresarMed () {
-    const { 
-        setAllDerivates, 
-        setShowModal, 
-        numero, 
-        setNumero, 
-        showMedicoModal, 
-        setShowMedicoModal, 
-        medications, 
-        setMedications,
-        addMedication,
-        setAddMedication,
-        showTreatmentModal,
-        setShowTreatmentModal,
-        treatmentDays,
-        setTreatmentDays,
-        startDate,
-        setEvents,
-        medico,
-        setMedico,
-        allMedicos,
-        setAllMedicos
-    } = userStateContext();
+    const { setAllDerivates, setShowModal, numero, setNumero, showMedicoModal, setShowMedicoModal, medications, setMedications, addMedication, setAddMedication, showTreatmentModal,
+            setShowTreatmentModal, treatmentDays, setTreatmentDays, startDate, setEvents, medico, setMedico, allMedicos, setAllMedicos} = userStateContext();
     const [selectedFilter, setSelectedFilter] = useState(1);
     const [searchTerm, setSearchTerm] = useState('');
     const [searchTermMedico, setSearchTermMedico] = useState('');
@@ -46,78 +18,6 @@ export default function IngresarMed () {
     const [selectedDays, setSelectedDays] = useState([]);
     const [interval, setInterval] = useState(24);
     const [totalDoses, setTotalDoses] = useState(0);
-
-    const medicos = [
-      {
-          nombre: 'Juan',
-          apellido: 'Perez',
-          numeroRegistro: '123456',
-          numeroCajaMedica: '987654',
-          especialidad: ['Cardiología', 'Medicina Interna']
-      },
-      {
-          nombre: 'Maria',
-          apellido: 'Gomez',
-          numeroRegistro: '654321',
-          numeroCajaMedica: '123987',
-          especialidad: ['Pediatría']
-      },
-      {
-          nombre: 'Carlos',
-          apellido: 'Lopez',
-          numeroRegistro: '112233',
-          numeroCajaMedica: '445566',
-          especialidad: ['Dermatología', 'Alergología']
-      },
-      {
-          nombre: 'Ana',
-          apellido: 'Martinez',
-          numeroRegistro: '223344',
-          numeroCajaMedica: '556677',
-          especialidad: ['Ginecología', 'Obstetricia']
-      },
-      {
-          nombre: 'Luis',
-          apellido: 'Rodriguez',
-          numeroRegistro: '334455',
-          numeroCajaMedica: '667788',
-          especialidad: ['Neurología']
-      },
-      {
-          nombre: 'Laura',
-          apellido: 'Fernandez',
-          numeroRegistro: '445566',
-          numeroCajaMedica: '778899',
-          especialidad: ['Psiquiatría']
-      },
-      {
-          nombre: 'Miguel',
-          apellido: 'Garcia',
-          numeroRegistro: '556677',
-          numeroCajaMedica: '889900',
-          especialidad: ['Oftalmología']
-      },
-      {
-          nombre: 'Sofia',
-          apellido: 'Hernandez',
-          numeroRegistro: '667788',
-          numeroCajaMedica: '990011',
-          especialidad: ['Endocrinología']
-      },
-      {
-          nombre: 'Diego',
-          apellido: 'Ramirez',
-          numeroRegistro: '778899',
-          numeroCajaMedica: '110022',
-          especialidad: ['Urología']
-      },
-      {
-          nombre: 'Elena',
-          apellido: 'Torres',
-          numeroRegistro: '889900',
-          numeroCajaMedica: '220033',
-          especialidad: ['Reumatología']
-      }];
 
     const diasDeLaSemana = ["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"];
 
@@ -137,9 +37,9 @@ export default function IngresarMed () {
             laboratorio: lab,
             fecha_vencimiento: fecha_vencimiento
         });
-        console.log(addMedication);
     };
 
+    //setea el medico que indico la medicacion
     const handleSetMedico = (nombre, apellido, numeroRegistro, nro_caja, especialidad) => {
         setMedico({
             nombre: nombre,
@@ -150,6 +50,7 @@ export default function IngresarMed () {
         });
     }
 
+    //limpia la variable de medicacion agregada, cuando se cierra el modal de medicacion
     const handleClearAddMedication = () => {
         setAddMedication({
             id: null,
@@ -169,6 +70,29 @@ export default function IngresarMed () {
         prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day]
       );
     };
+
+    const filteredMedications = medications.filter(medication =>
+        medication.nombre_comercial.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        medication.droga.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        medication.grupo_terapeutico.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    const groupedMedications = filteredMedications.reduce((acc, medication) => {
+        if (!acc[medication.drugName]) {
+            acc[medication.drugName] = [];
+        }
+        acc[medication.drugName].push(medication);
+        return acc;
+    }, {});
+
+    const filteredMedicos = allMedicos.filter(medico =>
+        medico.nombre.toLowerCase().includes(searchTermMedico.toLowerCase()) ||
+        medico.apellido.toLowerCase().includes(searchTermMedico.toLowerCase()) ||
+        // ! need to fix this
+        // medico.numeroRegistro.includes(searchTermMedico) ||
+        String(medico.nro_caja).includes(searchTermMedico) 
+        // medico.especialidad.some(especialidad => especialidad.toLowerCase().includes(searchTermMedico.toLowerCase()))
+    );
 
     const generateEventsByWeekday = (startDate, totalDays, targetWeekdays) => {
       const events = []
@@ -249,6 +173,7 @@ export default function IngresarMed () {
       fetchAllMedicos(setAllMedicos);
     }, []);
   
+    //use effects que tienen que ver con el calendario
     useEffect(() => {
       if (!startDate || treatmentDays <= 0) return;
     
@@ -277,29 +202,6 @@ export default function IngresarMed () {
       const newEvents = generateEventsByWeekday(startDate, treatmentDays, selectedDays)
       setEvents(newEvents)
     }, [startDate, treatmentDays, selectedDays])
-
-    const filteredMedications = medications.filter(medication =>
-        medication.nombre_comercial.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        medication.droga.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        medication.grupo_terapeutico.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-
-    const groupedMedications = filteredMedications.reduce((acc, medication) => {
-        if (!acc[medication.drugName]) {
-            acc[medication.drugName] = [];
-        }
-        acc[medication.drugName].push(medication);
-        return acc;
-    }, {});
-
-    const filteredMedicos = allMedicos.filter(medico =>
-        medico.nombre.toLowerCase().includes(searchTermMedico.toLowerCase()) ||
-        medico.apellido.toLowerCase().includes(searchTermMedico.toLowerCase()) ||
-        // ! need to fix this
-        // medico.numeroRegistro.includes(searchTermMedico) ||
-        String(medico.nro_caja).includes(searchTermMedico) 
-        // medico.especialidad.some(especialidad => especialidad.toLowerCase().includes(searchTermMedico.toLowerCase()))
-    );
 
     return (
         <div className="flex">
@@ -426,7 +328,6 @@ export default function IngresarMed () {
                                 ))}
                             </tbody>
                             </table>
-                                {/* FIN Modal para buscar medicación -------------------------------------- */}
                             </div>
                         </form>
                     </div>
