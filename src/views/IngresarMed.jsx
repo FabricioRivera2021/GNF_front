@@ -4,21 +4,24 @@ import LlamadorPanel from "../components/LlamadorPanel";
 import { userStateContext } from '../context/ContextProvider';
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import IngresarMedSideBar from '../components/IngresarMedSideBar';
-import { fetchAllMedicamentos, getCurrentSelectedNumber } from '../API/apiServices';
+import { 
+  fetchAllMedicamentos, 
+  getCurrentSelectedNumber,
+  handleSetNextState, 
+  handlePauseNumber,
+  handleCancelNumber,
+  handleDerivateToPosition,
+  handleDerivateTo
+} from '../API/apiServices';
 
 export default function IngresarMed () {
     const { 
-        setFilterCancel, 
-        setFilterPaused, 
         setAllDerivates, 
         setShowModal, 
-        showModal, 
         numero, 
         setNumero, 
         showMedicoModal, 
         setShowMedicoModal, 
-        showMedicationModal, 
-        setShowMedicationModal, 
         medications, 
         setMedications,
         addMedication,
@@ -28,7 +31,9 @@ export default function IngresarMed () {
         treatmentDays,
         setTreatmentDays,
         startDate,
-        setEvents
+        setEvents,
+        medico,
+        setMedico
     } = userStateContext();
     const [selectedFilter, setSelectedFilter] = useState(1);
     const [searchTerm, setSearchTerm] = useState('');
@@ -132,6 +137,16 @@ export default function IngresarMed () {
         console.log(addMedication);
     };
 
+    const handleSetMedico = (nombre, apellido, numeroRegistro, numeroCajaMedica, especialidad) => {
+        setMedico({
+            nombre: nombre,
+            apellido: apellido,
+            numeroRegistro: numeroRegistro,
+            numeroCajaMedica: numeroCajaMedica,
+            especialidad: especialidad
+        });
+    }
+
     const handleClearAddMedication = () => {
         setAddMedication({
             id: null,
@@ -144,21 +159,6 @@ export default function IngresarMed () {
         });
     };
 
-    //show the treatment modal to input the treatment
-    // const handleInputMedicationTreatment = () => {
-    //     setShowTreatmentModal(true);
-    // };
-
-    // const handleClickFilter = (id) => {
-    //   setFilterPaused(false);
-    //   setFilterCancel(false);
-    //   setSelectedFilter(id);
-    // };
-
-    // const handleCloseModal = () => setShowModal(false);
-
-    // const handleCloseMedicationModal = () => setShowMedicaitonModal(false);
-
     const handleCloseMedicoModal = () => setShowMedicoModal(false);
 
     const toggleDay = (day) => {
@@ -167,13 +167,26 @@ export default function IngresarMed () {
       );
     };
 
-    // const calculateRemainingDays = (diasDeLaSemana) => {
-    //   const currentDay = new Date().toLocaleString('es-ES', { weekday: 'long' });
-    //   const currentDayIndex = diasDeLaSemana.indexOf(currentDay) + 1; // +1 to match the 1-7 range
-
-    //   const remainingDays = 7 - currentDayIndex;
-    //   return remainingDays;
-    // }
+    const generateEventsByWeekday = (startDate, totalDays, targetWeekdays) => {
+      const events = []
+      const dayInMs = 24 * 60 * 60 * 1000
+    
+      for (let i = 0; i < totalDays; i++) {
+        const currentDate = new Date(startDate.getTime() + i * dayInMs)
+        const dayOfWeek = currentDate.getDay() // 0 = Domingo, 1 = Lunes, ...
+    
+        if (targetWeekdays.includes(dayOfWeek)) {
+          events.push({
+            title: '💊 Medicación',
+            start: currentDate,
+            end: currentDate,
+            allDay: true,
+          })
+        }
+      }
+    
+      return events
+    }
 
     const calculateDoses = (days, dosesPerDay, selectedDays, everyday) => {
       let selectedDayIndexes = selectedDays.map(day => diasDeLaSemana.indexOf(day) + 1); //selected day index 
@@ -413,7 +426,7 @@ export default function IngresarMed () {
                                 <tr>
                                 <th className="px-2 py-1 border-b">Nombre</th>
                                 <th className="px-2 py-1 border-b">Apellido</th>
-                                <th className="px-2 py-1 border-b">Número de Registro</th>
+                                {/* <th className="px-2 py-1 border-b">Número de Registro</th> */}
                                 <th className="px-2 py-1 border-b">Número de Caja Médica</th>
                                 <th className="px-2 py-1 border-b">Especialidad</th>
                                 <th className="px-2 py-1 border-b"></th>
@@ -424,10 +437,21 @@ export default function IngresarMed () {
                                 <tr key={index} className={index % 2 === 0 ? 'bg-gray-100' : 'bg-white'}>
                                     <td className="px-2 py-1 border-b">{medico.nombre}</td>
                                     <td className="px-2 py-1 border-b">{medico.apellido}</td>
-                                    <td className="px-2 py-1 border-b">{medico.numeroRegistro}</td>
+                                    {/* <td className="px-2 py-1 border-b">{medico.numeroRegistro}</td> */}
                                     <td className="px-2 py-1 border-b">{medico.numeroCajaMedica}</td>
                                     <td className="px-2 py-1 border-b">{medico.especialidad.join(', ')}</td>
-                                    <td className="px-2 py-1 border-b"><button className='bg-blue-400 px-2 py-0.5 rounded-sm shadow-sm text-white hover:bg-blue-600'>Agregar</button></td>
+                                    <td className="px-2 py-1 border-b">
+                                      <button 
+                                        className='bg-blue-400 px-2 py-0.5 rounded-sm shadow-sm text-white hover:bg-blue-600'
+                                        onClick={() => {
+                                            handleSetMedico(medico.nombre, medico.apellido, medico.numeroRegistro, medico.numeroCajaMedica, medico.especialidad);
+                                            setShowMedicoModal(false);
+                                            // setMedico
+                                          }
+                                        }>
+                                          Agregar
+                                      </button>
+                                    </td>
                                 </tr>
                                 ))}
                             </tbody>
@@ -441,7 +465,7 @@ export default function IngresarMed () {
                           <div className='flex justify-between'>
                             <div className='flex flex-col items-start bg-yellow-100 mb-3 text-slate-600 p-2 rounded-md text-sm'>
                               <p className='text-center text-sm font-semibold underline'>Medicación</p>
-                              <p className='font-semibold'>{addMedication.droga}</p>
+                              <p className='font-semibold'>{addMedication.droga} {(addMedication.tipo_medicamento == "Controlado") ? <ExclamationTriangleIcon className='w-6 text-orange-500' /> : ""} </p>
                               <p>Concentración: <span className='font-semibold'>{addMedication.droga_concentracion}</span></p>
                               <p>Nombre Comercial: <span className='font-semibold'>{addMedication.nombre_comercial}</span></p>
                               <p>Comp. por caja: <span className='font-semibold'>{addMedication.unidades_caja}</span></p>
