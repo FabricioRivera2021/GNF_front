@@ -31,8 +31,8 @@ const StateContext = createContext({
   setShowModal: () => {},
   setAllDerivates: () => {},
   setFiltros: () => {},
-  filterPaused: () => {}, 
-  filterCancel: () => {},
+  setFilterPaused: () => {}, 
+  setFilterCancel: () => {},
   setShowMedicationModal: () => {},
   setShowMedicoModal: () => {},
   setShowTreatmentModal: () => {},
@@ -54,13 +54,7 @@ export const ContextProvider = ({children}) => {
   const [showModal, setShowModal] = useState(false);
   const [isChangingPosition, setIsChangingPosition] = useState(false);
   const [allDerivates, setAllDerivates] = useState([]);//posibles posiciones para derivar
-  const [numero, setNumero] = useState({
-    'nro': null,
-    'estado': "none",
-    'fila': "none",
-    'prefix': "none",
-    'lugar': "none",
-  });
+  const [numero, setNumero] = useState({'nro': null, 'estado': "none", 'fila': "none", 'prefix': "none", 'lugar': "none"});
   const [numerosTV, setNumerosTV] = useState([]);//array para guardar los numeros que ya fueron llamados y mostarlos en la TV
   const [filtros, setFiltros] = useState([]);//filtros para la tabla de llamador
   const [showMedicationModal, setShowMedicationModal] = useState(false);
@@ -69,9 +63,8 @@ export const ContextProvider = ({children}) => {
   const [showTreatmentModal, setShowTreatmentModal] = useState(false);
   const [tratamientos, setTratamientos] = useState([]);
   const [addMedication, setAddMedication] = useState({});
-  const [historicoRetiros, setHistoricoRetiros] = useState([]);
-  //set start date as today
-  const [startDate, setStartDate] = useState(new Date());
+  const [historicoRetiros, setHistoricoRetiros] = useState([]); //historico de retiros
+  const [startDate, setStartDate] = useState(new Date());//set start date as today
   const [treatmentDays, setTreatmentDays] = useState(0)
   const [events, setEvents] = useState([])
 

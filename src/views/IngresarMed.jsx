@@ -116,6 +116,7 @@ export default function IngresarMed () {
     //FUNCTIONS
     const handleAddMedication = (event, id, droga, nombre_comercial, tipo_medicamento, droga_concentracion, unidades_caja, presentacion_farmaceutica, lab, lote, fecha_vencimiento) => {
         event.preventDefault();
+        setShowTreatmentModal(true);
         setAddMedication({
             id: id,
             droga: droga,
@@ -143,31 +144,10 @@ export default function IngresarMed () {
         });
     };
 
-    const generateEventsByWeekday = (startDate, totalDays, targetWeekdays) => {
-      const events = []
-      const dayInMs = 24 * 60 * 60 * 1000
-    
-      for (let i = 0; i < totalDays; i++) {
-        const currentDate = new Date(startDate.getTime() + i * dayInMs)
-        const dayOfWeek = currentDate.getDay() // 0 = Domingo, 1 = Lunes, ...
-    
-        if (targetWeekdays.includes(dayOfWeek)) {
-          events.push({
-            title: '💊 Medicación',
-            start: currentDate,
-            end: currentDate,
-            allDay: true,
-          })
-        }
-      }
-    
-      return events
-    };
-
     //show the treatment modal to input the treatment
-    const handleInputMedicationTreatment = () => {
-        setShowTreatmentModal(true);
-    };
+    // const handleInputMedicationTreatment = () => {
+    //     setShowTreatmentModal(true);
+    // };
 
     // const handleClickFilter = (id) => {
     //   setFilterPaused(false);
@@ -225,8 +205,8 @@ export default function IngresarMed () {
           let occurrences = weeks;
           // Verificamos si el día seleccionado cae en los días extras después de las semanas completas
           let adjustedIndex = (dayIndex - startDayIndex + 7) % 7; // Ajuste si el tratamiento no empieza en domingo
-          console.log("adjustedIndex", dayIndex - startDayIndex + 7 % 7);
-          if (adjustedIndex <= extraDays) {
+          console.log("adjustedIndex", (dayIndex - startDayIndex + 7) % 7);
+          if (adjustedIndex < extraDays) {
             occurrences++;
           }
           console.log(`Día ${diasDeLaSemana[dayIndex - 1]} aparece ${occurrences} veces`);
@@ -340,7 +320,7 @@ export default function IngresarMed () {
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
-                    <div className="rounded-lg w-full h-[calc(100vh-35rem)] overflow-auto">
+                    <div className="rounded-lg w-full h-[calc(100vh-32rem)] overflow-auto">
                         <form className="space-y-4">
                             <div className='min-h-20 py-1 px-4'>
                             <table className="shadow-sm min-w-full text-left text-sm font-roboto font-medium text-slate-600 text-surface p-2">
@@ -367,11 +347,11 @@ export default function IngresarMed () {
                                 {Object.keys(groupedMedications).map((drugName, index) => (
                                 <React.Fragment key={index}>
                                     {groupedMedications[drugName].map((medication, subIndex) => (
-                                    <tr key={subIndex} className={index % 2 === 0 ? 'bg-gray-100' : 'bg-white'}>
+                                    <tr key={subIndex} className={(medication.tipo_medicamento == "Controlado") ? 'bg-orange-100' : 'bg-white'}>
                                         {/* {subIndex === 0 && (
-                                        <td className="px-2 py-1 border-b" rowSpan={groupedMedications[drugName].length}>
-                                            {medication.droga}
-                                        </td>
+                                          <td className="px-2 py-1 border-b" rowSpan={groupedMedications[drugName].length}>
+                                              {medication.droga}
+                                          </td>
                                         )} */}
                                         <td className="px-2 py-1 border-b">{medication.droga}</td>
                                         <td className="px-2 py-1 border-b">{medication.lote}</td>
@@ -381,7 +361,7 @@ export default function IngresarMed () {
                                         <td className="px-2 py-1 border-b">{medication.presentacion_farmaceutica}</td>
                                         <td className="px-2 py-1 border-b">{medication.unidad_medida}</td>
                                         <td className="px-2 py-1 border-b">{medication.via_administracion}</td>
-                                        <td className="px-2 py-1 border-b">{medication.tipo_medicamento}</td>
+                                        <td className={`px-2 py-1 border-b ${(medication.tipo_medicamento == "Controlado") ? "text-orange-600" : ""}`}>{medication.tipo_medicamento}</td>
                                         <td className="px-2 py-1 border-b">{medication.estado}</td>
                                         <td className="px-2 py-1 border-b">{medication.ranurable}</td>
                                         <td className="px-2 py-1 border-b">{medication.laboratorio}</td>
@@ -455,43 +435,8 @@ export default function IngresarMed () {
                     </Modal>
                 </div>
                 <div className="flex items-center mx-7 mt-4 gap-4">
-                    <div 
-                        className={`flex w-fit items-end rounded-md px-2 gap-5 text-lg ${(addMedication.droga != null) 
-                                                                                            ? ((addMedication.tipo_medicamento === 'Controlado') 
-                                                                                                ? 'py-1 px-4 border-orange-500 border-x-2 shadow-md bg-orange-200' 
-                                                                                                : 'py-1 px-4 border-blue-500 bg-blue-50 border-x-2 shadow-md') 
-                                                                                            : '' 
-                                                                                        } 
-                                    `}>
-                        <div className='flex font-bold'>
-                            <p className='text-slate-700'>{addMedication.droga}</p> {/* medication.droga */}
-                        </div>
-                        <div className='flex gap-4 items-center font-normal'>
-                            <p className='text-slate-700 font-semibold'>{addMedication.nombre_comercial}</p> {/* medication.tipo_medicamento */}
-                            <p className='text-slate-600'>{addMedication.droga_concentracion}</p> {/* medication.droga_concentracion */}
-                            <p className='text-slate-600'>{addMedication.unidades_caja} {addMedication.presentacion_farmaceutica}</p> {/* medication.unidades_caja */}
-                            {
-                                ((addMedication.tipo_medicamento === 'Controlado') 
-                                    ?
-                                    <div className='flex gap-2'>
-                                        <p>Medicación CONTROLADA</p>
-                                        <ExclamationTriangleIcon className='w-6 text-red-500' />
-                                    </div>
-                                    :
-                                    '')
-                            }
-                        </div>
-                    </div>
-                    <button 
-                        className={`bg-blue-400 rounded-md shadow-sm px-2 py-0.5 text-white ${addMedication.droga != null ? 'hover:bg-blue-600' : 'hidden'}`}
-                        onClick={() => handleInputMedicationTreatment()}
-                    >Ingresar tto.</button>
-
-
-
-
                     {/* ----------------------------------------------------------------------------------------------------------------------------------------- */}
-                    <Modal show={showTreatmentModal} handleClose={() => setShowTreatmentModal(false)}>
+                    <Modal show={showTreatmentModal} handleClose={() => {setShowTreatmentModal(false); handleClearAddMedication(); }}>
                         <div>
                           <div className='flex justify-between'>
                             <div className='flex flex-col items-start bg-yellow-100 mb-3 text-slate-600 p-2 rounded-md text-sm'>
@@ -499,6 +444,7 @@ export default function IngresarMed () {
                               <p className='font-semibold'>{addMedication.droga}</p>
                               <p>Concentración: <span className='font-semibold'>{addMedication.droga_concentracion}</span></p>
                               <p>Nombre Comercial: <span className='font-semibold'>{addMedication.nombre_comercial}</span></p>
+                              <p>Comp. por caja: <span className='font-semibold'>{addMedication.unidades_caja}</span></p>
                               <p>Lab: <span className='font-semibold'>{addMedication.laboratorio}</span></p>
                               <p>Lote: <span className='font-semibold'>{addMedication.lote}</span></p>
                               <p>F.venc: <span className='font-semibold'>{addMedication.fecha_vencimiento}</span></p>
@@ -579,10 +525,6 @@ export default function IngresarMed () {
                           </div>
                         </div>
                     </Modal>
-                    <button 
-                        className={`bg-red-400 rounded-md shadow-sm px-2 py-0.5 text-white ${addMedication.droga != null ? 'hover:bg-red-600' : 'hidden'}`}
-                        onClick={() => handleClearAddMedication()}
-                    >Cancelar</button>
                 </div>
                 <div className="items-start w-full p-3 space-y-6">
                     <div className="rounded-lg w-full overflow-auto">
