@@ -176,7 +176,7 @@ export default function HistorialRetiros() {
     return (
         <div className="flex">
             <IngresarMedSideBar />
-            <div className='flex flex-col w-full h-[calc(100vh-4rem)]'>
+            <div className='flex flex-col w-[calc(100vw-4rem)] h-[calc(100vh-4rem)]'>
 
             <div className="flex flex-col items-start w-full p-3 space-y-3">
                     <h2 className="text-2xl font-bold mb-2">Historial retiros</h2>

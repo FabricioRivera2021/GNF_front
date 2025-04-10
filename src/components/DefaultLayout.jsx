@@ -16,6 +16,8 @@ const navigation = [
   { name: 'TV', to: '/TV' },
   { name: 'Llamador', to: '/llamador'},
   { name: 'Dispensar medicacion', to: '/nuevoIngresoVentanilla'},
+  { name: 'Menu preparación', to: '/menuPreparacion'},
+  { name: 'Caja', to: '/caja'},
   { name: 'Consultas stock', to: '/consultasStock'},
   { name: 'Abastecimiento', to: '/abastecimiento'},
   { name: 'Menu pedidos remotos', to: '/pedidosRemotos'},

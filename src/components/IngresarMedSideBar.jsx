@@ -11,7 +11,7 @@ export default function IngresarMedSideBar() {
         className={({ isActive }) =>
           isActive
             ? 'rounded-sm py-1 text-left pl-1 bg-blue-500 text-white px-10'
-            : 'rounded-sm py-1 text-left pl-1 hover:bg-blue-400 hover:text-slate-100 capitalize font-roboto text-sm bg-slate-100 text-slate-700 px-10'
+            : 'rounded-sm py-1 text-left pl-1 hover:bg-blue-400 hover:text-slate-100 bg-slate-100 text-slate-700 px-10'
         }
       >
         Ingresar medicacion
@@ -21,7 +21,7 @@ export default function IngresarMedSideBar() {
         className={({ isActive }) =>
           isActive
             ? 'rounded-sm py-1 text-left pl-1 bg-blue-500 text-white px-10'
-            : 'rounded-sm py-1 text-left pl-1 hover:bg-blue-400 hover:text-slate-100 capitalize font-roboto text-sm bg-slate-100 text-slate-700 px-10'
+            : 'rounded-sm py-1 text-left pl-1 hover:bg-blue-400 hover:text-slate-100 bg-slate-100 text-slate-700 px-10'
         }
       >
         Ingr. med. desde CC
@@ -31,17 +31,17 @@ export default function IngresarMedSideBar() {
         className={({ isActive }) =>
           isActive
             ? 'rounded-sm py-1 text-left pl-1 bg-blue-500 text-white px-10'
-            : 'rounded-sm py-1 text-left pl-1 hover:bg-blue-400 hover:text-slate-100 capitalize font-roboto text-sm bg-slate-100 text-slate-700 px-10'
+            : 'rounded-sm py-1 text-left pl-1 hover:bg-blue-400 hover:text-slate-100 bg-slate-100 text-slate-700 px-10'
         }
       >
         Ver ultimos retiros
       </NavLink>
       <NavLink
-        to="/nuevoIngresoVentanillaMedicacionRetira"
+        to="/retiroActual"
         className={({ isActive }) =>
           isActive
             ? 'rounded-sm py-1 text-left pl-1 bg-blue-500 text-white px-10'
-            : 'rounded-sm py-1 text-left pl-1 hover:bg-blue-400 hover:text-slate-100 capitalize font-roboto text-sm bg-slate-100 text-slate-700 px-10'
+            : 'rounded-sm py-1 text-left pl-1 hover:bg-blue-400 hover:text-slate-100 bg-slate-100 text-slate-700 px-10'
         }
       >
         Ver Medicacion que retira

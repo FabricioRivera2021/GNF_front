@@ -1,5 +1,5 @@
 import { Navigate, createBrowserRouter } from "react-router-dom";
-import { Login, Logout, Llamador, Dashboard, PanelNumerico, IngresarMed, MedCC, HistorialRetiros } from "./views/index.js";
+import { Login, Logout, Llamador, Dashboard, PanelNumerico, IngresarMed, MedCC, HistorialRetiros, RetiroActual } from "./views/index.js";
 import { DefaultLayout, GuestLayout } from "./components/index.js";
 import { AdminLayout } from "./components/AdminLayout.jsx";
 import { TV } from "./views/TV.jsx";
@@ -38,6 +38,10 @@ const router = createBrowserRouter([
             {
                 path: '/nuevoIngresoVentanilla', //cambiar esto despues de probar a guest
                 element: <IngresarMed />
+            },
+            {
+                path: '/retiroActual', //cambiar esto despues de probar a guest
+                element: <RetiroActual />
             },
             {
                 path: '/nuevoIngresoVentanillaCC', //cambiar esto despues de probar a guest

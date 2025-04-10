@@ -206,7 +206,7 @@ export default function IngresarMed () {
     return (
         <div className="flex">
             <IngresarMedSideBar />
-            <div className='flex flex-col w-full h-[calc(100vh-4rem)]'>
+            <div className='flex flex-col w-[calc(100vw-4rem)] h-[calc(100vh-4rem)]'>
                 {/* Ingresar medicacion formulario */}
                 <div className="flex flex-col items-start w-full p-3 space-y-3">
                     <h2 className="text-2xl font-bold mb-2">Ingresar Medicación</h2>
@@ -227,13 +227,15 @@ export default function IngresarMed () {
                               {
                                 (medico.nombre) 
                                 ?  (
-                                      <div className='flex flex-col px-1 text-slate-500 items-start font-semibold'>
-                                        {/* <div className='flex gap-3'> */}
-                                        <p>{medico.nombre} {medico.apellido}</p>
-                                        <p className='text-slate-400 font-semibold'>{medico.especialidad}</p>
-                                        <p className='text-slate-400 font-semibold'>CJP: {medico.nro_caja}</p>
-                                        {/* </div> */}
-                                        <p className='text-slate-400 font-semibold'>Reg: 225487</p>
+                                      <div className='flex px-1 text-slate-500 items-start font-semibold gap-4'>
+                                        <div className='flex flex-col'>
+                                          <p className='text-slate-700 font-semibold'>{medico.nombre} {medico.apellido}</p>
+                                          <p className='text-slate-400 font-semibold'>{medico.especialidad}</p>
+                                        </div>
+                                        <div className='flex flex-col'>
+                                          <p className='text-slate-400 font-semibold'>CJP: {medico.nro_caja}</p>
+                                          <p className='text-slate-400 font-semibold'>Reg: 225487</p>
+                                        </div>
                                       </div>
                                     )
                                 : (
