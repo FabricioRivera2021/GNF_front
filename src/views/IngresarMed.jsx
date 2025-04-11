@@ -174,9 +174,10 @@ export default function IngresarMed () {
     }, []);
   
     //use effects que tienen que ver con el calendario
+
     useEffect(() => {
       if (!startDate || treatmentDays <= 0) return;
-    
+  
       const endDate = new Date(startDate);
       endDate.setDate(startDate.getDate() + treatmentDays - 1);
     
@@ -186,7 +187,7 @@ export default function IngresarMed () {
         end: endDate,
         allDay: true
       }]);
-    }, [treatmentDays, startDate]);
+    }, [startDate, treatmentDays]);
 
     useEffect(() => {
       if (!days || !interval || interval <= 0) return;
@@ -223,11 +224,11 @@ export default function IngresarMed () {
                                 setShowMedicoModal(true);
                                 }}
                                 />
-                            <div className='flex items-center gap-2 px-1'>
+                            <div className='flex items-center gap-2'>
                               {
                                 (medico.nombre) 
                                 ?  (
-                                      <div className='flex px-1 text-slate-500 items-start font-semibold gap-4'>
+                                      <div className='flex px-1 text-slate-500 items-start font-semibold gap-4 bg-yellow-100 rounded-md shadow-sm mt-2'>
                                         <div className='flex flex-col'>
                                           <p className='text-slate-700 font-semibold'>{medico.nombre} {medico.apellido}</p>
                                           <p className='text-slate-400 font-semibold'>{medico.especialidad}</p>
@@ -239,9 +240,9 @@ export default function IngresarMed () {
                                       </div>
                                     )
                                 : (
-                                    <div className='flex px-1 text-slate-500 items-start font-semibold'>
-                                      <p className='text-slate-400 font-semibold'>No se ingreso médico</p>
-                                      <ExclamationTriangleIcon className='w-6 text-orange-400' />
+                                    <div className='flex px-1 gap-2 text-slate-500 items-start font-semibold bg-red-200 rounded-md shadow-sm mt-2'>
+                                      <p className='text-slate-800 font-semibold'>No se ingreso médico</p>
+                                      <ExclamationTriangleIcon className='w-6 text-orange-700' />
                                     </div>
                                   )
                               }
@@ -397,7 +398,7 @@ export default function IngresarMed () {
                             </div>
                             <div className='flex gap-2 items-start'>
                               <div>
-                                  <CalendarTreatment />
+                                  <CalendarTreatment mode='edit'/>
                               </div>
                               <div className='flex flex-col gap-2 justify-between h-full'>
                                 <div>

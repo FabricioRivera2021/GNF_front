@@ -45,17 +45,11 @@ const messages = {
   showMore: (total) => `+ Ver más (${total})`,
 }
 
-const CalendarTreatment = () => {
+const CalendarTreatment = ({ mode = "edit", treatments = [] }) => {
 
-  const {startDate, setStartDate, treatmentDays, setTreatmentDays, event, setEvent} = userStateContext();
+  const {startDate, setStartDate, treatmentDays, setTreatmentDays, events, setEvents} = userStateContext();
 
-  const [events, setEvents] = useState([
-    {
-      start: new Date(), // Día de inicio (puedes cambiarlo)
-      end: new Date(),
-      title: "Inicio Tratamiento",
-    },
-  ]);
+  const isCurrentMonth = new Date(events.start).getMonth() === new Date().getMonth() && new Date(events.start).getFullYear() === new Date().getFullYear();
 
   useEffect(() => {
     // redibuja el calendario si se cambia un evento (por ejemplo el rango de fechas de un tratamiento)
@@ -81,22 +75,25 @@ const CalendarTreatment = () => {
         selectable={true}// this enables clicking/selecting slots
         views={['month']}// optional, limit to month view
         onSelectSlot={(slotInfo) => {
-          const selectedDate = slotInfo.start
-          setStartDate(selectedDate)
-          // Optional: generate a placeholder event if duration is already selected
-          if (treatmentDays > 0) {
-            const endDate = new Date(selectedDate)
-            endDate.setDate(selectedDate.getDate() + treatmentDays - 1)
+          if (mode === "edit") {
+            const selectedDate = slotInfo.start;
+            setStartDate(selectedDate);
       
-            setEvents([{
-              title: `Tratamiento (${treatmentDays} días)`,
-              start: selectedDate,
-              end: endDate,
-              allDay: true
-            }])
+            if (treatmentDays > 0) {
+              const endDate = new Date(selectedDate);
+              endDate.setDate(selectedDate.getDate() + treatmentDays - 1);
+      
+              setEvents([
+                {
+                  title: `Tratamiento (${treatmentDays} días)`,
+                  start: selectedDate,
+                  end: endDate,
+                  allDay: true,
+                },
+              ]);
+            }
           }
         }}
-
         //   // Cuando el usuario selecciona un día, lo guarda como inicio del tratamiento
         //   const newEvent = {
         //     start: slot.start,

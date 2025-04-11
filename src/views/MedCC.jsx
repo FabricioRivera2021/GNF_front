@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { Modal } from '../components/index';
+import { CalendarTreatment, Modal } from '../components/index';
 import LlamadorPanel from "../components/LlamadorPanel";
 import { userStateContext } from '../context/ContextProvider';
 import { ArrowDownCircleIcon, ArrowUpCircleIcon } from '@heroicons/react/24/outline';
 import IngresarMedSideBar from '../components/IngresarMedSideBar';
 import { fetchTratamiento, getCurrentSelectedNumber } from '../API/apiServices';
+import { parse } from 'date-fns';
 
 export default function MedCC () {
     const { setFilterCancel, setFilterPaused, setAllDerivates, setShowModal, showModal, numero, setNumero, 
-            showMedicoModal, setShowMedicoModal, showMedicationModal, setShowMedicationModal, tratamientos, setTratamientos } = userStateContext();
+            showMedicoModal, setShowMedicoModal, showMedicationModal, setShowMedicationModal, tratamientos, setTratamientos, setEvents } = userStateContext();
     const [selectedFilter, setSelectedFilter] = useState(1);
     const [openModalCC, setOpenModalCC] = useState(false);
+    const [viewTreatment, setViewTreatment] = useState({});
     const [ttoShowMedicationOnModal, setTtoShowMedicationOnModal] = useState({});
 
     //get current selected number by the User
@@ -25,6 +27,22 @@ export default function MedCC () {
         console.log(data);
     }, []);
 
+    // useEffect(() => {
+    //   const mappedEvents = tratamientos.map((t) => {
+  
+    //     const endDate = new Date(t.fecha_inicio);
+    //     endDate.setDate(endDate.getDate() + t.total_tto_dias - 1);
+      
+    //     return ({
+    //       title: `Tratamiento (${t.total_tto_dias} días)`,
+    //       start: new Date(t.fecha_inicio),
+    //       end: endDate,
+    //       allDay: true,
+    //     });
+    //   });
+    //   setEvents(mappedEvents);
+    // }, [tratamientos]);
+
     const handleClickFilter = (id) => {
         setFilterPaused(false);
         setFilterCancel(false);
@@ -32,7 +50,19 @@ export default function MedCC () {
     };
 
     const handleOpenModal = () => {
-        setOpenModalCC(true);
+      console.log(viewTreatment);
+
+      setOpenModalCC(true);
+    
+      const endDate = new Date(viewTreatment.fecha_inic);
+      endDate.setDate(endDate.getDate() + viewTreatment.treatment - 1);
+      const mappedEvent = {
+        title: `Tratamiento (${viewTreatment.treatment} días)`,
+        start: new Date(viewTreatment.fecha_inic),
+        end: endDate,
+        allDay: true,
+      };
+      setEvents([mappedEvent]);
     }
 
     return (
@@ -66,7 +96,10 @@ export default function MedCC () {
                           className='hover:bg-gray-100 cursor-pointer' 
                           onClick={
                             () => {
-                              handleOpenModal();
+                              setViewTreatment({
+                                fecha_inic: tto.fecha_inicio, 
+                                treatment: tto.total_tto_dias
+                              });
                               setTtoShowMedicationOnModal({
                                   id: index,
                                   marca: tto.medication.nombre_comercial,
@@ -79,6 +112,7 @@ export default function MedCC () {
                                   f_inic: tto.fecha_inicio,
                                   f_fin: tto.fecha_fin
                                 });
+                              handleOpenModal();
                             }}
                       >
                         <td className="px-2 py-1 border-b">{tto.activo ? <ArrowUpCircleIcon className='w-6 text-green-400' /> : <ArrowDownCircleIcon className='w-6 text-red-400' />}</td>
@@ -99,33 +133,33 @@ export default function MedCC () {
                 </table>
               </div>
               <Modal show={openModalCC} handleClose={() => setOpenModalCC(false)}>
-                <div className='flex flex-col gap-4'>
-                  <div>
-                    <div className="flex justify-between items-center mb-2">
-                      <h3 className="text-lg font-bold">{ttoShowMedicationOnModal.droga} {ttoShowMedicationOnModal.concentracion}</h3>
+                <div className='flex gap-4'>
+                <div className="mt-4">
+                    <div>
+                      <CalendarTreatment mode='view' treatments={tratamientos} />
                     </div>
-                    <div className='bg-yellow-100 rounded-md p-1 text-slate-500'>
+                  </div>
+                  <div>
+                    <div className='bg-yellow-100 rounded-md shadow-md p-1 text-slate-500'>
+                      <h3 className="text-lg font-bold">{ttoShowMedicationOnModal.droga} {ttoShowMedicationOnModal.concentracion}</h3>
                       <p className='border-b'>Marca: {ttoShowMedicationOnModal.marca}</p>
                       <p className='border-b'>Tratamiento: {ttoShowMedicationOnModal.tto_dias} dias</p>
                       <p className='border-b'>Frecuencia: 1 comp cada 8 hs por 30 dias</p>
-                      <p className='border-b'>Retiros pendientes: {ttoShowMedicationOnModal.pendientes} caja/s</p>
-                      <p className='border-b'>Puede retirar: {ttoShowMedicationOnModal.ret_mes} caja/s</p>
                       <p className='border-b'>Fecha inicio tto.: {ttoShowMedicationOnModal.f_inic}</p>
                       <p className='border-b'>Fecha fin tto.: {ttoShowMedicationOnModal.f_fin}</p>
                       <p>Funcionario: ADMIN</p>
                     </div>
-                    <p className='px-1 py-0.5'>Fecha actual: 10/04/2025</p>
-                    <p className='px-1 py-0.5'>Retiro actual comprende desde 01/02/2023 hasta 02/03/2023</p>
-                    {/* agregar calendario para ver fechas de retiro de manera mas facil */}
-                    {/* PENDIENTE */}
-                  </div>
-                  <div className="mt-4">
+                    <div className='bg-blue-100 rounded-md p-1 shadow-md text-slate-700 mt-2 mb-2'>
+                      <p>Retiro actual comprende desde 01/02/2023 hasta 02/03/2023</p>
+                      <p>Retiros pendientes: {ttoShowMedicationOnModal.pendientes} caja/s</p>
+                      <p>Puede retirar: {ttoShowMedicationOnModal.ret_mes} caja/s</p>
+                    </div>
                     <label className="block mb-2 text-sm font-medium text-gray-700">Cantidad a retirar:</label>
                     <div className='flex gap-2 items-center'>
                       <input type="number" className="border w-1/2 border-gray-300 rounded-md p-2" placeholder="..." />
                       <p>Cajas</p>
                     </div>
-                    <button className='bg-blue-400 text-white rounded-md shadow-sm px-2 py-0.5 mt-2' onClick={console.log('Agregar a retiro')}>Agregar a retiro</button>
+                    <button className='bg-blue-400 text-white rounded-md shadow-sm px-2 py-0.5 mt-2 hover:bg-blue-500 hover:shadow-md' onClick={console.log('Agregar a retiro')}>Agregar a retiro</button>
                   </div>
                 </div>
               </Modal>

@@ -70,7 +70,14 @@ export const ContextProvider = ({children}) => {
   const [historicoRetiros, setHistoricoRetiros] = useState([]); //historico de retiros
   const [startDate, setStartDate] = useState(new Date());//set start date as today
   const [treatmentDays, setTreatmentDays] = useState(0);
-  const [events, setEvents] = useState([]);
+  const [events, setEvents] = useState([
+    {
+      title: `Tratamiento (${treatmentDays} días)`,
+      start: startDate,
+      end: new Date(startDate.getTime() + treatmentDays * 24 * 60 * 60 * 1000), // Calcula la fecha de fin
+      allDay: true
+    }
+  ]);
   const [medico, setMedico] = useState({});
   const [allMedicos, setAllMedicos] = useState([]);
 
