@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { CalendarTreatment, Modal } from '../components/index';
 import LlamadorPanel from "../components/LlamadorPanel";
 import { userStateContext } from '../context/ContextProvider';
-import { ArrowDownCircleIcon, ArrowUpCircleIcon } from '@heroicons/react/24/outline';
+import { ArrowDownCircleIcon, ArrowUpCircleIcon, ExclamationCircleIcon } from '@heroicons/react/24/outline';
 import IngresarMedSideBar from '../components/IngresarMedSideBar';
 import { fetchTratamiento, getCurrentSelectedNumber } from '../API/apiServices';
 import { parse } from 'date-fns';
@@ -49,21 +49,21 @@ export default function MedCC () {
         setSelectedFilter(id);
     };
 
-    const handleOpenModal = () => {
-      console.log(viewTreatment);
+    // const handleOpenModal = () => {
+    //   console.log(viewTreatment);
 
-      setOpenModalCC(true);
+    //   setOpenModalCC(true);
     
-      const endDate = new Date(viewTreatment.fecha_inic);
-      endDate.setDate(endDate.getDate() + viewTreatment.treatment - 1);
-      const mappedEvent = {
-        title: `Tratamiento (${viewTreatment.treatment} días)`,
-        start: new Date(viewTreatment.fecha_inic),
-        end: endDate,
-        allDay: true,
-      };
-      setEvents([mappedEvent]);
-    }
+    //   const endDate = new Date(viewTreatment.fecha_inic);
+    //   endDate.setDate(endDate.getDate() + viewTreatment.treatment - 1);
+    //   const mappedEvent = {
+    //     title: `Tratamiento (${viewTreatment.treatment} días)`,
+    //     start: new Date(viewTreatment.fecha_inic),
+    //     end: endDate,
+    //     allDay: true,
+    //   };
+    //   setEvents([mappedEvent]);
+    // }
 
     return (
       <div className="flex">
@@ -88,32 +88,48 @@ export default function MedCC () {
                       <th className="px-2 py-1 border-b">Funcionario</th>
                       <th className="px-2 py-1 border-b">Fecha inicio tto.</th>
                       <th className="px-2 py-1 border-b">Fecha fin tto.</th>
+                      <th className="px-2 py-1 border-b"></th>
                     </tr>
                   </thead>
                   <tbody className='whitespace-nowrap'>
                     {tratamientos.map((tto, index) => (
                       <tr key={index} 
                           className='hover:bg-gray-100 cursor-pointer' 
-                          onClick={
-                            () => {
-                              setViewTreatment({
-                                fecha_inic: tto.fecha_inicio, 
-                                treatment: tto.total_tto_dias
-                              });
-                              setTtoShowMedicationOnModal({
-                                  id: index,
-                                  marca: tto.medication.nombre_comercial,
-                                  droga: tto.medication.droga,
-                                  concentracion: tto.medication.droga_concentracion,
-                                  tto_dias: tto.total_tto_dias,
-                                  frec: tto.frecuencia,
-                                  pendientes: tto.retiros_pendientes,
-                                  ret_mes: tto.retiros_por_mes,
-                                  f_inic: tto.fecha_inicio,
-                                  f_fin: tto.fecha_fin
-                                });
-                              handleOpenModal();
-                            }}
+                          onClick={() => {
+                            const treatmentData = {
+                              fecha_inic: tto.fecha_inicio,
+                              treatment: tto.total_tto_dias
+                            };
+                          
+                            setViewTreatment(treatmentData);
+                            console.log(treatmentData);
+                            
+                          
+                            const endDate = new Date(treatmentData.fecha_inic);
+                            endDate.setDate(endDate.getDate() + treatmentData.treatment - 1);
+                            const mappedEvent = {
+                              title: `Tratamiento (${treatmentData.treatment} días)`,
+                              start: new Date(treatmentData.fecha_inic),
+                              end: endDate,
+                              allDay: true,
+                            };
+                            setEvents([mappedEvent]);
+                          
+                            setTtoShowMedicationOnModal({
+                              id: index,
+                              marca: tto.medication.nombre_comercial,
+                              droga: tto.medication.droga,
+                              concentracion: tto.medication.droga_concentracion,
+                              tto_dias: tto.total_tto_dias,
+                              frec: tto.frecuencia,
+                              pendientes: tto.retiros_pendientes,
+                              ret_mes: tto.retiros_por_mes,
+                              f_inic: tto.fecha_inicio,
+                              f_fin: tto.fecha_fin
+                            });
+                          
+                            setOpenModalCC(true);
+                          }}
                       >
                         <td className="px-2 py-1 border-b">{tto.activo ? <ArrowUpCircleIcon className='w-6 text-green-400' /> : <ArrowDownCircleIcon className='w-6 text-red-400' />}</td>
                         <td className="px-2 py-1 border-b">{tto.medication.droga}</td>
@@ -125,8 +141,15 @@ export default function MedCC () {
                         <td className="px-2 py-1 border-b">{tto.retiros_pendientes} caja/s</td>
                         <td className="px-2 py-1 border-b">{tto.retiros_por_mes} caja/s</td>
                         <td className="px-2 py-1 border-b">{tto.user.name}</td>
-                        <td className="px-2 py-1 border-b">{tto.fecha_inicio}</td>
-                        <td className="px-2 py-1 border-b">{tto.fecha_fin}</td>
+                        <td className="px-2 py-1 border-b">{new Date(tto.fecha_inicio).toLocaleDateString('es-ES')}</td>
+                        <td className="px-2 py-1 border-b">{new Date(tto.fecha_fin).toLocaleDateString('es-ES')}</td>
+                        <td className="px-2 py-1 border-b">
+                          {new Date() > tto.fecha_fin ? <ArrowUpCircleIcon className='w-6 text-orange-400' /> : ''}
+                          <div className='flex'>
+                            <ExclamationCircleIcon className='w-6 text-orange-400' />
+                            <p className='text-gray-400'>Cuenta vencida</p>
+                          </div>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -145,9 +168,8 @@ export default function MedCC () {
                       <p className='border-b'>Marca: {ttoShowMedicationOnModal.marca}</p>
                       <p className='border-b'>Tratamiento: {ttoShowMedicationOnModal.tto_dias} dias</p>
                       <p className='border-b'>Frecuencia: 1 comp cada 8 hs por 30 dias</p>
-                      <p className='border-b'>Fecha inicio tto.: {ttoShowMedicationOnModal.f_inic}</p>
-                      <p className='border-b'>Fecha fin tto.: {ttoShowMedicationOnModal.f_fin}</p>
-                      <p>Funcionario: ADMIN</p>
+                      <p className='border-b'>Fecha inicio tto.: {new Date(ttoShowMedicationOnModal.f_inic).toLocaleDateString('es-ES')}</p>
+                      <p>Fecha fin tto.: {new Date(ttoShowMedicationOnModal.f_fin).toLocaleDateString('es-ES')}</p>
                     </div>
                     <div className='bg-blue-100 rounded-md p-1 shadow-md text-slate-700 mt-2 mb-2'>
                       <p>Retiro actual comprende desde 01/02/2023 hasta 02/03/2023</p>

@@ -48,8 +48,13 @@ const messages = {
 const CalendarTreatment = ({ mode = "edit", treatments = [] }) => {
 
   const {startDate, setStartDate, treatmentDays, setTreatmentDays, events, setEvents} = userStateContext();
+  const [calendarDate, setCalendarDate] = useState(new Date());
 
-  const isCurrentMonth = new Date(events.start).getMonth() === new Date().getMonth() && new Date(events.start).getFullYear() === new Date().getFullYear();
+  useEffect(() => {
+    if (mode === "view" && events.length > 0) {
+      setCalendarDate(new Date(events[0].start));
+    }
+  }, [mode, events]);
 
   useEffect(() => {
     // redibuja el calendario si se cambia un evento (por ejemplo el rango de fechas de un tratamiento)
@@ -74,6 +79,12 @@ const CalendarTreatment = ({ mode = "edit", treatments = [] }) => {
         culture="es"//this ensures date-fns uses Spanish locale
         selectable={true}// this enables clicking/selecting slots
         views={['month']}// optional, limit to month view
+        date={mode === "view" ? calendarDate : undefined}
+        onNavigate={(date) => {
+          if (mode === "view") {
+            setCalendarDate(date);
+          }
+        }}
         onSelectSlot={(slotInfo) => {
           if (mode === "edit") {
             const selectedDate = slotInfo.start;
@@ -93,6 +104,19 @@ const CalendarTreatment = ({ mode = "edit", treatments = [] }) => {
               ]);
             }
           }
+        }}
+        eventPropGetter={(event) => {
+          const today = new Date();
+          const isCurrentTreatment =
+            today >= new Date(event.start) && today <= new Date(event.end);
+          return {
+            style: {
+              backgroundColor: isCurrentTreatment ? 'green' : '#3174ad',
+              color: 'white',
+              borderRadius: '4px',
+              border: 'none',
+            },
+          };
         }}
         //   // Cuando el usuario selecciona un día, lo guarda como inicio del tratamiento
         //   const newEvent = {
