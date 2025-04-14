@@ -190,6 +190,47 @@ export default function IngresarMed () {
     }, [startDate, treatmentDays]);
 
     useEffect(() => {
+      if (!startDate || treatmentDays <= 0 || selectedDays.length === 0) return;
+      let selectedDayIndexes = selectedDays.map(day => diasDeLaSemana.indexOf(day) + 1); //selected day index
+    
+      const newEvents = [];
+      let currentDate = new Date(startDate);
+      let addedDays = 0;
+    
+      while (addedDays < Math.floor(treatmentDays / 7)) {
+        const weekday = currentDate.getDay(); // Día de la semana (0–6)
+        const isValidDay = selectedDayIndexes.includes(weekday);
+    
+        console.log(
+          `[${currentDate.toDateString()}] Día de la semana: ${weekday} ${
+            isValidDay ? "✔️ válido" : "❌ no válido"
+          }`
+        );
+    
+        if (isValidDay) {
+          newEvents.push({
+            title: `Toma ${addedDays + 1}`,
+            start: new Date(currentDate),
+            end: new Date(currentDate),
+            allDay: true
+          });
+          addedDays++;
+        }
+    
+        currentDate.setDate(currentDate.getDate() + 1); // Avanza un día
+      }
+    
+      console.table(
+        newEvents.map(event => ({
+          Día: event.start.toDateString(),
+          Título: event.title
+        }))
+      );
+    
+      setEvents(newEvents);
+    }, [startDate, treatmentDays, selectedDays]);
+
+    useEffect(() => {
       if (!days || !interval || interval <= 0) return;
     
       const intervalCount = 24 / interval;
@@ -197,12 +238,12 @@ export default function IngresarMed () {
       calculateDoses(treatmentDays, intervalCount, selectedDays, everyday);
     }, [treatmentDays, interval, selectedDays, everyday]);
 
-    useEffect(() => {
-      if (!startDate || treatmentDays <= 0 || selectedDays.length === 0) return;
+    // useEffect(() => {
+    //   if (!startDate || treatmentDays <= 0 || selectedDays.length === 0) return;
     
-      const newEvents = generateEventsByWeekday(startDate, treatmentDays, selectedDays)
-      setEvents(newEvents)
-    }, [startDate, treatmentDays, selectedDays])
+    //   const newEvents = generateEventsByWeekday(startDate, treatmentDays, selectedDays)
+    //   setEvents(newEvents)
+    // }, [startDate, treatmentDays, selectedDays])
 
     return (
         <div className="flex">
@@ -256,7 +297,7 @@ export default function IngresarMed () {
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
-                    <div className="rounded-lg w-full h-[calc(100vh-32rem)] overflow-auto">
+                    <div className="rounded-lg w-full h-[calc(100vh-27rem)] overflow-auto">
                         <form className="space-y-4">
                             <div className='min-h-20 py-1 px-4'>
                             <table className="shadow-sm min-w-full text-left text-sm font-roboto font-medium text-slate-600 text-surface p-2">
@@ -397,8 +438,11 @@ export default function IngresarMed () {
                               <p>notas</p>
                             </div>
                             <div className='flex gap-2 items-start'>
-                              <div>
+                              <div className='flex flex-col items-center'>
                                   <CalendarTreatment mode='edit'/>
+                                  <div className='font-semibold text-orange-400'>
+                                    📅 Mes actual
+                                  </div>
                               </div>
                               <div className='flex flex-col gap-2 justify-between h-full'>
                                 <div>

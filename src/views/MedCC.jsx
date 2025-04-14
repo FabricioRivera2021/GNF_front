@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { CalendarTreatment, Modal } from '../components/index';
 import LlamadorPanel from "../components/LlamadorPanel";
 import { userStateContext } from '../context/ContextProvider';
-import { ArrowDownCircleIcon, ArrowUpCircleIcon, ExclamationCircleIcon } from '@heroicons/react/24/outline';
+import { ArrowDownCircleIcon, ArrowUpCircleIcon, ExclamationCircleIcon, CheckBadgeIcon } from '@heroicons/react/24/outline';
 import IngresarMedSideBar from '../components/IngresarMedSideBar';
 import { fetchTratamiento, getCurrentSelectedNumber } from '../API/apiServices';
 import { parse } from 'date-fns';
@@ -144,11 +144,18 @@ export default function MedCC () {
                         <td className="px-2 py-1 border-b">{new Date(tto.fecha_inicio).toLocaleDateString('es-ES')}</td>
                         <td className="px-2 py-1 border-b">{new Date(tto.fecha_fin).toLocaleDateString('es-ES')}</td>
                         <td className="px-2 py-1 border-b">
-                          {new Date() > tto.fecha_fin ? <ArrowUpCircleIcon className='w-6 text-orange-400' /> : ''}
-                          <div className='flex'>
-                            <ExclamationCircleIcon className='w-6 text-orange-400' />
-                            <p className='text-gray-400'>Cuenta vencida</p>
-                          </div>
+                          {new Date() > new Date(tto.fecha_fin) 
+                            ?
+                              <div className='flex items-center gap-1'>
+                                <ExclamationCircleIcon className='w-6 text-orange-400' />
+                                <p className='text-gray-400'>Vencida</p>
+                              </div>
+                            : 
+                              <div className='flex items-center gap-1'>
+                                <CheckBadgeIcon className='w-6 text-green-400' />
+                                <p className='text-gray-400'>Vigente</p>
+                              </div>
+                          }
                         </td>
                       </tr>
                     ))}
@@ -158,8 +165,11 @@ export default function MedCC () {
               <Modal show={openModalCC} handleClose={() => setOpenModalCC(false)}>
                 <div className='flex gap-4'>
                 <div className="mt-4">
-                    <div>
+                    <div className='flex flex-col gap-2 items-center'>
                       <CalendarTreatment mode='view' treatments={tratamientos} />
+                      <div className='font-semibold text-orange-400'>
+                        📅 Mes actual
+                      </div>
                     </div>
                   </div>
                   <div>

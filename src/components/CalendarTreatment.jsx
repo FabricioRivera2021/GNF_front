@@ -5,7 +5,6 @@ import { format, parse, startOfWeek, getDay } from 'date-fns';
 import es from 'date-fns/locale/es'; // Importa el idioma español de date-fns
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { userStateContext } from "../context/ContextProvider";
-// import localization from "moment/locale/es"; // Importa el idioma español
 
 const locales = {
   es: es
@@ -18,10 +17,6 @@ const localizer = dateFnsLocalizer({
   getDay,
   locales,
 })
-
-// moment.locale('el'); // Configura Moment en español
-// const localizer = momentLocalizer(moment); // Configura el localizador de Moment.js para react-big-calendar
-// moment.locale("es", localization); // Configura el idioma español para Moment.js
 
 console.log("Idioma actual:", moment.locale()); // 🔥 Debería mostrar "es"
 console.log("Locales disponibles:", moment.locales()); // 🔥 Lista de locales cargados
@@ -69,7 +64,9 @@ const CalendarTreatment = ({ mode = "edit", treatments = [] }) => {
   }, [startDate, treatmentDays])
 
   return (
-    <div style={{ height: 350 }}>
+    <>
+
+    <div style={{ height: 350, width: 700}}>
       <Calendar
         localizer={localizer}
         events={events}
@@ -118,17 +115,26 @@ const CalendarTreatment = ({ mode = "edit", treatments = [] }) => {
             },
           };
         }}
-        //   // Cuando el usuario selecciona un día, lo guarda como inicio del tratamiento
-        //   const newEvent = {
-        //     start: slot.start,
-        //     end: slot.end,
-        //     title: "Inicio Tratamiento",
-        //   };
-        //   setEvents([newEvent]); // Solo permite un día de inicio
-        // }}
+        dayPropGetter={(date) => {
+          // Iteramos sobre todos los eventos para ver si el día de la celda está dentro del rango
+          const isTreatmentDay = events.some(event => {
+            const eventStart = new Date(event.start);
+            const eventEnd = new Date(event.end);
+            
+            // Compara si la fecha de la celda está dentro del rango del evento
+            return date >= eventStart && date <= eventEnd;
+          });
+
+          return {
+            style: {
+              backgroundColor: isTreatmentDay ? '#f0a835' : undefined, // naranja solo si es día de tratamiento
+            },
+          };
+        }}
         style={{ marginLeft: "20px", marginRight: "20px" }}
       />
     </div>
+    </>
   );
 };
 
