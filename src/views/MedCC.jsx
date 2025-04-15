@@ -71,9 +71,9 @@ export default function MedCC () {
         <div className='flex flex-col w-[calc(100vw-4rem)] h-[calc(100vh-4rem)]'>
           <div className="flex flex-col items-start w-full p-3 space-y-3">
             <h2 className="text-2xl font-bold mb-2">Cuenta corriente</h2>
-            <div className="rounded-lg overflow-auto">
-              <div className='py-1 px-4'>
-                <table className="shadow-sm text-left text-sm font-roboto font-medium text-slate-600 text-surface p-2">
+            <div className="rounded-lg overflow-auto w-full">
+              <div className='py-1 px-4 w-11/12'>
+                <table className="shadow-sm text-left text-xs font-roboto font-medium text-slate-600 text-surface p-2 w-full">
                   <thead className='sticky top-0 bg-blue-400 text-white whitespace-nowrap'>
                     <tr>
                       <th className="px-2 py-1 border-b">Tto</th>
@@ -104,7 +104,6 @@ export default function MedCC () {
                             setViewTreatment(treatmentData);
                             console.log(treatmentData);
                             
-                          
                             const endDate = new Date(treatmentData.fecha_inic);
                             endDate.setDate(endDate.getDate() + treatmentData.treatment - 1);
                             const mappedEvent = {
@@ -141,8 +140,16 @@ export default function MedCC () {
                         <td className="px-2 py-1 border-b">{tto.retiros_pendientes} caja/s</td>
                         <td className="px-2 py-1 border-b">{tto.retiros_por_mes} caja/s</td>
                         <td className="px-2 py-1 border-b">{tto.user.name}</td>
-                        <td className="px-2 py-1 border-b">{new Date(tto.fecha_inicio).toLocaleDateString('es-ES')}</td>
-                        <td className="px-2 py-1 border-b">{new Date(tto.fecha_fin).toLocaleDateString('es-ES')}</td>
+                        <td>
+                          <p className="px-2 py-1 border-b font-semibold text-slate-500 rounded-md shadow-sm">
+                            {new Date(tto.fecha_inicio).toLocaleDateString('es-ES')}
+                          </p>
+                        </td>
+                        <td>
+                          <p className="px-2 py-1 border-b font-semibold text-slate-500 rounded-md shadow-sm">
+                            {new Date(tto.fecha_fin).toLocaleDateString('es-ES')}
+                          </p>
+                        </td>
                         <td className="px-2 py-1 border-b">
                           {new Date() > new Date(tto.fecha_fin) 
                             ?
@@ -164,12 +171,9 @@ export default function MedCC () {
               </div>
               <Modal show={openModalCC} handleClose={() => setOpenModalCC(false)}>
                 <div className='flex gap-4'>
-                <div className="mt-4">
+                  <div className="mt-4">
                     <div className='flex flex-col gap-2 items-center'>
                       <CalendarTreatment mode='view' treatments={tratamientos} />
-                      <div className='font-semibold text-orange-400'>
-                        📅 Mes actual
-                      </div>
                     </div>
                   </div>
                   <div>

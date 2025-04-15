@@ -46,6 +46,8 @@ const CalendarTreatment = ({ mode = "edit", treatments = [] }) => {
   const [calendarDate, setCalendarDate] = useState(new Date());
 
   useEffect(() => {
+    console.log(events);
+    
     if (mode === "view" && events.length > 0) {
       setCalendarDate(new Date(events[0].start));
     }
@@ -66,7 +68,7 @@ const CalendarTreatment = ({ mode = "edit", treatments = [] }) => {
   return (
     <>
 
-    <div style={{ height: 350, width: 700}}>
+    <div style={{ height: 350, width: 550}}>
       <Calendar
         localizer={localizer}
         events={events}
@@ -109,25 +111,9 @@ const CalendarTreatment = ({ mode = "edit", treatments = [] }) => {
           return {
             style: {
               backgroundColor: isCurrentTreatment ? 'green' : '#3174ad',
-              color: 'white',
+              color: '#1e293b',
               borderRadius: '4px',
               border: 'none',
-            },
-          };
-        }}
-        dayPropGetter={(date) => {
-          // Iteramos sobre todos los eventos para ver si el día de la celda está dentro del rango
-          const isTreatmentDay = events.some(event => {
-            const eventStart = new Date(event.start);
-            const eventEnd = new Date(event.end);
-            
-            // Compara si la fecha de la celda está dentro del rango del evento
-            return date >= eventStart && date <= eventEnd;
-          });
-
-          return {
-            style: {
-              backgroundColor: isTreatmentDay ? '#f0a835' : undefined, // naranja solo si es día de tratamiento
             },
           };
         }}

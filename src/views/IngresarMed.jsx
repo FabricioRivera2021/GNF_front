@@ -175,19 +175,21 @@ export default function IngresarMed () {
   
     //use effects que tienen que ver con el calendario
 
-    useEffect(() => {
-      if (!startDate || treatmentDays <= 0) return;
+    // revisar que hace esto despues
+    // --
+    // useEffect(() => {
+    //   if (!startDate || treatmentDays <= 0) return;
   
-      const endDate = new Date(startDate);
-      endDate.setDate(startDate.getDate() + treatmentDays - 1);
+    //   const endDate = new Date(startDate);
+    //   endDate.setDate(startDate.getDate() + treatmentDays - 1);
     
-      setEvents([{
-        title: `Tratamiento (${treatmentDays} días)`,
-        start: startDate,
-        end: endDate,
-        allDay: true
-      }]);
-    }, [startDate, treatmentDays]);
+    //   setEvents([{
+    //     title: `Tratamiento (${treatmentDays} días)`,
+    //     start: startDate,
+    //     end: endDate,
+    //     allDay: true
+    //   }]);
+    // }, [startDate, treatmentDays]);
 
     useEffect(() => {
       if (!startDate || treatmentDays <= 0 || selectedDays.length === 0) return;
@@ -254,7 +256,7 @@ export default function IngresarMed () {
                     <h2 className="text-2xl font-bold mb-2">Ingresar Medicación</h2>
                     <div className='flex items-end justify-start gap-2'>
                         <div className='ml-4 py-2'>
-                            <input
+                              <input
                                 className="shadow appearance-none border py-1.5 px-2 rounded-md text-gray-100 font-semibold leading-tight 
                                 focus:outline-none focus:shadow-outline bg-blue-400 cursor-pointer hover:bg-blue-500"
                                 id="medicationName"
@@ -264,7 +266,7 @@ export default function IngresarMed () {
                                 setSearchTermMedico('');
                                 setShowMedicoModal(true);
                                 }}
-                                />
+                              />
                             <div className='flex items-center gap-2'>
                               {
                                 (medico.nombre) 
@@ -426,23 +428,33 @@ export default function IngresarMed () {
                     <Modal show={showTreatmentModal} handleClose={() => {setShowTreatmentModal(false); handleClearAddMedication(); }}>
                         <div>
                           <div className='flex justify-between'>
-                            <div className='flex flex-col items-start bg-yellow-100 mb-3 text-slate-600 p-2 rounded-md text-sm'>
-                              <p className='text-center text-sm font-semibold underline'>Medicación</p>
-                              <p className='font-semibold'>{addMedication.droga} {(addMedication.tipo_medicamento == "Controlado") ? <ExclamationTriangleIcon className='w-6 text-orange-500' /> : ""} </p>
-                              <p>Concentración: <span className='font-semibold'>{addMedication.droga_concentracion}</span></p>
-                              <p>Nombre Comercial: <span className='font-semibold'>{addMedication.nombre_comercial}</span></p>
-                              <p>Comp. por caja: <span className='font-semibold'>{addMedication.unidades_caja}</span></p>
-                              <p>Lab: <span className='font-semibold'>{addMedication.laboratorio}</span></p>
-                              <p>Lote: <span className='font-semibold'>{addMedication.lote}</span></p>
-                              <p>F.venc: <span className='font-semibold'>{addMedication.fecha_vencimiento}</span></p>
-                              <p>notas</p>
+                            <div className='flex flex-col items-start mb-3 text-slate-600 p-2 rounded-md text-sm gap-4'>
+                              <div className='bg-yellow-100 shadow-sm p-2 rounded-md'>                            
+                                <p className='text-center text-sm font-semibold underline'>Medicación</p>
+                                <p className='font-semibold'>{addMedication.droga} {(addMedication.tipo_medicamento == "Controlado") ? <ExclamationTriangleIcon className='w-6 text-orange-500' /> : ""} </p>
+                                <p>Concentración: <span className='font-semibold'>{addMedication.droga_concentracion}</span></p>
+                                <p>Nombre Comercial: <span className='font-semibold'>{addMedication.nombre_comercial}</span></p>
+                                <p>Comp. por caja: <span className='font-semibold'>{addMedication.unidades_caja}</span></p>
+                                <p>Lab: <span className='font-semibold'>{addMedication.laboratorio}</span></p>
+                                <p>Lote: <span className='font-semibold'>{addMedication.lote}</span></p>
+                                <p>F.venc: <span className='font-semibold'>{addMedication.fecha_vencimiento}</span></p>
+                                {/* <p>notas: ...</p> */}
+                              </div>
+                              <div className='flex flex-col gap-1'>
+                                <div className='bg-orange-400 py-0.5 px-2 rounded-sm shadow-sm text-slate-50 font-semibold'>
+                                  📅 Mes actual
+                                </div>
+                                <div className='bg-blue-500 py-0.5 px-2 rounded-sm shadow-sm text-slate-50 font-semibold'>
+                                  📅 Tratamiento total
+                                </div>
+                                <div className='bg-gray-300 py-0.5 px-2 rounded-sm shadow-sm text-slate-600 font-semibold'>
+                                  💊 Detalle
+                                </div>
+                              </div>
                             </div>
                             <div className='flex gap-2 items-start'>
                               <div className='flex flex-col items-center'>
                                   <CalendarTreatment mode='edit'/>
-                                  <div className='font-semibold text-orange-400'>
-                                    📅 Mes actual
-                                  </div>
                               </div>
                               <div className='flex flex-col gap-2 justify-between h-full'>
                                 <div>
@@ -461,20 +473,31 @@ export default function IngresarMed () {
                                         />
                                   </div>
                                   <div>
-                                      <label>
-                                        <input className='border-none bg-slate-200 hover:bg-blue-200' type="checkbox" checked={everyday} onChange={(e) => setEveryday(e.target.checked)} />
-                                        <span className='ml-2'>Todos los días</span>
-                                      </label>
+                                    <label className="flex items-center cursor-pointer">
+                                      <input
+                                        className="border-none bg-slate-200 hover:bg-blue-200 rounded"
+                                        type="checkbox"
+                                        checked={everyday}
+                                        onChange={(e) => setEveryday(e.target.checked)}
+                                      />
+                                      <span className="ml-2">Todos los días</span>
+                                    </label>
                                   </div>
-                                      {!everyday && (
-                                      <div className="grid grid-cols-3 gap-2">
-                                          {diasDeLaSemana.map((day) => (
-                                          <label key={day} className="flex items-center">
-                                              <input className='border-none bg-slate-200 hover:bg-blue-200' type="checkbox" checked={selectedDays.includes(day)} onChange={() => toggleDay(day)} />
-                                              <span className="ml-2">{day}</span>
-                                          </label>
-                                          ))}
-                                  </div>
+
+                                  {!everyday && (
+                                    <div className="grid grid-cols-3 gap-2 mt-2">
+                                      {diasDeLaSemana.map((day) => (
+                                        <label key={day} className="flex items-center cursor-pointer">
+                                          <input
+                                            className="border-none bg-slate-200 hover:bg-blue-200 rounded"
+                                            type="checkbox"
+                                            checked={selectedDays.includes(day)}
+                                            onChange={() => toggleDay(day)}
+                                          />
+                                          <span className="ml-2">{day}</span>
+                                        </label>
+                                      ))}
+                                    </div>
                                   )}
                                   <div>
                                       <label>Cada cuántas horas:</label>
