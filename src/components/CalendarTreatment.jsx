@@ -110,10 +110,15 @@ const CalendarTreatment = ({ mode = "edit", treatments = [] }) => {
             today >= new Date(event.start) && today <= new Date(event.end);
           return {
             style: {
-              backgroundColor: isCurrentTreatment ? 'green' : '#3174ad',
-              color: '#1e293b',
+              backgroundColor: isCurrentTreatment ? '#2b7fff' : '#2b7fff',
+              color: 'white',
               borderRadius: '4px',
-              border: 'none',
+              border: '1px solid white',
+              display: 'block',
+              padding: '2px',
+              fontSize: '14px',
+              margin_bottom: '5px',
+              boxShadow: '0px 1px 1px rgba(0, 0, 0, 0.2)',
             },
           };
         }}

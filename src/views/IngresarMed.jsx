@@ -305,6 +305,7 @@ export default function IngresarMed () {
                             <table className="shadow-sm min-w-full text-left text-sm font-roboto font-medium text-slate-600 text-surface p-2">
                             <thead className='sticky top-0 bg-blue-400 text-white'>
                                 <tr>
+                                <th className="px-2 py-1 border-b"></th>
                                 <th className="px-2 py-1 border-b">Droga</th>
                                 <th className="px-2 py-1 border-b">Lote</th>
                                 <th className="px-2 py-1 border-b">F. venc.</th>
@@ -319,7 +320,6 @@ export default function IngresarMed () {
                                 <th className="px-2 py-1 border-b">Laboratorio</th>
                                 <th className="px-2 py-1 border-b">Unidades por caja</th>
                                 <th className="px-2 py-1 border-b">Stock</th>
-                                <th className="px-2 py-1 border-b"></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -332,20 +332,6 @@ export default function IngresarMed () {
                                               {medication.droga}
                                           </td>
                                         )} */}
-                                        <td className="px-2 py-1 border-b">{medication.droga}</td>
-                                        <td className="px-2 py-1 border-b">{medication.lote}</td>
-                                        <td className="px-2 py-1 border-b">{medication.fecha_vencimiento}</td>
-                                        <td className="px-2 py-1 border-b">{medication.nombre_comercial}</td>
-                                        <td className="px-2 py-1 border-b">{medication.droga_concentracion}</td>
-                                        <td className="px-2 py-1 border-b">{medication.presentacion_farmaceutica}</td>
-                                        <td className="px-2 py-1 border-b">{medication.unidad_medida}</td>
-                                        <td className="px-2 py-1 border-b">{medication.via_administracion}</td>
-                                        <td className={`px-2 py-1 border-b ${(medication.tipo_medicamento == "Controlado") ? "text-orange-600" : ""}`}>{medication.tipo_medicamento}</td>
-                                        <td className="px-2 py-1 border-b">{medication.estado}</td>
-                                        <td className="px-2 py-1 border-b">{medication.ranurable}</td>
-                                        <td className="px-2 py-1 border-b">{medication.laboratorio}</td>
-                                        <td className="px-2 py-1 border-b">30 {medication.presentacion_farmaceutica}s</td>
-                                        <td className="px-2 py-1 border-b">{medication.stock}</td>
                                         <td className="px-2 py-1 border-b">
                                             <button 
                                                 className={` px-2 py-0.5 rounded-sm shadow-sm text-white ${addMedication.droga ? 'cursor-not-allowed bg-gray-500' : 'bg-blue-400 hover:bg-blue-600'}`}
@@ -368,6 +354,21 @@ export default function IngresarMed () {
                                                 Agregar
                                             </button>
                                         </td>
+                                        <td className="px-2 py-1 border-b">{medication.droga}</td>
+                                        <td className="px-2 py-1 border-b">{medication.lote}</td>
+                                        <td className="px-2 py-1 border-b">{medication.fecha_vencimiento}</td>
+                                        <td className="px-2 py-1 border-b">{medication.nombre_comercial}</td>
+                                        <td className="px-2 py-1 border-b">{medication.droga_concentracion}</td>
+                                        <td className="px-2 py-1 border-b">{medication.presentacion_farmaceutica}</td>
+                                        <td className="px-2 py-1 border-b">{medication.unidad_medida}</td>
+                                        <td className="px-2 py-1 border-b">{medication.via_administracion}</td>
+                                        <td className={`px-2 py-1 border-b ${(medication.tipo_medicamento == "Controlado") ? "text-orange-600" : ""}`}>{medication.tipo_medicamento}</td>
+                                        <td className="px-2 py-1 border-b">{medication.estado}</td>
+                                        <td className="px-2 py-1 border-b">{medication.ranurable}</td>
+                                        <td className="px-2 py-1 border-b">{medication.laboratorio}</td>
+                                        <td className="px-2 py-1 border-b">30 {medication.presentacion_farmaceutica}s</td>
+                                        <td className="px-2 py-1 border-b">{medication.stock}</td>
+
                                     </tr>
                                     ))}
                                 </React.Fragment>
