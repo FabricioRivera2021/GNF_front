@@ -7,7 +7,7 @@ export default function IngresarMedSideBar() {
   return (
     <SideBar>
       <NavLink
-        to="/nuevoIngresoVentanilla"
+        to="/ventanilla/nuevoIngresoVentanilla"
         className={({ isActive }) =>
           isActive
             ? 'rounded-sm py-1 text-left pl-1 bg-blue-500 text-white px-10'
@@ -17,7 +17,7 @@ export default function IngresarMedSideBar() {
         Ingresar medicacion
       </NavLink>
       <NavLink
-        to="/nuevoIngresoVentanillaCC"
+        to="/ventanilla/nuevoIngresoVentanillaCC"
         className={({ isActive }) =>
           isActive
             ? 'rounded-sm py-1 text-left pl-1 bg-blue-500 text-white px-10'
@@ -27,7 +27,7 @@ export default function IngresarMedSideBar() {
         Ingr. med. desde CC
       </NavLink>
       <NavLink
-        to="/historialRetiros"
+        to="/ventanilla/historialRetiros"
         className={({ isActive }) =>
           isActive
             ? 'rounded-sm py-1 text-left pl-1 bg-blue-500 text-white px-10'
@@ -37,7 +37,7 @@ export default function IngresarMedSideBar() {
         Ver ultimos retiros
       </NavLink>
       <NavLink
-        to="/retiroActual"
+        to="/ventanilla/retiroActual"
         className={({ isActive }) =>
           isActive
             ? 'rounded-sm py-1 text-left pl-1 bg-blue-500 text-white px-10'

@@ -1,4 +1,4 @@
-import { Navigate, createBrowserRouter } from "react-router-dom";
+import { Navigate, Outlet, createBrowserRouter } from "react-router-dom";
 import { Login, Logout, Llamador, Dashboard, PanelNumerico, IngresarMed, MedCC, HistorialRetiros, RetiroActual } from "./views/index.js";
 import { DefaultLayout, GuestLayout } from "./components/index.js";
 import { AdminLayout } from "./components/AdminLayout.jsx";
@@ -38,8 +38,30 @@ const router = createBrowserRouter([
                 element: <Supervisor />
             },
             {
-                path: '/nuevoIngresoVentanilla', //cambiar esto despues de probar a guest
-                element: <IngresarMed />
+                path: '/ventanilla',
+                element: <Outlet />, // Optional layout component or just <Outlet />
+                children: [
+                  {
+                    index: true, // this makes it the default route
+                    element: <Navigate to="nuevoIngresoVentanilla" />
+                  },
+                  {
+                    path: 'nuevoIngresoVentanilla',
+                    element: <IngresarMed />
+                  },
+                  {
+                    path: 'nuevoIngresoVentanillaCC',
+                    element: <MedCC />
+                  },
+                  {
+                    path: 'retiroActual',
+                    element: <RetiroActual />
+                  },
+                  {
+                    path: 'historialRetiros',
+                    element: <HistorialRetiros />
+                  }
+                ]
             },
             {
                 path: '/caja', //cambiar esto despues de probar a guest
@@ -48,18 +70,6 @@ const router = createBrowserRouter([
             {
                 path: '/menuPreparacion', //cambiar esto despues de probar a guest
                 element: <Preparacion />
-            },
-            {
-                path: '/retiroActual', //cambiar esto despues de probar a guest
-                element: <RetiroActual />
-            },
-            {
-                path: '/nuevoIngresoVentanillaCC', //cambiar esto despues de probar a guest
-                element: <MedCC />
-            },
-            {
-                path: '/historialRetiros', //cambiar esto despues de probar a guest
-                element: <HistorialRetiros />
             },
             {
                 path: '/consultasStock', //cambiar esto despues de probar a guest
