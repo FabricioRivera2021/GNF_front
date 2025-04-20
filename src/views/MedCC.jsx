@@ -120,7 +120,8 @@ export default function MedCC () {
                               droga: tto.medication.droga,
                               concentracion: tto.medication.droga_concentracion,
                               tto_dias: tto.total_tto_dias,
-                              frec: tto.frecuencia,
+                              frecuencia: tto.frecuencia,
+                              cantidad_diaria: tto.cantidad_diaria,
                               pendientes: tto.retiros_pendientes,
                               ret_mes: tto.retiros_por_mes,
                               f_inic: tto.fecha_inicio,
@@ -132,7 +133,7 @@ export default function MedCC () {
                       >
                         <td className="px-2 py-1 border-b">{tto.activo ? <ArrowUpCircleIcon className='w-6 text-green-400' /> : <ArrowDownCircleIcon className='w-6 text-red-400' />}</td>
                         <td className="px-2 py-1 border-b">{tto.medication.droga}</td>
-                        <td className="px-2 py-1 border-b">2 comp/dia!!!</td>
+                        <td className="px-2 py-1 border-b">{tto.cantidad_diaria} cada {tto.frecuencia} hs</td>
                         <td className="px-2 py-1 border-b">{tto.total_tto_dias} dias</td>
                         <td className="px-2 py-1 border-b">{tto.medicos.nombre} {tto.medicos.apellido}</td>
                         <td className="px-2 py-1 border-b">{tto.medicos.especialidad}</td>
@@ -181,7 +182,7 @@ export default function MedCC () {
                       <h3 className="text-lg font-bold">{ttoShowMedicationOnModal.droga} {ttoShowMedicationOnModal.concentracion}</h3>
                       <p className='border-b'>Marca: {ttoShowMedicationOnModal.marca}</p>
                       <p className='border-b'>Tratamiento: {ttoShowMedicationOnModal.tto_dias} dias</p>
-                      <p className='border-b'>Frecuencia: 1 comp cada 8 hs por 30 dias</p>
+                      <p className='border-b'>Frecuencia: {ttoShowMedicationOnModal.cantidad_diaria} comp cada {ttoShowMedicationOnModal.frecuencia} hs por 30 dias</p>
                       <p className='border-b'>Fecha inicio tto.: {new Date(ttoShowMedicationOnModal.f_inic).toLocaleDateString('es-ES')}</p>
                       <p>Fecha fin tto.: {new Date(ttoShowMedicationOnModal.f_fin).toLocaleDateString('es-ES')}</p>
                     </div>

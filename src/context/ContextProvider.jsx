@@ -21,7 +21,7 @@ const StateContext = createContext({
   addMedication: {},
   historicoRetiros: [],
   startDate: 1,
-  treatmentDays: 0,
+  treatmentDays: '',
   events: [],
   medico: {},
   allMedicos: [],
@@ -69,7 +69,7 @@ export const ContextProvider = ({children}) => {
   const [addMedication, setAddMedication] = useState({});
   const [historicoRetiros, setHistoricoRetiros] = useState([]); //historico de retiros
   const [startDate, setStartDate] = useState(new Date());//set start date as today
-  const [treatmentDays, setTreatmentDays] = useState(0);
+  const [treatmentDays, setTreatmentDays] = useState('');//dias de tratamiento
   const [events, setEvents] = useState([
     {
       title: `Tratamiento (${treatmentDays} días)`,

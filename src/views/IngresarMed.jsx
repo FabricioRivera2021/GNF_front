@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Modal, CalendarTreatment } from '../components/index';
 import LlamadorPanel from "../components/LlamadorPanel";
 import { userStateContext } from '../context/ContextProvider';
@@ -61,6 +61,14 @@ export default function IngresarMed () {
             unidades_caja: null,
             presentacion_farmaceutica: null
         });
+    };
+
+    const handleClearTreatmentDays = () => {
+        setTreatmentDays('');
+        setEveryday(true);
+        setSelectedDays([]);
+        setInterval(24);
+        setTotalDoses(0);
     };
 
     const handleCloseMedicoModal = () => setShowMedicoModal(false);
@@ -157,6 +165,9 @@ export default function IngresarMed () {
       setTotalDoses(totalDoses);
     };
 
+    //REFERENCIAS
+    const treatmentDaysInputRef = useRef(null);
+
     //USE EFFECTS
     //get current selected number by the User
     useEffect(() => {
@@ -240,6 +251,13 @@ export default function IngresarMed () {
       calculateDoses(treatmentDays, intervalCount, selectedDays, everyday);
     }, [treatmentDays, interval, selectedDays, everyday]);
 
+    //focus on the input days of treatment when the modal is open
+    useEffect(() => {
+      if (showTreatmentModal && treatmentDaysInputRef.current) {
+        treatmentDaysInputRef.current.focus();
+      }
+    }, [showTreatmentModal]);
+
     // useEffect(() => {
     //   if (!startDate || treatmentDays <= 0 || selectedDays.length === 0) return;
     
@@ -307,8 +325,6 @@ export default function IngresarMed () {
                                 <tr>
                                 <th className="px-2 py-1 border-b"></th>
                                 <th className="px-2 py-1 border-b">Droga</th>
-                                <th className="px-2 py-1 border-b">Lote</th>
-                                <th className="px-2 py-1 border-b">F. venc.</th>
                                 <th className="px-2 py-1 border-b">Nombre comercial</th>
                                 <th className="px-2 py-1 border-b">Concentración</th>
                                 <th className="px-2 py-1 border-b">Presentación</th>
@@ -319,6 +335,8 @@ export default function IngresarMed () {
                                 <th className="px-2 py-1 border-b">Ranurable</th>
                                 <th className="px-2 py-1 border-b">Laboratorio</th>
                                 <th className="px-2 py-1 border-b">Unidades por caja</th>
+                                <th className="px-2 py-1 border-b">Lote</th>
+                                <th className="px-2 py-1 border-b">F. venc.</th>
                                 <th className="px-2 py-1 border-b">Stock</th>
                                 </tr>
                             </thead>
@@ -343,8 +361,8 @@ export default function IngresarMed () {
                                                                     medication.droga,
                                                                     medication.nombre_comercial,
                                                                     medication.tipo_medicamento,
-                                                                    medication.droga_concentracion, 
                                                                     medication.unidades_caja, 
+                                                                    medication.droga_concentracion, 
                                                                     medication.presentacion_farmaceutica,
                                                                     medication.laboratorio,
                                                                     medication.lote,
@@ -354,9 +372,7 @@ export default function IngresarMed () {
                                                 Agregar
                                             </button>
                                         </td>
-                                        <td className="px-2 py-1 border-b">{medication.droga}</td>
-                                        <td className="px-2 py-1 border-b">{medication.lote}</td>
-                                        <td className="px-2 py-1 border-b">{medication.fecha_vencimiento}</td>
+                                        <td className="px-2 py-1 border-b font-semibold text-slate-900">{medication.droga}</td>
                                         <td className="px-2 py-1 border-b">{medication.nombre_comercial}</td>
                                         <td className="px-2 py-1 border-b">{medication.droga_concentracion}</td>
                                         <td className="px-2 py-1 border-b">{medication.presentacion_farmaceutica}</td>
@@ -367,8 +383,9 @@ export default function IngresarMed () {
                                         <td className="px-2 py-1 border-b">{medication.ranurable}</td>
                                         <td className="px-2 py-1 border-b">{medication.laboratorio}</td>
                                         <td className="px-2 py-1 border-b">30 {medication.presentacion_farmaceutica}s</td>
+                                        <td className="px-2 py-1 border-b">{medication.lote}</td>
+                                        <td className="px-2 py-1 border-b">{new Date(medication.fecha_vencimiento).toLocaleDateString('es-ES')}</td>
                                         <td className="px-2 py-1 border-b">{medication.stock}</td>
-
                                     </tr>
                                     ))}
                                 </React.Fragment>
@@ -426,7 +443,7 @@ export default function IngresarMed () {
                 </div>
                 <div className="flex items-center mx-7 mt-4 gap-4">
                     {/* ----------------------------------------------------------------------------------------------------------------------------------------- */}
-                    <Modal show={showTreatmentModal} handleClose={() => {setShowTreatmentModal(false); handleClearAddMedication(); }}>
+                    <Modal show={showTreatmentModal} handleClose={() => {setShowTreatmentModal(false); handleClearAddMedication(); handleClearTreatmentDays(); }}>
                         <div>
                           <div className='flex justify-between'>
                             <div className='flex flex-col items-start mb-3 text-slate-600 p-2 rounded-md text-sm gap-4'>
@@ -438,19 +455,8 @@ export default function IngresarMed () {
                                 <p>Comp. por caja: <span className='font-semibold'>{addMedication.unidades_caja}</span></p>
                                 <p>Lab: <span className='font-semibold'>{addMedication.laboratorio}</span></p>
                                 <p>Lote: <span className='font-semibold'>{addMedication.lote}</span></p>
-                                <p>F.venc: <span className='font-semibold'>{addMedication.fecha_vencimiento}</span></p>
+                                <p>F.venc: <span className='font-semibold'>{new Date(addMedication.fecha_vencimiento).toLocaleDateString('es-ES')}</span></p>
                                 {/* <p>notas: ...</p> */}
-                              </div>
-                              <div className='flex flex-col gap-1'>
-                                <div className='bg-orange-400 py-0.5 px-2 rounded-sm shadow-sm text-slate-50 font-semibold'>
-                                  📅 Mes actual
-                                </div>
-                                <div className='bg-blue-500 py-0.5 px-2 rounded-sm shadow-sm text-slate-50 font-semibold'>
-                                  📅 Tratamiento total
-                                </div>
-                                <div className='bg-gray-300 py-0.5 px-2 rounded-sm shadow-sm text-slate-600 font-semibold'>
-                                  💊 Detalle
-                                </div>
                               </div>
                             </div>
                             <div className='flex gap-2 items-start'>
@@ -463,6 +469,7 @@ export default function IngresarMed () {
                                         <label>Días de tratamiento:</label>
                                         {/* <input className='border-none rounded-md mx-1 text-slate-600 bg-slate-200' type="number" min="1" defaultValue={1} value={days} onChange={(e) => setDays(Number(e.target.value))} /> */}
                                         <input
+                                          ref={treatmentDaysInputRef}
                                           className='border-none rounded-md mx-1 text-slate-600 bg-slate-200'
                                           min={1}
                                           defaultValue={1}
