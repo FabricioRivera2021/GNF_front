@@ -131,7 +131,11 @@ export default function MedCC () {
                             setOpenModalCC(true);
                           }}
                       >
-                        <td className="px-2 py-1 border-b">{tto.activo ? <ArrowUpCircleIcon className='w-6 text-green-400' /> : <ArrowDownCircleIcon className='w-6 text-red-400' />}</td>
+                        <td className="px-2 py-1 border-b">
+                          {tto.activo 
+                            ? <div className='flex items-center gap-1'><ArrowUpCircleIcon className='w-6 text-green-400' /><p>Vigente</p></div> 
+                            : <div className='flex items-center gap-1'><ArrowDownCircleIcon className='w-6 text-red-400' /><p>Caducado</p></div>}
+                        </td>
                         <td className="px-2 py-1 border-b">{tto.medication.droga}</td>
                         <td className="px-2 py-1 border-b">{tto.cantidad_diaria} cada {tto.frecuencia} hs</td>
                         <td className="px-2 py-1 border-b">{tto.total_tto_dias} dias</td>

@@ -22,7 +22,19 @@ export default function IngresarMed () {
     const diasDeLaSemana = ["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"];
 
     //FUNCTIONS
-    const handleAddMedication = (event, id, droga, nombre_comercial, tipo_medicamento, droga_concentracion, unidades_caja, presentacion_farmaceutica, lab, lote, fecha_vencimiento) => {
+    const handleAddMedication = (
+          event, 
+          id, 
+          droga, 
+          nombre_comercial, 
+          tipo_medicamento, 
+          droga_concentracion, 
+          unidades_caja, 
+          presentacion_farmaceutica, 
+          lab, 
+          lote,
+          fecha_vencimiento
+        ) => {
         event.preventDefault();
         setShowTreatmentModal(true);
         setAddMedication({
@@ -361,8 +373,8 @@ export default function IngresarMed () {
                                                                     medication.droga,
                                                                     medication.nombre_comercial,
                                                                     medication.tipo_medicamento,
-                                                                    medication.unidades_caja, 
                                                                     medication.droga_concentracion, 
+                                                                    medication.unidades_caja, 
                                                                     medication.presentacion_farmaceutica,
                                                                     medication.laboratorio,
                                                                     medication.lote,
@@ -452,7 +464,7 @@ export default function IngresarMed () {
                                 <p className='font-semibold'>{addMedication.droga} {(addMedication.tipo_medicamento == "Controlado") ? <ExclamationTriangleIcon className='w-6 text-orange-500' /> : ""} </p>
                                 <p>Concentración: <span className='font-semibold'>{addMedication.droga_concentracion}</span></p>
                                 <p>Nombre Comercial: <span className='font-semibold'>{addMedication.nombre_comercial}</span></p>
-                                <p>Comp. por caja: <span className='font-semibold'>{addMedication.unidades_caja}</span></p>
+                                <p>Presentación: <span className='font-semibold'>{addMedication.unidades_caja} {addMedication.presentacion_farmaceutica}s</span></p>
                                 <p>Lab: <span className='font-semibold'>{addMedication.laboratorio}</span></p>
                                 <p>Lote: <span className='font-semibold'>{addMedication.lote}</span></p>
                                 <p>F.venc: <span className='font-semibold'>{new Date(addMedication.fecha_vencimiento).toLocaleDateString('es-ES')}</span></p>
