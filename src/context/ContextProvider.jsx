@@ -78,7 +78,7 @@ export const ContextProvider = ({children}) => {
       allDay: true
     }
   ]);
-  const [medico, setMedico] = useState({});
+  const [medico, setMedico] = useState([]);
   const [allMedicos, setAllMedicos] = useState([]);
 
   //funcion para agregar un nuevo numero a la TV

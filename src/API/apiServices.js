@@ -217,6 +217,7 @@ export const fetchAllMedicamentos = (setMedicamentos) => {
     axios
         .get(`${API_URL}/allMedications`)
         .then(response => {
+          console.log("allmedications endpoint", response.data);
             setMedicamentos(response.data);
         })
         .catch(error => {
@@ -229,6 +230,7 @@ export const fetchAllMedicos = (setAllMedicos) => {
     axios
         .get(`${API_URL}/allMedicos`)
         .then(response => {
+          console.log("allmedicos endpoint", response.data);
             setAllMedicos(response.data);
         })
         .catch(error => {

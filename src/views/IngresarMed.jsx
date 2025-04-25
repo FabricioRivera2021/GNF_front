@@ -93,8 +93,8 @@ export default function IngresarMed () {
 
     const filteredMedications = medications.filter(medication =>
         medication.nombre_comercial.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        medication.droga.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        medication.grupo_terapeutico.toLowerCase().includes(searchTerm.toLowerCase())
+        medication.droga.toLowerCase().includes(searchTerm.toLowerCase())
+        // medication.grupo_terapeutico.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     const groupedMedications = filteredMedications.reduce((acc, medication) => {
@@ -270,6 +270,8 @@ export default function IngresarMed () {
       }
     }, [showTreatmentModal]);
 
+    console.log("medicos", allMedicos);
+
     // useEffect(() => {
     //   if (!startDate || treatmentDays <= 0 || selectedDays.length === 0) return;
     
@@ -372,11 +374,11 @@ export default function IngresarMed () {
                                                                     medication.id, 
                                                                     medication.droga,
                                                                     medication.nombre_comercial,
-                                                                    medication.tipo_medicamento,
+                                                                    medication.categoria.nombre_categoria,
                                                                     medication.droga_concentracion, 
                                                                     medication.unidades_caja, 
-                                                                    medication.presentacion_farmaceutica,
-                                                                    medication.laboratorio,
+                                                                    medication.presentacion_farmaceutica.presentacion,
+                                                                    medication.laboratorio.razon_social,
                                                                     medication.lote,
                                                                     medication.fecha_vencimiento
                                                     )
@@ -387,14 +389,14 @@ export default function IngresarMed () {
                                         <td className="px-2 py-1 border-b font-semibold text-slate-900">{medication.droga}</td>
                                         <td className="px-2 py-1 border-b">{medication.nombre_comercial}</td>
                                         <td className="px-2 py-1 border-b">{medication.droga_concentracion}</td>
-                                        <td className="px-2 py-1 border-b">{medication.presentacion_farmaceutica}</td>
-                                        <td className="px-2 py-1 border-b">{medication.unidad_medida}</td>
-                                        <td className="px-2 py-1 border-b">{medication.via_administracion}</td>
-                                        <td className={`px-2 py-1 border-b ${(medication.tipo_medicamento == "Controlado") ? "text-orange-600" : ""}`}>{medication.tipo_medicamento}</td>
+                                        <td className="px-2 py-1 border-b">{medication.presentacion_farmaceutica.presentacion}</td>
+                                        <td className="px-2 py-1 border-b">{medication.unidad_medida.unidad_medida}</td>
+                                        <td className="px-2 py-1 border-b">{medication.via_administracion.map(via => via.nombre)}</td>
+                                        <td className={`px-2 py-1 border-b ${(medication.categoria.nombre_categoria == "Controlado") ? "text-orange-600" : ""}`}>{medication.categoria.nombre_categoria}</td>
                                         <td className="px-2 py-1 border-b">{medication.estado}</td>
                                         <td className="px-2 py-1 border-b">{medication.ranurable}</td>
-                                        <td className="px-2 py-1 border-b">{medication.laboratorio}</td>
-                                        <td className="px-2 py-1 border-b">30 {medication.presentacion_farmaceutica}s</td>
+                                        <td className="px-2 py-1 border-b">{medication.laboratorio.razon_social}</td>
+                                        <td className="px-2 py-1 border-b">30 {medication.presentacion_farmaceutica.presentacion}s</td>
                                         <td className="px-2 py-1 border-b">{medication.lote}</td>
                                         <td className="px-2 py-1 border-b">{new Date(medication.fecha_vencimiento).toLocaleDateString('es-ES')}</td>
                                         <td className="px-2 py-1 border-b">{medication.stock}</td>
@@ -434,7 +436,11 @@ export default function IngresarMed () {
                                     <td className="px-2 py-1 border-b">{medico.apellido}</td>
                                     {/* <td className="px-2 py-1 border-b">{medico.numeroRegistro}</td> */}
                                     <td className="px-2 py-1 border-b">{medico.nro_caja}</td>
-                                    <td className="px-2 py-1 border-b">{medico.especialidad}</td>
+                                    <td className="px-2 py-1 border-b">{medico.especialidades
+                                      .map(
+                                        especialidad => <div>{especialidad.nombre}</div>
+                                      )}
+                                    </td>
                                     <td className="px-2 py-1 border-b">
                                       <button 
                                         className='bg-blue-400 px-2 py-0.5 rounded-sm shadow-sm text-white hover:bg-blue-600'
