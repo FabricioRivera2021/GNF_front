@@ -16,11 +16,11 @@ const navigation = [
   { name: 'TV', to: '/TV' },
   { name: 'Llamador', to: '/llamador'},
   { name: 'Ventanilla', to: '/ventanilla'},
-  { name: 'Menu preparación', to: '/menuPreparacion'},
+  { name: 'Preparación', to: '/menuPreparacion'},
   { name: 'Caja', to: '/caja'},
-  { name: 'Consultas stock', to: '/consultasStock'},
+  { name: 'Stock', to: '/consultasStock'},
   { name: 'Abastecimiento', to: '/abastecimiento'},
-  { name: 'Menu pedidos remotos', to: '/pedidosRemotos'},
+  { name: 'Pedidos', to: '/pedidosRemotos'},
 ]
 
 const userNavigation = [

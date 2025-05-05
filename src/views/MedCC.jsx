@@ -140,7 +140,7 @@ export default function MedCC () {
                         <td className="px-2 py-1 border-b">{tto.cantidad_diaria} cada {tto.frecuencia} hs</td>
                         <td className="px-2 py-1 border-b">{tto.total_tto_dias} dias</td>
                         <td className="px-2 py-1 border-b">{tto.medicos.nombre} {tto.medicos.apellido}</td>
-                        <td className="px-2 py-1 border-b">{tto.medicos.especialidad}</td>
+                        <td className="px-2 py-1 border-b">{tto.medicos.especialidades.map(especialidad => <div>{especialidad.nombre}</div>)}</td>
                         <td className="px-2 py-1 border-b">{tto.tipo_tto}</td>
                         <td className="px-2 py-1 border-b">{tto.retiros_pendientes} caja/s</td>
                         <td className="px-2 py-1 border-b">{tto.retiros_por_mes} caja/s</td>

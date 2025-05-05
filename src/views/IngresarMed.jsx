@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Modal, CalendarTreatment } from '../components/index';
 import LlamadorPanel from "../components/LlamadorPanel";
 import { userStateContext } from '../context/ContextProvider';
-import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
+import { ExclamationTriangleIcon, PlusIcon } from '@heroicons/react/24/outline';
 import IngresarMedSideBar from '../components/IngresarMedSideBar';
 import { fetchAllMedicamentos, getCurrentSelectedNumber,handleSetNextState, handlePauseNumber,handleCancelNumber,handleDerivateToPosition,handleDerivateTo,fetchAllMedicos} from '../API/apiServices';
 
@@ -135,6 +135,11 @@ export default function IngresarMed () {
       return events
     }
 
+    const getSelectedDays = (startDate, treatmentDays) => {
+      console.log("startDate", startDate);
+      console.log("treatmentDays", treatmentDays);
+    }
+
     const calculateDoses = (days, dosesPerDay, selectedDays, everyday) => {
       let selectedDayIndexes = selectedDays.map(day => diasDeLaSemana.indexOf(day) + 1); //selected day index 
       // selectedDays.map(day => {
@@ -196,7 +201,46 @@ export default function IngresarMed () {
       fetchAllMedicos(setAllMedicos);
     }, []);
   
-    //use effects que tienen que ver con el calendario
+    useEffect(() => {
+      const startDateForShowTreatmentModal = new Date(startDate); // Clonar startDate
+      //treatment days
+      const endDate = new Date(startDate); // Clonar startDate
+      endDate.setDate(endDate.getDate() + treatmentDays - 1); // Calcular la fecha de fin sumando los días de tratamiento
+
+      console.log("startDate", startDate);
+      console.log("endDate", endDate);
+      
+
+      while (startDateForShowTreatmentModal <= endDate) {
+        const dayOfWeek = startDateForShowTreatmentModal.toLocaleDateString('es-ES', { weekday: 'long' });; // 0 = Domingo, 1 = Lunes, ...
+        const isValidDay = selectedDays.includes(dayOfWeek);
+        console.log(
+          `[${startDateForShowTreatmentModal.getDay()}] Día de la semana: ${dayOfWeek} ${
+            isValidDay ? "✔️ válido" : "❌ no válido"
+          }`
+        );
+        console.log("adasdasd" ,startDateForShowTreatmentModal.getDay());
+        console.log("adsadssssss", dayOfWeek);
+        console.log("valid day", isValidDay);
+        console.log("selected days", selectedDays);
+        if (isValidDay) {
+          setEvents((prevEvents) => [
+            ...prevEvents,
+            {
+              title: `Toma Example`,
+              start: new Date(startDateForShowTreatmentModal),
+              end: new Date(startDateForShowTreatmentModal),
+              allDay: true,
+            },
+          ]);
+          // addedDays++;
+        // console.log(startDateForShowTreatmentModal.toLocaleDateString('es-ES'));
+        }
+      startDateForShowTreatmentModal.setDate(startDateForShowTreatmentModal.getDate() + 1); // Avanza un día
+      }
+    }, [startDate, treatmentDays, selectedDays]);
+
+    // use effects que tienen que ver con el calendario
 
     // revisar que hace esto despues
     // --
@@ -214,46 +258,46 @@ export default function IngresarMed () {
     //   }]);
     // }, [startDate, treatmentDays]);
 
-    useEffect(() => {
-      if (!startDate || treatmentDays <= 0 || selectedDays.length === 0) return;
-      let selectedDayIndexes = selectedDays.map(day => diasDeLaSemana.indexOf(day) + 1); //selected day index
+    // useEffect(() => {
+    //   if (!startDate || treatmentDays <= 0 || selectedDays.length === 0) return;
+    //   let selectedDayIndexes = selectedDays.map(day => diasDeLaSemana.indexOf(day) + 1); //selected day index
     
-      const newEvents = [];
-      let currentDate = new Date(startDate);
-      let addedDays = 0;
+    //   const newEvents = [];
+    //   let currentDate = new Date(startDate);
+    //   let addedDays = 0;
     
-      while (addedDays < Math.floor(treatmentDays / 7)) {
-        const weekday = currentDate.getDay(); // Día de la semana (0–6)
-        const isValidDay = selectedDayIndexes.includes(weekday);
+    //   while (addedDays < Math.floor(treatmentDays / 7)) {
+    //     const weekday = currentDate.getDay(); // Día de la semana (0–6)
+    //     const isValidDay = selectedDayIndexes.includes(weekday);
     
-        console.log(
-          `[${currentDate.toDateString()}] Día de la semana: ${weekday} ${
-            isValidDay ? "✔️ válido" : "❌ no válido"
-          }`
-        );
+    //     console.log(
+    //       `[${currentDate.toDateString()}] Día de la semana: ${weekday} ${
+    //         isValidDay ? "✔️ válido" : "❌ no válido"
+    //       }`
+    //     );
     
-        if (isValidDay) {
-          newEvents.push({
-            title: `Toma ${addedDays + 1}`,
-            start: new Date(currentDate),
-            end: new Date(currentDate),
-            allDay: true
-          });
-          addedDays++;
-        }
+    //     if (isValidDay) {
+    //       newEvents.push({
+    //         title: `Toma ${addedDays + 1}`,
+    //         start: new Date(currentDate),
+    //         end: new Date(currentDate),
+    //         allDay: true
+    //       });
+    //       addedDays++;
+    //     }
     
-        currentDate.setDate(currentDate.getDate() + 1); // Avanza un día
-      }
+    //     currentDate.setDate(currentDate.getDate() + 1); // Avanza un día
+    //   }
     
-      console.table(
-        newEvents.map(event => ({
-          Día: event.start.toDateString(),
-          Título: event.title
-        }))
-      );
+    //   console.table(
+    //     newEvents.map(event => ({
+    //       Día: event.start.toDateString(),
+    //       Título: event.title
+    //     }))
+    //   );
     
-      setEvents(newEvents);
-    }, [startDate, treatmentDays, selectedDays]);
+    //   setEvents(newEvents);
+    // }, [startDate, treatmentDays, selectedDays]);
 
     useEffect(() => {
       if (!days || !interval || interval <= 0) return;
@@ -269,8 +313,6 @@ export default function IngresarMed () {
         treatmentDaysInputRef.current.focus();
       }
     }, [showTreatmentModal]);
-
-    console.log("medicos", allMedicos);
 
     // useEffect(() => {
     //   if (!startDate || treatmentDays <= 0 || selectedDays.length === 0) return;
@@ -331,7 +373,7 @@ export default function IngresarMed () {
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
-                    <div className="rounded-lg w-full h-[calc(100vh-27rem)] overflow-auto">
+                    <div className="rounded-lg w-[calc(100vw-16rem)] h-[calc(100vh-27rem)] overflow-auto">
                         <form className="space-y-4">
                             <div className='min-h-20 py-1 px-4'>
                             <table className="shadow-sm min-w-full text-left text-sm font-roboto font-medium text-slate-600 text-surface p-2">
@@ -339,16 +381,16 @@ export default function IngresarMed () {
                                 <tr>
                                 <th className="px-2 py-1 border-b"></th>
                                 <th className="px-2 py-1 border-b">Droga</th>
-                                <th className="px-2 py-1 border-b">Nombre comercial</th>
+                                <th className="px-2 py-1 border-b whitespace-nowrap">N. comercial</th>
                                 <th className="px-2 py-1 border-b">Concentración</th>
                                 <th className="px-2 py-1 border-b">Presentación</th>
                                 <th className="px-2 py-1 border-b">Unidad</th>
-                                <th className="px-2 py-1 border-b">Via administración</th>
+                                <th className="px-2 py-1 border-b whitespace-nowrap">Via admin.</th>
                                 <th className="px-2 py-1 border-b">Tipo</th>
                                 <th className="px-2 py-1 border-b">Estado</th>
                                 <th className="px-2 py-1 border-b">Ranurable</th>
-                                <th className="px-2 py-1 border-b">Laboratorio</th>
-                                <th className="px-2 py-1 border-b">Unidades por caja</th>
+                                <th className="px-2 py-1 border-b">Lab</th>
+                                <th className="px-2 py-1 border-b">Unidades</th>
                                 <th className="px-2 py-1 border-b">Lote</th>
                                 <th className="px-2 py-1 border-b">F. venc.</th>
                                 <th className="px-2 py-1 border-b">Stock</th>
@@ -383,7 +425,7 @@ export default function IngresarMed () {
                                                                     medication.fecha_vencimiento
                                                     )
                                                 }}>
-                                                Agregar
+                                                <PlusIcon className='w-4'/>
                                             </button>
                                         </td>
                                         <td className="px-2 py-1 border-b font-semibold text-slate-900">{medication.droga}</td>
@@ -396,7 +438,7 @@ export default function IngresarMed () {
                                         <td className="px-2 py-1 border-b">{medication.estado}</td>
                                         <td className="px-2 py-1 border-b">{medication.ranurable}</td>
                                         <td className="px-2 py-1 border-b">{medication.laboratorio.razon_social}</td>
-                                        <td className="px-2 py-1 border-b">30 {medication.presentacion_farmaceutica.presentacion}s</td>
+                                        <td className="px-2 py-1 border-b">30</td>
                                         <td className="px-2 py-1 border-b">{medication.lote}</td>
                                         <td className="px-2 py-1 border-b">{new Date(medication.fecha_vencimiento).toLocaleDateString('es-ES')}</td>
                                         <td className="px-2 py-1 border-b">{medication.stock}</td>
