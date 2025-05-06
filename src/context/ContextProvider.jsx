@@ -3,6 +3,7 @@ import { createContext, useContext, useState } from "react";
 
 const StateContext = createContext({
   currentUser: {},
+  customer: {},
   userToken: null,
   position: '',
   numero: {},
@@ -26,6 +27,7 @@ const StateContext = createContext({
   medico: {},
   allMedicos: [],
   setCurrentUser: () => {},
+  setCustomer: () => {},
   setUserToken: () => {},
   setPosition: () => {},
   setNumero: () => {},
@@ -51,6 +53,7 @@ const StateContext = createContext({
 
 export const ContextProvider = ({children}) => {
   const [currentUser, setCurrentUser] = useState({});
+  const [customer, setCustomer] = useState({});
   const [filterPaused, setFilterPaused] = useState(false);//cantidad numeros pausados
   const [filterCancel, setFilterCancel] = useState(false);//cantidad numeros cancelados
   const [userToken, _setUserToken] = useState(localStorage.getItem('TOKEN') || '');
@@ -103,6 +106,8 @@ export const ContextProvider = ({children}) => {
       value={{
         currentUser,
         setCurrentUser,
+        customer,
+        setCustomer,
         userToken,
         setUserToken,
         isChangingPosition,

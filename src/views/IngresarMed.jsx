@@ -4,12 +4,12 @@ import LlamadorPanel from "../components/LlamadorPanel";
 import { userStateContext } from '../context/ContextProvider';
 import { ExclamationTriangleIcon, PlusIcon } from '@heroicons/react/24/outline';
 import IngresarMedSideBar from '../components/IngresarMedSideBar';
-import { fetchAllMedicamentos, getCurrentSelectedNumber,handleSetNextState, handlePauseNumber,handleCancelNumber,handleDerivateToPosition,handleDerivateTo,fetchAllMedicos} from '../API/apiServices';
+import { fetchAllMedicamentos, getCurrentSelectedNumber,handleSetNextState, handlePauseNumber,handleCancelNumber,handleDerivateToPosition,handleDerivateTo,fetchAllMedicos, createTratamiento} from '../API/apiServices';
 
 //COMPONENTE PRINCIPAL
 export default function IngresarMed () {
     const { setAllDerivates, setShowModal, numero, setNumero, showMedicoModal, setShowMedicoModal, medications, setMedications, addMedication, setAddMedication, showTreatmentModal,
-            setShowTreatmentModal, treatmentDays, setTreatmentDays, startDate, setEvents, medico, setMedico, allMedicos, setAllMedicos} = userStateContext();
+            setShowTreatmentModal, treatmentDays, setTreatmentDays, startDate, setEvents, medico, setMedico, allMedicos, setAllMedicos, currentUser, customer} = userStateContext();
     const [selectedFilter, setSelectedFilter] = useState(1);
     const [searchTerm, setSearchTerm] = useState('');
     const [searchTermMedico, setSearchTermMedico] = useState('');
@@ -52,8 +52,9 @@ export default function IngresarMed () {
     };
 
     //setea el medico que indico la medicacion
-    const handleSetMedico = (nombre, apellido, numeroRegistro, nro_caja, especialidad) => {
+    const handleSetMedico = (id, nombre, apellido, numeroRegistro, nro_caja, especialidad) => {
         setMedico({
+            id: id,
             nombre: nombre,
             apellido: apellido,
             numeroRegistro: 111, //hardcodear por ahora
@@ -180,10 +181,10 @@ export default function IngresarMed () {
               isValidDay ? "✔️ válido" : "❌ no válido"
             }`
           );
-          console.log("adasdasd" ,startDateForShowTreatmentModal.getDay());
-          console.log("adsadssssss", dayOfWeek);
-          console.log("valid day", isValidDay);
-          console.log("selected days", selectedDays);
+          // console.log("adasdasd" ,startDateForShowTreatmentModal.getDay());
+          // console.log("adsadssssss", dayOfWeek);
+          // console.log("valid day", isValidDay);
+          // console.log("selected days", selectedDays);
           if (isValidDay) {
             console.log("newEvents", newEvents)
             newEvents.push(
@@ -227,6 +228,25 @@ export default function IngresarMed () {
       console.log("Total de dosis:", totalDoses);
       setTotalDoses(totalDoses);
     };
+
+    const handleCreateTreatment = (startDate, treatmentDays, interval, totalDoses, medicationId) => {
+
+      const endDate = new Date(startDate); // Clonar startDate
+      endDate.setDate(endDate.getDate() + treatmentDays - 1);
+
+      return () => {
+        startDate
+        treatmentDays
+        endDate
+        interval
+        totalDoses
+        medicationId
+        medico.id
+        currentUser.id
+        numero
+        // console.log("customer", customer); -> por ahora lo conseguimos desde el backend a travez del id del numero (sabiendo que usuario esta asignado a ese numero)
+      };
+    }
 
     //REFERENCIAS
     const treatmentDaysInputRef = useRef(null);
@@ -428,7 +448,7 @@ export default function IngresarMed () {
                                       <button 
                                         className='bg-blue-400 px-2 py-0.5 rounded-sm shadow-sm text-white hover:bg-blue-600'
                                         onClick={() => {
-                                            handleSetMedico(medico.nombre, medico.apellido, medico.numeroRegistro, medico.nro_caja, medico.especialidad);
+                                            handleSetMedico(medico.id, medico.nombre, medico.apellido, medico.numeroRegistro, medico.nro_caja, medico.especialidad);
                                             setShowMedicoModal(false);
                                             // setMedico
                                           }
@@ -540,7 +560,27 @@ export default function IngresarMed () {
                                 )}
                                 </div>
                                 <div>
-                                    <button className='bg-blue-400 shadow-sm px-3 py-0.5 rounded-sm text-white hover:bg-blue-500'>Ingresar tto.</button>
+                                    <button 
+                                      className='bg-blue-400 shadow-sm px-3 py-0.5 rounded-sm text-white hover:bg-blue-500'
+                                      onClick={() => createTratamiento(
+                                        startDate,
+                                        treatmentDays, 
+                                        // selectedDays, 
+                                        // everyday, 
+                                        interval, 
+                                        totalDoses, 
+                                        addMedication.id,
+                                        medico.id,
+                                        // numero
+                                        //customer_id -> context
+                                        //user_id -> usuario logueado
+                                        //tipo_tto -> eleccion usuario
+                                          //cronico, agudo, fnr, compra especial
+                                        //cantidad_diaria ??
+                                      )}
+                                      >
+                                      Ingresar tto.
+                                    </button>
                                 </div>
                               </div>
                             </div>

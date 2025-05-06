@@ -253,6 +253,65 @@ export const fetchTratamiento = (customer_id, setTratamientos) => {
         });
 }
 
+//crear un nuevo tratamiento
+export const createTratamiento = (
+      startDate,
+      treatmentDays,
+      interval,
+      totalDoses,
+      medication,
+      medico, //id
+      // currentUser, //id
+      // numero,
+    ) => {
+
+    const endDate = new Date(startDate); // Clonar startDate
+    endDate.setDate(endDate.getDate() + treatmentDays - 1);
+
+    console.log("test");
+
+    const tratamiento = {
+      startDate: startDate,
+      treatmentDays: treatmentDays,
+      endDate: endDate,
+      interval: interval,
+      totalDoses: totalDoses,
+      medicationID: medication,
+      medicoID: medico,
+      // customer: currentUser.id,
+      // numero: numero,
+    }
+
+    console.log(`${API_URL}/createTreatment`);
+    axios
+        .post(`${API_URL}/createTreatment`, tratamiento)
+        .then(response => {;
+            console.log(response.data);
+        })
+        .catch(error => {
+            console.error('Error creating tratamiento:', error);
+        });
+}
+
+const handleCreateTreatment = (startDate, treatmentDays, interval, totalDoses, medicationId) => {
+
+  const endDate = new Date(startDate); // Clonar startDate
+  endDate.setDate(endDate.getDate() + treatmentDays - 1);
+
+  return () => {
+    startDate
+    treatmentDays
+    endDate
+    interval
+    totalDoses
+    medicationId
+    medico.id
+    currentUser.id
+    numero
+    // console.log("customer", customer); -> por ahora lo conseguimos desde el backend a travez del id del numero (sabiendo que usuario esta asignado a ese numero)
+  };
+}
+
 export const fetchHistoricoRetiros = (customer_id, setHistoricoRetiros) => {
     console.log(`${API_URL}/historicoRetiros/${customer_id}`);
     axios
