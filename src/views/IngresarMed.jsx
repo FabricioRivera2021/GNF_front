@@ -142,15 +142,13 @@ export default function IngresarMed () {
 
     const calculateDoses = (days, dosesPerDay, selectedDays, everyday) => {
       let selectedDayIndexes = selectedDays.map(day => diasDeLaSemana.indexOf(day) + 1); //selected day index 
-      // selectedDays.map(day => {
-      //   console.log(diasDeLaSemana.indexOf(day) + 1);
-      // })
       let startDayIndex = diasDeLaSemana.indexOf(startDate.toLocaleString('es-ES', { weekday: 'long' })) + 1; // +1 to match the 1-7 range
       console.log("startDayIndex", startDayIndex);
       if (!Number.isInteger(days) || days <= 0) {
           console.error("Valor invalido de dias. Debe ser un número entero positivo.");
           return;
       }
+      const newEvents = [];
       let weeks = Math.floor(days / 7);
       console.log("weeks", weeks);
       let extraDays = days % 7;
@@ -159,10 +157,58 @@ export default function IngresarMed () {
       if (everyday) {
         totalDoses = days * dosesPerDay;
       } else {
-        if (selectedDayIndexes.length > days) {
-          console.error("No se puede seleccionar más días de los que dura el tratamiento");
-          return;
+        // if (selectedDayIndexes.length > days) {
+        //   console.error("No se puede seleccionar más días de los que dura el tratamiento");
+        //   return;
+        // }
+        const startDateForShowTreatmentModal = new Date(startDate); // Clonar startDate
+        //treatment days
+        const endDate = new Date(startDate); // Clonar startDate
+        endDate.setDate(endDate.getDate() + treatmentDays - 1); // Calcular la fecha de fin sumando los días de tratamiento
+  
+        console.log("startDate", startDate);
+        console.log("endDate", endDate);
+        
+        //set an empty events array to avoid showing the last treatment days
+        setEvents([]);
+  
+        while (startDateForShowTreatmentModal <= endDate) {
+          const dayOfWeek = startDateForShowTreatmentModal.toLocaleDateString('es-ES', { weekday: 'long' });; // 0 = Domingo, 1 = Lunes, ...
+          const isValidDay = selectedDays.includes(dayOfWeek);
+          console.log(
+            `[${startDateForShowTreatmentModal.getDay()}] Día de la semana: ${dayOfWeek} ${
+              isValidDay ? "✔️ válido" : "❌ no válido"
+            }`
+          );
+          console.log("adasdasd" ,startDateForShowTreatmentModal.getDay());
+          console.log("adsadssssss", dayOfWeek);
+          console.log("valid day", isValidDay);
+          console.log("selected days", selectedDays);
+          if (isValidDay) {
+            console.log("newEvents", newEvents)
+            newEvents.push(
+              {
+                title: `Toma ${newEvents.length + 1}`,
+                start: new Date(startDateForShowTreatmentModal),
+                end: new Date(startDateForShowTreatmentModal),
+                allDay: true,
+              },
+            );
+            // addedDays++;
+          // console.log(startDateForShowTreatmentModal.toLocaleDateString('es-ES'));
+          }
+        startDateForShowTreatmentModal.setDate(startDateForShowTreatmentModal.getDate() + 1); // Avanza un día
         }
+
+        setEvents(newEvents);
+
+        console.table(
+          newEvents.map(event => ({
+            Día: event.start,
+            Título: event.title
+          }))
+        );
+
         console.log(selectedDayIndexes);
         selectedDayIndexes.forEach(dayIndex => {
           console.log(`Día ${dayIndex}---------`);
@@ -200,104 +246,6 @@ export default function IngresarMed () {
     useEffect(() => {
       fetchAllMedicos(setAllMedicos);
     }, []);
-  
-    useEffect(() => {
-      const startDateForShowTreatmentModal = new Date(startDate); // Clonar startDate
-      //treatment days
-      const endDate = new Date(startDate); // Clonar startDate
-      endDate.setDate(endDate.getDate() + treatmentDays - 1); // Calcular la fecha de fin sumando los días de tratamiento
-
-      console.log("startDate", startDate);
-      console.log("endDate", endDate);
-      
-
-      while (startDateForShowTreatmentModal <= endDate) {
-        const dayOfWeek = startDateForShowTreatmentModal.toLocaleDateString('es-ES', { weekday: 'long' });; // 0 = Domingo, 1 = Lunes, ...
-        const isValidDay = selectedDays.includes(dayOfWeek);
-        console.log(
-          `[${startDateForShowTreatmentModal.getDay()}] Día de la semana: ${dayOfWeek} ${
-            isValidDay ? "✔️ válido" : "❌ no válido"
-          }`
-        );
-        console.log("adasdasd" ,startDateForShowTreatmentModal.getDay());
-        console.log("adsadssssss", dayOfWeek);
-        console.log("valid day", isValidDay);
-        console.log("selected days", selectedDays);
-        if (isValidDay) {
-          setEvents((prevEvents) => [
-            ...prevEvents,
-            {
-              title: `Toma Example`,
-              start: new Date(startDateForShowTreatmentModal),
-              end: new Date(startDateForShowTreatmentModal),
-              allDay: true,
-            },
-          ]);
-          // addedDays++;
-        // console.log(startDateForShowTreatmentModal.toLocaleDateString('es-ES'));
-        }
-      startDateForShowTreatmentModal.setDate(startDateForShowTreatmentModal.getDate() + 1); // Avanza un día
-      }
-    }, [startDate, treatmentDays, selectedDays]);
-
-    // use effects que tienen que ver con el calendario
-
-    // revisar que hace esto despues
-    // --
-    // useEffect(() => {
-    //   if (!startDate || treatmentDays <= 0) return;
-  
-    //   const endDate = new Date(startDate);
-    //   endDate.setDate(startDate.getDate() + treatmentDays - 1);
-    
-    //   setEvents([{
-    //     title: `Tratamiento (${treatmentDays} días)`,
-    //     start: startDate,
-    //     end: endDate,
-    //     allDay: true
-    //   }]);
-    // }, [startDate, treatmentDays]);
-
-    // useEffect(() => {
-    //   if (!startDate || treatmentDays <= 0 || selectedDays.length === 0) return;
-    //   let selectedDayIndexes = selectedDays.map(day => diasDeLaSemana.indexOf(day) + 1); //selected day index
-    
-    //   const newEvents = [];
-    //   let currentDate = new Date(startDate);
-    //   let addedDays = 0;
-    
-    //   while (addedDays < Math.floor(treatmentDays / 7)) {
-    //     const weekday = currentDate.getDay(); // Día de la semana (0–6)
-    //     const isValidDay = selectedDayIndexes.includes(weekday);
-    
-    //     console.log(
-    //       `[${currentDate.toDateString()}] Día de la semana: ${weekday} ${
-    //         isValidDay ? "✔️ válido" : "❌ no válido"
-    //       }`
-    //     );
-    
-    //     if (isValidDay) {
-    //       newEvents.push({
-    //         title: `Toma ${addedDays + 1}`,
-    //         start: new Date(currentDate),
-    //         end: new Date(currentDate),
-    //         allDay: true
-    //       });
-    //       addedDays++;
-    //     }
-    
-    //     currentDate.setDate(currentDate.getDate() + 1); // Avanza un día
-    //   }
-    
-    //   console.table(
-    //     newEvents.map(event => ({
-    //       Día: event.start.toDateString(),
-    //       Título: event.title
-    //     }))
-    //   );
-    
-    //   setEvents(newEvents);
-    // }, [startDate, treatmentDays, selectedDays]);
 
     useEffect(() => {
       if (!days || !interval || interval <= 0) return;
@@ -313,13 +261,6 @@ export default function IngresarMed () {
         treatmentDaysInputRef.current.focus();
       }
     }, [showTreatmentModal]);
-
-    // useEffect(() => {
-    //   if (!startDate || treatmentDays <= 0 || selectedDays.length === 0) return;
-    
-    //   const newEvents = generateEventsByWeekday(startDate, treatmentDays, selectedDays)
-    //   setEvents(newEvents)
-    // }, [startDate, treatmentDays, selectedDays])
 
     return (
         <div className="flex">
