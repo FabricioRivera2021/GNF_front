@@ -4,7 +4,7 @@ import LlamadorPanel from "../components/LlamadorPanel";
 import { userStateContext } from '../context/ContextProvider';
 import { ExclamationTriangleIcon, PlusIcon } from '@heroicons/react/24/outline';
 import IngresarMedSideBar from '../components/IngresarMedSideBar';
-import { fetchAllMedicamentos, getCurrentSelectedNumber,handleSetNextState, handlePauseNumber,handleCancelNumber,handleDerivateToPosition,handleDerivateTo,fetchAllMedicos, createTratamiento} from '../API/apiServices';
+import { fetchAllMedicamentos, getCurrentSelectedNumber,handleSetNextState, handlePauseNumber,handleCancelNumber,handleDerivateToPosition,handleDerivateTo,fetchAllMedicos, createTreatment} from '../API/apiServices';
 
 //COMPONENTE PRINCIPAL
 export default function IngresarMed () {
@@ -562,7 +562,7 @@ export default function IngresarMed () {
                                 <div>
                                     <button 
                                       className='bg-blue-400 shadow-sm px-3 py-0.5 rounded-sm text-white hover:bg-blue-500'
-                                      onClick={() => createTratamiento(
+                                      onClick={() => createTreatment(
                                         startDate,
                                         treatmentDays, 
                                         // selectedDays, 

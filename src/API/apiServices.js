@@ -254,15 +254,15 @@ export const fetchTratamiento = (customer_id, setTratamientos) => {
 }
 
 //crear un nuevo tratamiento
-export const createTratamiento = (
+export const createTreatment = (
       startDate,
       treatmentDays,
       interval,
-      totalDoses,
+      // totalDoses,
       medication,
       medico, //id
       // currentUser, //id
-      // numero,
+      numero,
     ) => {
 
     const endDate = new Date(startDate); // Clonar startDate
@@ -275,16 +275,17 @@ export const createTratamiento = (
       treatmentDays: treatmentDays,
       endDate: endDate,
       interval: interval,
-      totalDoses: totalDoses,
       medicationID: medication,
       medicoID: medico,
       // customer: currentUser.id,
-      // numero: numero,
+      numero: numero,
     }
 
     console.log(`${API_URL}/createTreatment`);
     axios
-        .post(`${API_URL}/createTreatment`, tratamiento)
+        .post(`${API_URL}/createTreatment`, {
+          tratamiento
+        })
         .then(response => {;
             console.log(response.data);
         })
