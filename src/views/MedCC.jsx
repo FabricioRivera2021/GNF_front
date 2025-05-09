@@ -6,6 +6,7 @@ import { ArrowDownCircleIcon, ArrowUpCircleIcon, ExclamationCircleIcon, CheckBad
 import IngresarMedSideBar from '../components/IngresarMedSideBar';
 import { fetchTratamiento, getCurrentSelectedNumber } from '../API/apiServices';
 import { parse } from 'date-fns';
+import { parseLocalDate } from '../helpers';
 
 export default function MedCC () {
     const { setFilterCancel, setFilterPaused, setAllDerivates, setShowModal, showModal, numero, setNumero, 
@@ -88,6 +89,7 @@ export default function MedCC () {
                       <th className="px-2 py-1 border-b">Funcionario</th>
                       <th className="px-2 py-1 border-b">Fecha inicio tto.</th>
                       <th className="px-2 py-1 border-b">Fecha fin tto.</th>
+                      <th className="px-2 py-1 border-b font-bold uppercase">Ultimo retiro</th>
                       <th className="px-2 py-1 border-b"></th>
                     </tr>
                   </thead>
@@ -105,10 +107,10 @@ export default function MedCC () {
                             console.log(treatmentData);
                             
                             const endDate = new Date(treatmentData.fecha_inic);
-                            endDate.setDate(endDate.getDate() + treatmentData.treatment - 1);
+                            endDate.setDate(endDate.getDate() + treatmentData.treatment);
                             const mappedEvent = {
                               title: `Tratamiento (${treatmentData.treatment} días)`,
-                              start: new Date(treatmentData.fecha_inic),
+                              start: parseLocalDate(treatmentData.fecha_inic), //this is a hot fix, need to be fixed
                               end: endDate,
                               allDay: true,
                             };
@@ -155,6 +157,11 @@ export default function MedCC () {
                             {new Date(tto.fecha_fin).toLocaleDateString('es-ES')}
                           </p>
                         </td>
+                        <td>
+                          <p className="px-2 py-1 border-b font-semibold text-slate-500 rounded-md shadow-sm">
+                            {new Date(tto.fecha_fin).toLocaleDateString('es-ES')}
+                          </p>
+                        </td>
                         <td className="px-2 py-1 border-b">
                           {new Date() > new Date(tto.fecha_fin) 
                             ?
@@ -187,8 +194,8 @@ export default function MedCC () {
                       <p className='border-b'>Marca: {ttoShowMedicationOnModal.marca}</p>
                       <p className='border-b'>Tratamiento: {ttoShowMedicationOnModal.tto_dias} dias</p>
                       <p className='border-b'>Frecuencia: {ttoShowMedicationOnModal.cantidad_diaria} comp cada {ttoShowMedicationOnModal.frecuencia} hs por 30 dias</p>
-                      <p className='border-b'>Fecha inicio tto.: {new Date(ttoShowMedicationOnModal.f_inic).toLocaleDateString('es-ES')}</p>
-                      <p>Fecha fin tto.: {new Date(ttoShowMedicationOnModal.f_fin).toLocaleDateString('es-ES')}</p>
+                      <p className='border-b'>Fecha inicio tto.: {ttoShowMedicationOnModal.f_inic}</p>
+                      <p>Fecha fin tto.: {ttoShowMedicationOnModal.f_fin}</p>
                     </div>
                     <div className='bg-blue-100 rounded-md p-1 shadow-md text-slate-700 mt-2 mb-2'>
                       <p>Retiro actual comprende desde 01/02/2023 hasta 02/03/2023</p>

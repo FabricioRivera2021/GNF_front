@@ -564,19 +564,21 @@ export default function IngresarMed () {
                                       className='bg-blue-400 shadow-sm px-3 py-0.5 rounded-sm text-white hover:bg-blue-500'
                                       onClick={() => createTreatment(
                                         startDate,
-                                        treatmentDays, 
-                                        // selectedDays, 
-                                        // everyday, 
-                                        interval, 
-                                        totalDoses, 
-                                        addMedication.id,
+                                        // endDate -> calculada desde el backend
+                                        // tto_dias_mes -> esta en la bd pero ni idea que hace 
                                         medico.id,
-                                        // numero
+                                        addMedication.id,
                                         //customer_id -> context
-                                        //user_id -> usuario logueado
-                                        //tipo_tto -> eleccion usuario
-                                          //cronico, agudo, fnr, compra especial
-                                        //cantidad_diaria ??
+                                        currentUser.id,
+                                        //activo -> si la cuenta esta vigente
+                                        treatmentDays, 
+                                        //total dias pendientes, no seria necesario
+                                        //retiros por mes -> no es nesesario
+                                        //retiros pendientes -> no es necesario
+                                        //tipo tto -> eleccion usuario
+                                        interval, //-> frecuencia de toma
+                                        //cantidad diaria -> no se si es necesario
+                                        numero
                                       )}
                                       >
                                       Ingresar tto.

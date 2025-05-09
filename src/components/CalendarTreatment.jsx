@@ -49,7 +49,7 @@ const CalendarTreatment = ({ mode = "edit", treatments = [] }) => {
     console.log(events);
     
     if (mode === "view" && events.length > 0) {
-      setCalendarDate(new Date(events[0].start));
+      setCalendarDate(events[0].start);
     }
   }, [mode, events]);
 
@@ -59,7 +59,7 @@ const CalendarTreatment = ({ mode = "edit", treatments = [] }) => {
       {
         title: `Tratamiento (${treatmentDays} días)`,
         start: startDate,
-        end: new Date(startDate.getTime() + treatmentDays * 24 * 60 * 60 * 1000), // Calcula la fecha de fin
+        end: new Date(startDate.getDate() + treatmentDays), // Calcula la fecha de fin
         allDay: true
       }
     ])
@@ -107,7 +107,7 @@ const CalendarTreatment = ({ mode = "edit", treatments = [] }) => {
         eventPropGetter={(event) => {
           const today = new Date();
           const isCurrentTreatment =
-            today >= new Date(event.start) && today <= new Date(event.end);
+            today >= event.start && today <= event.end;
           return {
             style: {
               backgroundColor: isCurrentTreatment ? '#2b7fff' : '#2b7fff',

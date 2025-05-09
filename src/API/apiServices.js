@@ -256,29 +256,39 @@ export const fetchTratamiento = (customer_id, setTratamientos) => {
 //crear un nuevo tratamiento
 export const createTreatment = (
       startDate,
+      medico, //id
+      medication, //id
+      currentUser, //id
       treatmentDays,
       interval,
-      // totalDoses,
-      medication,
-      medico, //id
-      // currentUser, //id
-      numero,
+      numero
     ) => {
 
     const endDate = new Date(startDate); // Clonar startDate
     endDate.setDate(endDate.getDate() + treatmentDays - 1);
 
-    console.log("test");
+    // Format dates to 'YYYY-MM-DD'
+    const formatDate = (date) => {
+      return date.toISOString().split('T')[0]; // '2025-05-09'
+    };
 
     const tratamiento = {
-      startDate: startDate,
-      treatmentDays: treatmentDays,
-      endDate: endDate,
-      interval: interval,
-      medicationID: medication,
+      startDate: formatDate(startDate),
+      endDate: formatDate(endDate),
+      ttoDiaMes: 10, //hardcodeado
       medicoID: medico,
-      // customer: currentUser.id,
-      numero: numero,
+      medicationID: medication,
+      customerID: 1, //hardcodeado
+      userID: currentUser, 
+      activo: true, //hardcodeado
+      treatmentDays: treatmentDays,
+      totalDiasPendientes: 10, //harcdcodeado
+      retirosPorMes: 10, //hardcodeado
+      retirosPendientes: 10, //hardcodeado
+      tipoTto: 'Comun', //hardcodeado
+      frecuencia: interval,
+      cantidadDiaria: 10, //hardcodeado
+      numero: numero, //para conseguir el id del customer desde el backend
     }
 
     console.log(`${API_URL}/createTreatment`);
