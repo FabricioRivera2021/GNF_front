@@ -5,6 +5,8 @@ import { userStateContext } from '../context/ContextProvider';
 import { ExclamationTriangleIcon, PlusIcon } from '@heroicons/react/24/outline';
 import IngresarMedSideBar from '../components/IngresarMedSideBar';
 import { fetchAllMedicamentos, getCurrentSelectedNumber,handleSetNextState, handlePauseNumber,handleCancelNumber,handleDerivateToPosition,handleDerivateTo,fetchAllMedicos, createTreatment} from '../API/apiServices';
+import Message from '../components/Message';
+import { use } from 'react';
 
 //COMPONENTE PRINCIPAL
 export default function IngresarMed () {
@@ -18,6 +20,14 @@ export default function IngresarMed () {
     const [selectedDays, setSelectedDays] = useState([]);
     const [interval, setInterval] = useState(24);
     const [totalDoses, setTotalDoses] = useState(0);
+    const [message, setMessage] = useState({message: null, colorMsg: "blue"});
+
+    const handleCreatePreConfirmacion = () => setMessage({
+        message: "Se agregó la medicación a la preconfirmación de entrega",
+        colorMsg: "green"
+      }
+
+    );
 
     const diasDeLaSemana = ["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"];
 
@@ -157,6 +167,16 @@ export default function IngresarMed () {
       let totalDoses = 0;
       if (everyday) {
         totalDoses = days * dosesPerDay;
+        const endDate = new Date(startDate); // Clonar startDate
+        endDate.setDate(endDate.getDate() + treatmentDays); // Calcular la fecha de fin sumando los días de tratamiento
+        setEvents(
+          [{
+            title: `Tratamiento ${treatmentDays} dias`,
+            start: new Date(startDate),
+            end: new Date(endDate),
+            allDay: true,
+          }],
+        )
       } else {
         // if (selectedDayIndexes.length > days) {
         //   console.error("No se puede seleccionar más días de los que dura el tratamiento");
@@ -226,6 +246,7 @@ export default function IngresarMed () {
         });
       }
       console.log("Total de dosis:", totalDoses);
+
       setTotalDoses(totalDoses);
     };
 
@@ -252,6 +273,18 @@ export default function IngresarMed () {
     const treatmentDaysInputRef = useRef(null);
 
     //USE EFFECTS
+    //mensajes
+    useEffect(() => {
+      if (message) {
+        const timeout = setTimeout(() => {
+          setMessage(null);
+        }, 3000);
+
+        // ✅ Clean up timeout if the message changes before 3 seconds
+        return () => clearTimeout(timeout);
+      }
+    }, [message]);
+
     //get current selected number by the User
     useEffect(() => {
         getCurrentSelectedNumber(setNumero)
@@ -273,7 +306,7 @@ export default function IngresarMed () {
       const intervalCount = 24 / interval;
     
       calculateDoses(treatmentDays, intervalCount, selectedDays, everyday);
-    }, [treatmentDays, interval, selectedDays, everyday]);
+    }, [treatmentDays, interval, selectedDays, everyday, startDate]);
 
     //focus on the input days of treatment when the modal is open
     useEffect(() => {
@@ -282,6 +315,9 @@ export default function IngresarMed () {
       }
     }, [showTreatmentModal]);
 
+    const endDate = new Date(startDate);
+    endDate.setDate(startDate.getDate() + treatmentDays - 1);
+    
     return (
         <div className="flex">
             <IngresarMedSideBar />
@@ -547,7 +583,7 @@ export default function IngresarMed () {
                                     <h4 className='underline'>Información del tratamiento</h4>
                                     <p>Inicio: {startDate.toLocaleDateString('es-ES')}</p>
                                     <p>Fin: {
-                                      new Date(startDate.getTime() + (treatmentDays - 1) * 86400000).toLocaleDateString('es-ES')
+                                      endDate.toLocaleDateString('es-ES')
                                     }</p>
                                     <p>Días de tratamiento: {treatmentDays}</p>
                                     {interval > 0 && (
@@ -562,24 +598,26 @@ export default function IngresarMed () {
                                 <div>
                                     <button 
                                       className='bg-blue-400 shadow-sm px-3 py-0.5 rounded-sm text-white hover:bg-blue-500'
-                                      onClick={() => createTreatment(
-                                        startDate,
-                                        // endDate -> calculada desde el backend
-                                        // tto_dias_mes -> esta en la bd pero ni idea que hace 
-                                        medico.id,
-                                        addMedication.id,
-                                        //customer_id -> context
-                                        currentUser.id,
-                                        //activo -> si la cuenta esta vigente
-                                        treatmentDays, 
-                                        //total dias pendientes, no seria necesario
-                                        //retiros por mes -> no es nesesario
-                                        //retiros pendientes -> no es necesario
-                                        //tipo tto -> eleccion usuario
-                                        interval, //-> frecuencia de toma
-                                        //cantidad diaria -> no se si es necesario
-                                        numero
-                                      )}
+                                      // ingresa el tratamiento en la base de datos
+                                      // onClick={() => createTreatment(
+                                      //   startDate,
+                                      //   // endDate -> calculada desde el backend
+                                      //   // tto_dias_mes -> esta en la bd pero ni idea que hace 
+                                      //   medico.id,
+                                      //   addMedication.id,
+                                      //   //customer_id -> context
+                                      //   currentUser.id,
+                                      //   //activo -> si la cuenta esta vigente
+                                      //   treatmentDays, 
+                                      //   //total dias pendientes, no seria necesario
+                                      //   //retiros por mes -> no es nesesario
+                                      //   //retiros pendientes -> no es necesario
+                                      //   //tipo tto -> eleccion usuario
+                                      //   interval, //-> frecuencia de toma
+                                      //   //cantidad diaria -> no se si es necesario
+                                      //   numero
+                                      // )}
+                                      onClick={handleCreatePreConfirmacion}
                                       >
                                       Ingresar tto.
                                     </button>
@@ -609,6 +647,7 @@ export default function IngresarMed () {
                     handleCancelNumber={(number) => handleCancelNumber(number, setNumero)}
                     />
                 </div>
+                {message ? <Message className="translate-x-0" message={message?.message} colorMsg={message?.colorMsg} /> : <Message className="translate-x-100" message={message?.message} colorMsg={message?.colorMsg} />}
             </div>
         </div>
     );

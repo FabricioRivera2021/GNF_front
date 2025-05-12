@@ -63,6 +63,8 @@ const CalendarTreatment = ({ mode = "edit", treatments = [] }) => {
         allDay: true
       }
     ])
+
+    setCalendarDate(startDate); //actualiza la fecha del calendario al inicio del tratamiento, para que el usuario vea el tratamiento en la fecha actual
   }, [startDate, treatmentDays])
 
   return (
@@ -78,12 +80,8 @@ const CalendarTreatment = ({ mode = "edit", treatments = [] }) => {
         culture="es"//this ensures date-fns uses Spanish locale
         selectable={true}// this enables clicking/selecting slots
         views={['month']}// optional, limit to month view
-        date={mode === "view" ? calendarDate : undefined}
-        onNavigate={(date) => {
-          if (mode === "view") {
-            setCalendarDate(date);
-          }
-        }}
+        date={ calendarDate }
+        onNavigate={(date) => { setCalendarDate(date) }}
         onSelectSlot={(slotInfo) => {
           if (mode === "edit") {
             const selectedDate = slotInfo.start;

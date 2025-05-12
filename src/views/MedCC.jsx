@@ -90,7 +90,6 @@ export default function MedCC () {
                       <th className="px-2 py-1 border-b">Fecha inicio tto.</th>
                       <th className="px-2 py-1 border-b">Fecha fin tto.</th>
                       <th className="px-2 py-1 border-b font-bold uppercase">Ultimo retiro</th>
-                      <th className="px-2 py-1 border-b"></th>
                     </tr>
                   </thead>
                   <tbody className='whitespace-nowrap'>
@@ -147,34 +146,20 @@ export default function MedCC () {
                         <td className="px-2 py-1 border-b">{tto.retiros_pendientes} caja/s</td>
                         <td className="px-2 py-1 border-b">{tto.retiros_por_mes} caja/s</td>
                         <td className="px-2 py-1 border-b">{tto.user.name}</td>
-                        <td>
-                          <p className="px-2 py-1 border-b font-semibold text-slate-500 rounded-md shadow-sm">
+                        <td className="px-2 py-1 border-b">
+                          <p className="font-semibold text-slate-500 rounded-md shadow-sm">
                             {new Date(tto.fecha_inicio).toLocaleDateString('es-ES')}
                           </p>
                         </td>
-                        <td>
-                          <p className="px-2 py-1 border-b font-semibold text-slate-500 rounded-md shadow-sm">
+                        <td className='px-2 py-1 border-b'>
+                          <p className="font-semibold text-slate-500 rounded-md shadow-sm">
                             {new Date(tto.fecha_fin).toLocaleDateString('es-ES')}
                           </p>
                         </td>
-                        <td>
-                          <p className="px-2 py-1 border-b font-semibold text-slate-500 rounded-md shadow-sm">
+                        <td className="px-2 py-1 border-b border-l bg-slate-100">
+                          <p className="font-semibold text-blue-500 rounded-md shadow-sm">
                             {new Date(tto.fecha_fin).toLocaleDateString('es-ES')}
                           </p>
-                        </td>
-                        <td className="px-2 py-1 border-b">
-                          {new Date() > new Date(tto.fecha_fin) 
-                            ?
-                              <div className='flex items-center gap-1'>
-                                <ExclamationCircleIcon className='w-6 text-orange-400' />
-                                <p className='text-gray-400'>Vencida</p>
-                              </div>
-                            : 
-                              <div className='flex items-center gap-1'>
-                                <CheckBadgeIcon className='w-6 text-green-400' />
-                                <p className='text-gray-400'>Vigente</p>
-                              </div>
-                          }
                         </td>
                       </tr>
                     ))}
