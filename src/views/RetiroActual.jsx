@@ -7,9 +7,55 @@ export default function RetiroActual(){
     <div className='flex'>
       <IngresarMedSideBar />
       <div className='flex flex-col w-[calc(100vw-4rem)] h-[calc(100vh-4rem)]'>
-        <div className='flex flex-col items-center justify-center w-full h-full'>
-          <h1 className='text-3xl font-bold text-slate-600'>Ver Medicacion que retira</h1>
-          <p className='text-orange-500 text-xl'>Esta funcionalidad no esta disponible en este momento.</p>
+        <div className='flex flex-col items-start w-full h-full p-3 space-y-1'>
+          <h1 className='text-2xl font-bold mb-2'>Medicación que retira</h1>
+          <div className='flex flex-wrap flex-col items-start justify-start rounded-lg w-[calc(100%-2%)] h-[calc(100%-8%)] p-4 gap-4'>
+
+            {/* table list */}
+            <div className="rounded-lg w-full h-[calc(100vh-35rem)] overflow-auto">          
+              <div className='flex'>
+                  
+              </div>
+              <div className='min-h-20 py-1 px-4'>
+                  <table className="shadow-sm min-w-full text-left text-sm font-roboto font-medium text-slate-600 text-surface p-2">
+                  <thead className='sticky top-0 bg-blue-400 text-white whitespace-nowrap'>
+                    <tr>
+                      <th className="px-2 py-1 border-b"></th>
+                      <th className="px-2 py-1 border-b">Droga</th>
+                      <th className="px-2 py-1 border-b">Concentracion</th>
+                      <th className="px-2 py-1 border-b">Marca comercial</th>
+                      <th className="px-2 py-1 border-b">Médico</th>
+                      <th className="px-2 py-1 border-b">Especialidad</th>
+                      <th className="px-2 py-1 border-b">Tipo Cuenta</th>
+                      <th className="px-2 py-1 border-b">Funcionario</th>
+                      <th className="px-2 py-1 border-b">FECHA</th>
+                      <th className="px-2 py-1 border-b">Cantidad retirada</th>
+                      <th className="px-2 py-1 border-b"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr className='rounded-sm py-1 text-left pl-1 capitalize font-roboto text-sm odd:bg-slate-50 even:bg-gray-100'>
+                      <td className='py-1'>1</td>
+                      <td className="px-2 py-1 border-b">Paracetamol</td>
+                      <td className="px-2 py-1 border-b">500mg</td>
+                      <td className="px-2 py-1 border-b">Paracetamol</td>
+                      <td className="px-2 py-1 border-b">Dr. Juan Perez</td>
+                      <td className="px-2 py-1 border-b">Medicina General</td>
+                      <td className="px-2 py-1 border-b">Particular</td>
+                      <td className="px-2 py-1 border-b">Juanito Perez</td>
+                      <td className="px-2 py-1 border-b">2023-10-01</td>
+                      <td className="px-2 py-1 border-b">2</td>
+                      <td className='flex py-1 items-center gap-2'>
+                        <button className='bg-yellow-500 hover:bg-yellow-400 text-white px-4 shadow-md rounded-md'>Editar</button>
+                        <button className='bg-red-500 hover:bg-red-400 text-white px-4 shadow-md rounded-md'>Eliminar</button>
+                      </td>
+                    </tr>
+                  </tbody>
+                  </table>
+                  {/* FIN Modal para buscar medicación -------------------------------------- */}
+              </div>   
+            </div>
+          </div>
         </div>
       </div>
     </div>

@@ -2,7 +2,8 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import SideBar from './SideBar';
-import { ClipboardDocumentListIcon, CubeIcon, DocumentMagnifyingGlassIcon, DocumentPlusIcon } from '@heroicons/react/24/outline';
+import { ClipboardDocumentListIcon, CubeIcon, DocumentMagnifyingGlassIcon, DocumentPlusIcon, ExclamationCircleIcon, SunIcon } from '@heroicons/react/24/outline';
+import { BellAlertIcon } from '@heroicons/react/24/solid';
 
 export default function IngresarMedSideBar() {
   return (
@@ -50,13 +51,15 @@ export default function IngresarMedSideBar() {
         to="/ventanilla/retiroActual"
         className={({ isActive }) =>
           isActive
-            ? 'rounded-sm py-1 text-left pl-1 bg-blue-500 text-white px-10'
-            : 'rounded-sm py-1 text-left pl-1 hover:bg-blue-400 hover:text-slate-100 bg-slate-100 text-slate-700 px-10'
+            ? 'rounded-sm py-1 text-left pl-1 bg-orange-400 text-white px-10'
+            : 'rounded-sm py-1 text-left pl-1 hover:bg-blue-400 hover:text-slate-100 bg-orange-500 animate-pulse text-slate-100 px-10'
         }
       >
-        <div className='flex gap-1'>
+        <div className='flex gap-1 justify-between w-full'>
           <CubeIcon className='w-6'/>
-          <p className='font-semibold'>Retiro</p>
+          <div className='flex gap-1 items-end justify-between w-full'>
+            <p className='font-semibold'>Retiro</p>
+          </div>
         </div>
       </NavLink>
     </SideBar>

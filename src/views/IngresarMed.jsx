@@ -22,12 +22,50 @@ export default function IngresarMed () {
     const [totalDoses, setTotalDoses] = useState(0);
     const [message, setMessage] = useState({message: null, colorMsg: "blue"});
 
-    const handleCreatePreConfirmacion = () => setMessage({
+    //pre confirmacion---------------------------------------------------------
+    const handleCreatePreConfirmacion = () => {
+
+    //agregar la medicacion al localstorage temporalmente
+    const preConfirmacion = JSON.parse(localStorage.getItem('preConfirmacion')) || [];
+
+    //guardo los datos en el array
+      preConfirmacion.push({
+        startDate: startDate,
+        // endDate -> calculada desde el backend
+        // tto_dias_mes -> esta en la bd pero ni idea que hace 
+        medicoID: medico.id,
+        medicationID: addMedication.id,
+        //customer_id -> context
+        userID: currentUser.id,
+        //activo -> si la cuenta esta vigente
+        treatmentDays: treatmentDays, 
+        //total dias pendientes, no seria necesario
+        //retiros por mes -> no es nesesario
+        //retiros pendientes -> no es necesario
+        //tipo tto -> eleccion usuario
+        interval: interval, //-> frecuencia de toma
+        //cantidad diaria -> no se si es necesario
+        numero: numero
+      });
+
+      // Guardar el array actualizado en localStorage
+      localStorage.setItem('preConfirmacion', JSON.stringify(preConfirmacion));
+      //si ya hania algo en el localstorage, lo actualizo
+    
+
+    console.log("preConfirmacion", preConfirmacion);
+    
+
+    setShowTreatmentModal(false);
+    handleClearAddMedication();
+    handleClearTreatmentDays();
+    
+    setMessage({
         message: "Se agregó la medicación a la preconfirmación de entrega",
         colorMsg: "green"
-      }
-
-    );
+        });
+    }
+    //end of preconfirmacion--------------------------------------------------
 
     const diasDeLaSemana = ["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"];
 
@@ -617,7 +655,9 @@ export default function IngresarMed () {
                                       //   //cantidad diaria -> no se si es necesario
                                       //   numero
                                       // )}
-                                      onClick={handleCreatePreConfirmacion}
+                                      onClick={() => {
+                                        handleCreatePreConfirmacion()
+                                      }}
                                       >
                                       Ingresar tto.
                                     </button>
