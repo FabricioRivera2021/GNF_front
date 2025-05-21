@@ -34,15 +34,22 @@ export default function IngresarMed () {
         // endDate -> calculada desde el backend
         // tto_dias_mes -> esta en la bd pero ni idea que hace 
         medicoID: medico.id,
+        medicoNombre: medico.nombre,
+        medicoEspecialidad: medico.especialidad,
         medicationID: addMedication.id,
+        medicationNombre: addMedication.droga,
+        medicationMarca: addMedication.nombre_comercial,
+        medicationConcentracion: addMedication.droga_concentracion,
+        medicationPresentacion: addMedication.presentacion_farmaceutica,
         //customer_id -> context
         userID: currentUser.id,
+        userName: currentUser.name,
         //activo -> si la cuenta esta vigente
         treatmentDays: treatmentDays, 
         //total dias pendientes, no seria necesario
         //retiros por mes -> no es nesesario
         //retiros pendientes -> no es necesario
-        //tipo tto -> eleccion usuario
+        tipo_tto: "comun", //hardcodeado
         interval: interval, //-> frecuencia de toma
         //cantidad diaria -> no se si es necesario
         numero: numero
@@ -52,10 +59,8 @@ export default function IngresarMed () {
       localStorage.setItem('preConfirmacion', JSON.stringify(preConfirmacion));
       //si ya hania algo en el localstorage, lo actualizo
     
-
     console.log("preConfirmacion", preConfirmacion);
     
-
     setShowTreatmentModal(false);
     handleClearAddMedication();
     handleClearTreatmentDays();
