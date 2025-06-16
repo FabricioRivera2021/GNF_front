@@ -18,7 +18,7 @@ export default function IngresarMedSideBar() {
       >
         <div className='flex gap-1'>
           <DocumentPlusIcon className='w-6' />
-          <p className='font-semibold'>Receta</p>
+          <p className='font-semibold'>Ingreso</p>
         </div>
       </NavLink>
       <NavLink
@@ -52,7 +52,11 @@ export default function IngresarMedSideBar() {
         className={({ isActive }) =>
           isActive
             ? 'rounded-sm py-1 text-left pl-1 bg-orange-400 text-white px-10'
-            : 'rounded-sm py-1 text-left pl-1 hover:bg-blue-400 hover:text-slate-100 bg-orange-500 animate-pulse text-slate-100 px-10'
+            //si el localstorage tiene el item 'preconfirmacion'
+            : localStorage.getItem('preConfirmacion')
+              ? 'rounded-sm py-1 text-left pl-1 bg-orange-500 text-slate-100 px-10 animate-pulse'
+              //si no, será gris
+              : 'rounded-sm py-1 text-left pl-1 hover:bg-blue-400 hover:text-slate-100 bg-slate-100 text-slate-700 px-10'
         }
       >
         <div className='flex gap-1 justify-between w-full'>
