@@ -362,7 +362,7 @@ export default function IngresarMed () {
     endDate.setDate(startDate.getDate() + treatmentDays - 1);
     
     return (
-        <div className="flex">
+        <div className="flex justify-between items-start">
             <IngresarMedSideBar />
             <div className='flex flex-col w-[calc(100vw-4rem)] h-[calc(100vh-4rem)]'>
                 {/* Ingresar medicacion formulario */}

@@ -24,19 +24,19 @@ export default function FilterSideBar({ selectedFilter, filterPausedNumber, filt
         </button>
       ))}
       <hr />
-      <div className="flex flex-col">
-        <input className="rounded-sm h-7 text-slate-800 pl-1" placeholder="Buscar" type="text" />
-      </div>
-      <div className="flex flex-col justify-between pt-10 gap-4 h-full">
+    
+        {/* <input className="rounded-sm h-7 w-full text-slate-800 pl-1" placeholder="Buscar" type="text" /> */}
+      
+      <div className="flex flex-col justify-between">
         <div className="flex flex-col gap-4">
           <button
-            className="rounded-sm py-1 text-center pl-1 bg-yellow-400 hover:bg-yellow-200 text-slate-700 capitalize font-roboto text-sm"
+            className="rounded-sm py-1 text-center bg-slate-100 hover:bg-yellow-100 text-yellow-600  font-roboto "
             onClick={() => filterPausedNumber()}
           >
             Ver pausados
           </button>
           <button
-            className="rounded-sm py-1 text-center pl-1 bg-red-500 hover:bg-red-600 text-slate-100 capitalize font-roboto text-sm"
+            className="rounded-sm py-1 text-center bg-slate-100 hover:bg-red-100 text-red-600  font-roboto "
             onClick={() => filterCancelNumber()}
           >
             Ver cancelados

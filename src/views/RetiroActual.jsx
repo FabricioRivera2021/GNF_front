@@ -1,17 +1,24 @@
 import React, { useState } from 'react'
 import IngresarMedSideBar from '../components/IngresarMedSideBar'
-import { Modal } from '../components';
+import { CalendarTreatment, Modal } from '../components';
+import { userStateContext } from '../context/ContextProvider';
 
 const preConfirmacion = JSON.parse(localStorage.getItem('preConfirmacion'));
 
 export default function RetiroActual(){
 
-  const [openModal, setOpenModal] = useState(false);
+  const { tratamientos } = userStateContext();
+
+  const [ttoShowMedicationOnModal, setTtoShowMedicationOnModal] = useState({});
+  // const [openModal, setOpenModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
+  const [openModalCC, setOpenModalCC] = useState(false);
 
   const handleModalOpen = (item) => {
+    console.log('item', item);
+    
     setSelectedItem(item);
-    setOpenModal(true);
+    setOpenModalCC(true);
   }
 
   return (
@@ -36,7 +43,8 @@ export default function RetiroActual(){
                         <th className="px-2 py-1 border-b">Especialidad</th>
                         <th className="px-2 py-1 border-b">Tipo Cuenta</th>
                         <th className="px-2 py-1 border-b">Funcionario</th>
-                        <th className="px-2 py-1 border-b">FECHA inicio</th>
+                        <th className="px-2 py-1 border-b">Fecha inicio tto.</th>
+                        <th className="px-2 py-1 border-b">Fecha fin tto.</th>
                         <th className="px-2 py-1 border-b">Cantidad retirada</th>
                         <th className="px-2 py-1 border-b"></th>
                       </tr>
@@ -57,27 +65,47 @@ export default function RetiroActual(){
                           <td className="px-2 py-1 border-b">{item.tipo_tto}</td>
                           <td className="px-2 py-1 border-b">{item.userName}</td>
                           <td className="px-2 py-1 border-b">{new Date(item.startDate).toLocaleDateString('es-ES')}</td>
+                          <td className="px-2 py-1 border-b">{new Date(new Date(item.startDate).setDate(new Date(item.startDate).getDate() + item.treatmentDays)).toLocaleDateString('es-ES')}</td>
                           <td className="px-2 py-1 border-b">Example cajas que retira</td>
                         </tr>
                       </tbody>
                       )) : 'no hay datos' }
                     </table>
-                    <Modal show={openModal} handleClose={() => setOpenModal(false)}>
-                      { selectedItem && (
-                        <div className='flex flex-col space-y-2'>
-                          <h2 className='text-lg font-bold'>Detalles de la medicación</h2>
-                          <p><strong>Droga:</strong> {selectedItem.medicationNombre}</p>
-                          <p><strong>Concentración:</strong> {selectedItem.medicationConcentracion}</p>
-                          <p><strong>Marca Comercial:</strong> {selectedItem.medicationMarca}</p>
-                          <p><strong>Médico:</strong> {selectedItem.medicoNombre}</p>
-                          <p><strong>Especialidad:</strong> {selectedItem.medicoEspecialidad}</p>
-                          <p><strong>Tipo Cuenta:</strong> {selectedItem.tipo_tto}</p>
-                          <p><strong>Funcionario:</strong> {selectedItem.userName}</p>
-                          <p><strong>Fecha Inicio:</strong> {new Date(selectedItem.startDate).toLocaleDateString('es-ES')}</p>
-                          <button>Editar</button>
-                          <button>Eliminar</button>
+                    <Modal show={openModalCC} handleClose={() => setOpenModalCC(false)}>
+                      <div className='flex gap-4'>
+                        <div className="mt-4">
+                          <div className='flex flex-col gap-2 items-center'>
+                            <CalendarTreatment mode='view' treatments={tratamientos} />
+                          </div>
                         </div>
-                      )}
+                        <div>
+                          <div className='bg-yellow-100 rounded-md shadow-md p-1 text-slate-500'>
+                            <h3 className="text-lg font-bold">{(selectedItem) ? selectedItem.medicationNombre : ''} {(selectedItem) ? `( ${selectedItem.medicationMarca} )` : ''}</h3>
+                            <p className='border-b'>Médico: {(selectedItem) ? selectedItem.medicoNombre : ''}</p>
+                            <p className='border-b'>Especialidad: {(selectedItem) ? selectedItem.medicoEspecialidad : ''}</p>
+                            <p className='border-b'>Tipo de tratamiento: {(selectedItem) ? selectedItem.tipo_tto : ''}</p>
+                            <p className='border-b'>Tratamiento: {(selectedItem) ? selectedItem.treatmentDays : ''} dias</p>
+                            <p className='border-b'>Frecuencia: cada {(selectedItem) ? selectedItem.interval : ''} hs</p>
+                            <p className='border-b'>Fecha inicio tto.: {(selectedItem) ? new Date(selectedItem.startDate).toLocaleDateString('es-ES') : ''}</p>
+                            <p>Fecha fin tto.: {
+                                            selectedItem 
+                                              ? new Date(new Date(selectedItem.startDate).setDate(new Date(selectedItem.startDate).getDate() + selectedItem.treatmentDays)).toLocaleDateString('es-ES') 
+                                              : ''}
+                            </p>
+                          </div>
+                          <div className='bg-blue-100 rounded-md p-1 shadow-md text-slate-700 mt-2 mb-2'>
+                            <p>Retiro actual comprende desde 01/02/2023 hasta 02/03/2023</p>
+                            {/* <p>Retiros pendientes: {(selectedItem) ? selectedItem. : ''.pendientes} caja/s</p> */}
+                            {/* <p>Puede retirar: {(selectedItem) ? selectedItem. : ''.ret_mes} caja/s</p> */}
+                          </div>
+                          <label className="block mb-2 text-sm font-medium text-gray-700">Cantidad a retirar:</label>
+                          <div className='flex gap-2 items-center'>
+                            <input type="number" className="border w-1/2 border-gray-300 rounded-md p-2" placeholder="..." />
+                            <p>Cajas</p>
+                          </div>
+                          <button className='bg-blue-400 text-white rounded-md shadow-sm px-2 py-0.5 mt-2 hover:bg-blue-500 hover:shadow-md' onClick={console.log('Agregar a retiro')}>Agregar a retiro</button>
+                        </div>
+                      </div>
                     </Modal>
                     {/* FIN Modal para buscar medicación -------------------------------------- */}
                 </div>
