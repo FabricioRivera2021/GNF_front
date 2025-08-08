@@ -3,10 +3,12 @@ import IngresarMedSideBar from '../components/IngresarMedSideBar'
 import { CalendarTreatment, Modal } from '../components';
 import { userStateContext } from '../context/ContextProvider';
 import { useEffect } from 'react';
+import LlamadorPanel from '../components/LlamadorPanel';
+import { handleCancelNumber, handleDerivateTo, handleDerivateToPosition, handlePauseNumber, handleSetNextState } from '../API/apiServices';
 
 
 export default function RetiroActual(){
-  const {tratamientos, preConfirmacion, setPreConfirmacion } = userStateContext();
+  const {tratamientos, preConfirmacion, setPreConfirmacion, numero } = userStateContext();
 
   useEffect(() => {
     // Obtener los items que haya en preconfirmacion al montar el componente y actualizar el componente
@@ -28,8 +30,7 @@ export default function RetiroActual(){
   }
 
   return (
-    <>
-    <div className='flex'>
+    <div className='flex justify-between items-start'>
       <IngresarMedSideBar />
       <div className='flex flex-col w-[calc(100vw-4rem)] h-[calc(100vh-4rem)]'>
         <div className='flex flex-col items-start w-full h-full p-3 space-y-1'>
@@ -124,8 +125,17 @@ export default function RetiroActual(){
             </div>
           </div>
         </div>
+        <div className='bottom-0 fixed w-full'>
+          <LlamadorPanel
+                numero={numero}
+                handleSetNextState={(number) => handleSetNextState(number, setNumero)}
+                handleDerivateTo={(number) => handleDerivateTo(number, setShowModal, setAllDerivates)}
+                handleDerivateToPosition={(number, position) => handleDerivateToPosition(number, position, setIsDerivating, setNumero, setShowModal)}
+                handlePauseNumber={(number) => handlePauseNumber(number, setNumero)}
+                handleCancelNumber={(number) => handleCancelNumber(number, setNumero)}
+                />
+        </div>
       </div>
     </div>
-    </>
   )
 }

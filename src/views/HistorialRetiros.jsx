@@ -174,10 +174,9 @@ export default function HistorialRetiros() {
     };
 
     return (
-        <div className="flex">
-            <IngresarMedSideBar />
-            <div className='flex flex-col w-[calc(100vw-4rem)] h-[calc(100vh-4rem)]'>
-
+      <div className="flex justify-between items-start">
+          <IngresarMedSideBar />
+          <div className='flex flex-col w-[calc(100vw-4rem)] h-[calc(100vh-4rem)]'>
             <div className="flex flex-col items-start w-full p-3 space-y-3">
                     <h2 className="text-2xl font-bold mb-2">Historial retiros</h2>
                     <div className="rounded-lg w-full h-[calc(100vh-35rem)] overflow-auto">
@@ -245,11 +244,9 @@ export default function HistorialRetiros() {
                             </div>
                         </form>
                     </div>
-                </div>
-
-                </div>
-                <div className='bottom-0 fixed w-full'>
-                  <LlamadorPanel
+            </div>
+            <div className='bottom-0 fixed w-full'>
+              <LlamadorPanel
                     numero={numero}
                     handleSetNextState={(number) => handleSetNextState(number, setNumero)}
                     handleDerivateTo={(number) => handleDerivateTo(number, setShowModal, setAllDerivates)}
@@ -257,7 +254,8 @@ export default function HistorialRetiros() {
                     handlePauseNumber={(number) => handlePauseNumber(number, setNumero)}
                     handleCancelNumber={(number) => handleCancelNumber(number, setNumero)}
                     />
-                </div>
-        </div>
+            </div>
+          </div>
+      </div>
     );
 };
