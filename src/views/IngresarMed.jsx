@@ -58,7 +58,7 @@ export default function IngresarMed () {
             numero: numero
           }
         ]
-        
+
         return nuevoArray;
       });
       
@@ -640,8 +640,10 @@ export default function IngresarMed () {
                                 )}
                                 </div>
                                 <div>
-                                    <button 
-                                      className='bg-blue-400 shadow-sm px-3 py-0.5 rounded-sm text-white hover:bg-blue-500'
+                                    <button
+                                      //if setmedico no existe deshabilitar el boton
+                                      disabled={!medico.id || !addMedication.id}
+                                      className={`${!medico.id || !addMedication.id ? 'bg-gray-400 cursor-not-allowed' : ''} bg-blue-400 shadow-sm px-3 py-0.5 rounded-sm text-white hover:bg-blue-500`}
                                       // ingresa el tratamiento en la base de datos
                                       // onClick={() => createTreatment(
                                       //   startDate,
@@ -667,6 +669,9 @@ export default function IngresarMed () {
                                       >
                                       Ingresar tto.
                                     </button>
+                                    {!medico.id && (
+                                      <div className='text-red-500 font-semibold'>- No hay médico seleccionado</div>
+                                    )}
                                 </div>
                               </div>
                             </div>
