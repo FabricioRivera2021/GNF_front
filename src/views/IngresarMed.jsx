@@ -11,7 +11,7 @@ import { use } from 'react';
 //COMPONENTE PRINCIPAL
 export default function IngresarMed () {
     const { setAllDerivates, setShowModal, numero, setNumero, showMedicoModal, setShowMedicoModal, medications, setMedications, addMedication, setAddMedication, showTreatmentModal,
-            setShowTreatmentModal, treatmentDays, setTreatmentDays, startDate, setEvents, medico, setMedico, allMedicos, setAllMedicos, currentUser, customer} = userStateContext();
+            setShowTreatmentModal, treatmentDays, setTreatmentDays, startDate, setEvents, medico, setMedico, allMedicos, setAllMedicos, currentUser, customer, preConfirmacion, setPreConfirmacion} = userStateContext();
     const [selectedFilter, setSelectedFilter] = useState(1);
     const [searchTerm, setSearchTerm] = useState('');
     const [searchTermMedico, setSearchTermMedico] = useState('');
@@ -25,50 +25,51 @@ export default function IngresarMed () {
     //pre confirmacion---------------------------------------------------------
     const handleCreatePreConfirmacion = () => {
 
-    //agregar la medicacion al localstorage temporalmente
-    const preConfirmacion = JSON.parse(localStorage.getItem('preConfirmacion')) || [];
+      // //agregar la medicacion al localstorage temporalmente
+      // setPreConfirmacion(JSON.parse(localStorage.getItem('preConfirmacion')) || []);
 
-    //guardo los datos en el array
-      preConfirmacion.push({
-        startDate: startDate,
-        // endDate -> calculada desde el backend
-        // tto_dias_mes -> esta en la bd pero ni idea que hace 
-        medicoID: medico.id,
-        medicoNombre: medico.nombre,
-        medicoEspecialidad: medico.especialidad,
-        medicationID: addMedication.id,
-        medicationNombre: addMedication.droga,
-        medicationMarca: addMedication.nombre_comercial,
-        medicationConcentracion: addMedication.droga_concentracion,
-        medicationPresentacion: addMedication.presentacion_farmaceutica,
-        //customer_id -> context
-        userID: currentUser.id,
-        userName: currentUser.name,
-        //activo -> si la cuenta esta vigente
-        treatmentDays: treatmentDays, 
-        //total dias pendientes, no seria necesario
-        //retiros por mes -> no es nesesario
-        //retiros pendientes -> no es necesario
-        tipo_tto: "comun", //hardcodeado
-        interval: interval, //-> frecuencia de toma
-        //cantidad diaria -> no se si es necesario
-        numero: numero
+      //guardo los datos en el array
+      setPreConfirmacion(prev => {
+        const nuevoArray = [
+          ...prev,
+          {
+            startDate: startDate,
+            // endDate -> calculada desde el backend
+            // tto_dias_mes -> esta en la bd pero ni idea que hace 
+            medicoID: medico.id,
+            medicoNombre: medico.nombre,
+            medicoEspecialidad: medico.especialidad,
+            medicationID: addMedication.id,
+            medicationNombre: addMedication.droga,
+            medicationMarca: addMedication.nombre_comercial,
+            medicationConcentracion: addMedication.droga_concentracion,
+            medicationPresentacion: addMedication.presentacion_farmaceutica,
+            //customer_id -> context
+            userID: currentUser.id,
+            userName: currentUser.name,
+            //activo -> si la cuenta esta vigente
+            treatmentDays: treatmentDays, 
+            //total dias pendientes, no seria necesario
+            //retiros por mes -> no es nesesario
+            //retiros pendientes -> no es necesario
+            tipo_tto: "comun", //hardcodeado
+            interval: interval, //-> frecuencia de toma
+            //cantidad diaria -> no se si es necesario
+            numero: numero
+          }
+        ]
+        
+        return nuevoArray;
       });
-
-      // Guardar el array actualizado en localStorage
-      localStorage.setItem('preConfirmacion', JSON.stringify(preConfirmacion));
-      //si ya hania algo en el localstorage, lo actualizo
-    
-    console.log("preConfirmacion", preConfirmacion);
-    
-    setShowTreatmentModal(false);
-    handleClearAddMedication();
-    handleClearTreatmentDays();
-    
-    setMessage({
-        message: "Se agregó la medicación a la preconfirmación de entrega",
-        colorMsg: "green"
-        });
+      
+      setShowTreatmentModal(false);
+      handleClearAddMedication();
+      handleClearTreatmentDays();
+      
+      setMessage({
+          message: "Se agregó la medicación a la preconfirmación de entrega",
+          colorMsg: "green"
+          });
     }
     //end of preconfirmacion--------------------------------------------------
 

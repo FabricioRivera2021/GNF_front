@@ -1,5 +1,5 @@
 import { set } from "date-fns";
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 const StateContext = createContext({
   currentUser: {},
@@ -101,6 +101,20 @@ export const ContextProvider = ({children}) => {
     _setUserToken(token);
   }
 
+  //solo para la preconfirmacion de retiro
+  const [preConfirmacion, setPreConfirmacion] = useState([]);
+
+  // Cargar desde localStorage al iniciar
+  useEffect(() => {
+    const stored = JSON.parse(localStorage.getItem('preConfirmacion')) || [];
+    setPreConfirmacion(stored);
+  }, []);
+
+  // Guardar en localStorage cada vez que cambie
+  useEffect(() => {
+    localStorage.setItem('preConfirmacion', JSON.stringify(preConfirmacion));
+  }, [preConfirmacion]);
+
   return (
     <StateContext.Provider
       value={{
@@ -152,7 +166,9 @@ export const ContextProvider = ({children}) => {
         medico,
         setMedico,
         allMedicos,
-        setAllMedicos
+        setAllMedicos,
+        preConfirmacion,
+        setPreConfirmacion
       }}
     >
       {children}

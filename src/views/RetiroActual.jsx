@@ -2,12 +2,18 @@ import React, { useState } from 'react'
 import IngresarMedSideBar from '../components/IngresarMedSideBar'
 import { CalendarTreatment, Modal } from '../components';
 import { userStateContext } from '../context/ContextProvider';
+import { useEffect } from 'react';
 
-const preConfirmacion = JSON.parse(localStorage.getItem('preConfirmacion'));
 
 export default function RetiroActual(){
+  const {tratamientos, preConfirmacion, setPreConfirmacion } = userStateContext();
 
-  const { tratamientos } = userStateContext();
+  useEffect(() => {
+    // Obtener los items que haya en preconfirmacion al montar el componente y actualizar el componente
+    if (preConfirmacion && preConfirmacion.length > 0) {
+      setTtoShowMedicationOnModal(preConfirmacion[0]);
+    }
+  }, []);
 
   const [ttoShowMedicationOnModal, setTtoShowMedicationOnModal] = useState({});
   // const [openModal, setOpenModal] = useState(false);
@@ -112,8 +118,7 @@ export default function RetiroActual(){
                 <button
                   onClick={() => {
                     //borra el localstorage y recarga la página
-                    localStorage.removeItem('preConfirmacion');
-                    window.location.reload();
+                    setPreConfirmacion([]); // Esto limpia el estado y el localStorage
                   }} 
                 className='bg-red-500 text-white px-4 py-2 rounded-md mx-2 my-3'>Eliminar todas</button>
             </div>
