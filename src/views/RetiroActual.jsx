@@ -13,6 +13,7 @@ import {
   StyleSheet,
   PDFViewer
 } from '@react-pdf/renderer';
+import { parseLocalDate } from '../helpers';
 
 // Estilos
 const styles = StyleSheet.create({
@@ -72,7 +73,7 @@ const styles = StyleSheet.create({
 
 
 export default function RetiroActual() {
-  const {tratamientos, preConfirmacion, setPreConfirmacion, numero } = userStateContext();
+  const {tratamientos, preConfirmacion, setPreConfirmacion, numero, setEvents, events } = userStateContext();
 
   useEffect(() => {
     // Obtener los items que haya en preconfirmacion al montar el componente y actualizar el componente
@@ -111,9 +112,15 @@ export default function RetiroActual() {
       const retiroEnd = new Date(startDate.setDate(retiroStart.getDate() + 30));
       retiros.push(
         // dependiendo de si la fecha actual se encuentre dentro del rango de fechas de un retiro determinado deberia hacerse un higlight de ese retiro
-        <p key={i} className={`px-1 py-0.5 ${retiroStart <= new Date() && retiroEnd >= new Date() ? 'bg-blue-500 text-white' : 'bg-blue-100'} rounded-md p-1 shadow-sm mb-2`}>
-          <span className='font-semibold'>{`${i}° retiro`}</span> <span>{retiroStart.toLocaleDateString('es-ES')} | {retiroEnd.toLocaleDateString('es-ES')}</span>
-        </p>
+        <div className='flex justify-between items-center gap-2' key={i}>
+          <p className={`px-1 py-0.5 ${retiroStart <= new Date() && retiroEnd >= new Date() ? 'text-blue-500' : 'text-slate-700'} rounded-md p-1 shadow-sm mb-2`}>
+            <span className='font-semibold'>{`${i}° retiro`}</span> <span>{retiroStart.toLocaleDateString('es-ES')} | {retiroEnd.toLocaleDateString('es-ES')}</span>
+          </p>
+          {/* dependiendo del estado del retiro los diferentes colores, por ahora solo azul */}
+          <p className={`px-1 py-0.5 bg-blue-400 text-white rounded-md p-1 shadow-sm mb-2`}>
+            <span>Pendiente</span>
+          </p>
+        </div>
       );
     }
 
@@ -122,6 +129,23 @@ export default function RetiroActual() {
 
   const handleModalOpen = (item) => {
     console.log('item', item);
+
+    const treatmentData = {
+      fecha_inic: new Date(item.startDate),
+      treatment: item.treatmentDays
+    };
+  
+    console.log(treatmentData);
+    
+    const endDate = new Date(treatmentData.fecha_inic);
+    endDate.setDate(endDate.getDate() + treatmentData.treatment);
+    const mappedEvent = {
+      title: `Tratamiento (${treatmentData.treatment} días)`,
+      start: treatmentData.fecha_inic,
+      end: endDate,
+      allDay: true,
+    };
+    setEvents([mappedEvent]);
     
     setSelectedItem(item);
     setOpenModalCC(true);
@@ -167,14 +191,14 @@ export default function RetiroActual() {
                         <th className="px-2 py-1 border-b"></th>
                         <th className="px-2 py-1 border-b">Droga</th>
                         <th className="px-2 py-1 border-b">Concentracion</th>
-                        <th className="px-2 py-1 border-b">Marca comercial</th>
+                        <th className="px-2 py-1 border-b">N. comercial</th>
                         <th className="px-2 py-1 border-b">Médico</th>
                         <th className="px-2 py-1 border-b">Especialidad</th>
                         <th className="px-2 py-1 border-b">Tipo Cuenta</th>
                         <th className="px-2 py-1 border-b">Funcionario</th>
                         <th className="px-2 py-1 border-b">Fecha inicio tto.</th>
                         <th className="px-2 py-1 border-b">Fecha fin tto.</th>
-                        <th className="px-2 py-1 border-b">Cantidad retirada</th>
+                        <th className="px-2 py-1 border-b">Tipo retiro</th>
                         <th className="px-2 py-1 border-b"></th>
                       </tr>
                     </thead>
@@ -195,11 +219,12 @@ export default function RetiroActual() {
                           <td className="px-2 py-1 border-b">{item.userName}</td>
                           <td className="px-2 py-1 border-b">{new Date(item.startDate).toLocaleDateString('es-ES')}</td>
                           <td className="px-2 py-1 border-b">{new Date(new Date(item.startDate).setDate(new Date(item.startDate).getDate() + item.treatmentDays)).toLocaleDateString('es-ES')}</td>
-                          <td className="px-2 py-1 border-b">Example cajas que retira</td>
+                          <td className="px-2 py-1 border-b">Cuenta pendiente | Nuevo ingreso medicación</td>
                         </tr>
                       </tbody>
                       )) : 'no hay datos' }
                     </table>
+                    {/* Modal para ver info detallada -------------------------------------- */}
                     <Modal show={openModalCC} handleClose={() => setOpenModalCC(false)}>
                       <div className='flex gap-4'>
                         <div className="mt-4">
@@ -233,12 +258,6 @@ export default function RetiroActual() {
                             {/* <p>Retiros pendientes: {(selectedItem) ? selectedItem. : ''.pendientes} caja/s</p> */}
                             {/* <p>Puede retirar: {(selectedItem) ? selectedItem. : ''.ret_mes} caja/s</p> */}
                           </div>
-                          <label className="block mb-2 text-sm font-medium text-gray-700">Cantidad a retirar:</label>
-                          <div className='flex gap-2 items-center'>
-                            <input type="number" className="border w-1/2 border-gray-300 rounded-md p-2" placeholder="..." />
-                            <p>Cajas</p>
-                          </div>
-                          <button className='bg-blue-400 text-white rounded-md shadow-sm px-2 py-0.5 mt-2 hover:bg-blue-500 hover:shadow-md' onClick={console.log('Agregar a retiro')}>Agregar a retiro</button>
                         </div>
                       </div>
                     </Modal>
