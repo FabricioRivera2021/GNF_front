@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import IngresarMedSideBar from '../components/IngresarMedSideBar'
 import { CalendarTreatment, Modal } from '../components';
 import { userStateContext } from '../context/ContextProvider';
@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
 
 
 export default function RetiroActual() {
-  const {tratamientos, preConfirmacion, setPreConfirmacion, numero, setEvents, events } = userStateContext();
+  const {tratamientos, preConfirmacion, setPreConfirmacion, numero, setEvents, events, customer } = userStateContext();
 
   useEffect(() => {
     // Obtener los items que haya en preconfirmacion al montar el componente y actualizar el componente
@@ -264,6 +264,8 @@ export default function RetiroActual() {
                     {/* FIN Modal para buscar medicación -------------------------------------- */}
                 </div>
                     <Modal show={modalTicket} handleClose={() => setModalTicket(false)}>
+                      {console.log(customer)}
+                      
                       {/* pdf creado desde cero y mostrado en el modal */}
                       <h2>Vista previa del recibo</h2>
 
@@ -275,7 +277,7 @@ export default function RetiroActual() {
                           <View style={styles.header}>
                             <Text style={styles.title}>Farmacia Salud</Text>
                             <Text style={styles.subtitle}>Ticket de Retiros</Text>
-                            <Text>Paciente: Juan Pérez</Text>
+                            <Text>Paciente: {/*paciente desde el userContext*/} </Text>
                             <Text>Fecha: 27/08/2025</Text>
                           </View>
 
