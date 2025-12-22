@@ -197,7 +197,7 @@ export default function RetiroActual() {
                         <th className="px-2 py-1 border-b">Tipo Cuenta</th>
                         <th className="px-2 py-1 border-b">Fecha inicio tto.</th>
                         <th className="px-2 py-1 border-b">Fecha fin tto.</th>
-                        <th className="px-2 py-1 border-b">Tipo retiro</th>
+                        <th className="px-2 py-1 border-b">Tipo retirotesting</th>
                         <th className="px-2 py-1 border-b"></th>
                       </tr>
                     </thead>
