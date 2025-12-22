@@ -195,7 +195,6 @@ export default function RetiroActual() {
                         <th className="px-2 py-1 border-b">Médico</th>
                         <th className="px-2 py-1 border-b">Especialidad</th>
                         <th className="px-2 py-1 border-b">Tipo Cuenta</th>
-                        <th className="px-2 py-1 border-b">Funcionario</th>
                         <th className="px-2 py-1 border-b">Fecha inicio tto.</th>
                         <th className="px-2 py-1 border-b">Fecha fin tto.</th>
                         <th className="px-2 py-1 border-b">Tipo retiro</th>
@@ -216,7 +215,6 @@ export default function RetiroActual() {
                           <td className="px-2 py-1 border-b">{item.medicoNombre}</td>
                           <td className="px-2 py-1 border-b">{item.medicoEspecialidad}</td>
                           <td className="px-2 py-1 border-b">{item.tipo_tto}</td>
-                          <td className="px-2 py-1 border-b">{item.userName}</td>
                           <td className="px-2 py-1 border-b">{new Date(item.startDate).toLocaleDateString('es-ES')}</td>
                           <td className="px-2 py-1 border-b">{new Date(new Date(item.startDate).setDate(new Date(item.startDate).getDate() + item.treatmentDays)).toLocaleDateString('es-ES')}</td>
                           <td className="px-2 py-1 border-b">Cuenta pendiente | Nuevo ingreso medicación</td>
