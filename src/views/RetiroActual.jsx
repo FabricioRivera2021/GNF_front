@@ -221,7 +221,7 @@ export default function RetiroActual() {
                           <td className="px-2 py-1 border-b">Cuenta pendiente | Nuevo ingreso medicación</td>
                         </tr>
                       </tbody>
-                      )) : 'no hay datos' }
+                      )) : <tr><td className="px-2 py-4 border-b text-center text-slate-400 font-semibold" colSpan={15}>No hay medicacion agregada</td></tr> }
                     </table>
                     {/* Modal para ver info detallada -------------------------------------- */}
                     <Modal show={openModalCC} handleClose={() => setOpenModalCC(false)}>
@@ -323,19 +323,23 @@ export default function RetiroActual() {
                         </Document>
                       </PDFViewer>
                     </Modal>
+                
                 <button
                   onClick={() => {
                     //borra el localstorage y recarga la página
                     setPreConfirmacion([]); // Esto limpia el estado y el localStorage
                   }} 
-                className='bg-red-500 text-white px-4 py-2 rounded-md mx-2 my-3'>Eliminar todas</button>
+                  disabled={preConfirmacion.length === 0}
+                className='bg-red-500 text-white px-4 py-2 rounded-md mx-2 my-3 disabled:bg-transparent'>Eliminar todas</button>
                 <button
                   onClick={() => {
                     //Crea el ticket de retiro de la medicacion y lo que debe abonar la persona
                     //Muestra un mockup de un ticket en pdf en un modal
                     setModalTicket(true);
                   }} 
-                className='bg-green-500 text-white shadow-md font-semibold px-4 py-2 rounded-sm hover:bg-green-100 hover:text-slate-500 mx-2 my-3'>Confirmar ticket</button>
+                  disabled={preConfirmacion.length === 0}
+                className='bg-green-500 text-white px-4 py-2 rounded-md mx-2 my-3 disabled:bg-transparent'>Confirmar ticket</button>
+
             </div>
           </div>
         </div>

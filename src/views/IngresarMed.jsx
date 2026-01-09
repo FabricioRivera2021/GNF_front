@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Modal, CalendarTreatment } from '../components/index';
 import LlamadorPanel from "../components/LlamadorPanel";
 import { userStateContext } from '../context/ContextProvider';
-import { ExclamationTriangleIcon, PlusIcon } from '@heroicons/react/24/outline';
+import { ExclamationCircleIcon, ExclamationTriangleIcon, PlusIcon } from '@heroicons/react/24/outline';
 import IngresarMedSideBar from '../components/IngresarMedSideBar';
 import { fetchAllMedicamentos, getCurrentSelectedNumber,handleSetNextState, handlePauseNumber,handleCancelNumber,handleDerivateToPosition,handleDerivateTo,fetchAllMedicos, createTreatment} from '../API/apiServices';
 import Message from '../components/Message';
@@ -389,12 +389,10 @@ export default function IngresarMed () {
                               {
                                 (medico.nombre) 
                                 ?  (
-                                      <div className='flex px-1 text-slate-500 items-start font-semibold gap-4 bg-yellow-100 rounded-md shadow-sm mt-2'>
+                                      <div className='flex pl-1 pr-3 text-slate-500 items-start font-semibold gap-4 bg-yellow-100 rounded-md shadow-sm mt-2'>
                                         <div className='flex flex-col'>
                                           <p className='text-slate-700 font-semibold'>{medico.nombre} {medico.apellido}</p>
                                           <p className='text-slate-400 font-semibold'>{medico.especialidad}</p>
-                                        </div>
-                                        <div className='flex flex-col'>
                                           <p className='text-slate-400 font-semibold'>CJP: {medico.nro_caja}</p>
                                           <p className='text-slate-400 font-semibold'>Reg: 225487</p>
                                         </div>
@@ -420,6 +418,7 @@ export default function IngresarMed () {
                     <div className="rounded-lg w-[calc(100vw-16rem)] h-[calc(100vh-27rem)] overflow-auto">
                         <form className="space-y-4">
                             <div className='min-h-20 py-1 px-4'>
+                            {(groupedMedications && Object.keys(groupedMedications).length > 0) && (
                             <table className="shadow-sm min-w-full text-left text-sm font-roboto font-medium text-slate-600 text-surface p-2">
                             <thead className='sticky top-0 bg-blue-400 text-white'>
                                 <tr>
@@ -494,6 +493,12 @@ export default function IngresarMed () {
                                 ))}
                             </tbody>
                             </table>
+                            ) || (
+                                <div className='flex flex-col items-center justify-center mt-10'>
+                                  <ExclamationCircleIcon className='w-12 text-yellow-400 mb-2' />
+                                  <p className='text-slate-500 font-semibold'>Cargando medicamentos</p>
+                                </div>
+                            )}
                             </div>
                         </form>
                     </div>
