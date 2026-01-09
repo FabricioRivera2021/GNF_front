@@ -38,6 +38,7 @@ export default function IngresarMed () {
             // tto_dias_mes -> esta en la bd pero ni idea que hace 
             medicoID: medico.id,
             medicoNombre: medico.nombre,
+            medicoApellido: medico.apellido,
             medicoEspecialidad: medico.especialidad,
             medicationID: addMedication.id,
             medicationNombre: addMedication.droga,
@@ -106,16 +107,18 @@ export default function IngresarMed () {
     };
 
     //setea el medico que indico la medicacion
-    const handleSetMedico = (id, nombre, apellido, numeroRegistro, nro_caja, especialidad) => {
+    //esto esta mal, solo necesito el id del medico
+    const handleSetMedico = (id, nombre, apellido, numeroRegistro, nro_caja, especialidades) => {
         setMedico({
             id: id,
             nombre: nombre,
             apellido: apellido,
             numeroRegistro: 111, //hardcodear por ahora
             nro_caja: nro_caja,
-            especialidad: especialidad
+            especialidad: especialidades
         });
-    }
+      }
+    console.log("medico seteado:", medico);
 
     //limpia la variable de medicacion agregada, cuando se cierra el modal de medicacion
     const handleClearAddMedication = () => {
@@ -509,8 +512,8 @@ export default function IngresarMed () {
                                 <th className="px-2 py-1 border-b">Nombre</th>
                                 <th className="px-2 py-1 border-b">Apellido</th>
                                 {/* <th className="px-2 py-1 border-b">Número de Registro</th> */}
-                                <th className="px-2 py-1 border-b">Número de Caja Médica</th>
                                 <th className="px-2 py-1 border-b">Especialidad</th>
+                                <th className="px-2 py-1 border-b">N. Caja</th>
                                 <th className="px-2 py-1 border-b"></th>
                                 </tr>
                             </thead>
@@ -520,17 +523,17 @@ export default function IngresarMed () {
                                     <td className="px-2 py-1 border-b">{medico.nombre}</td>
                                     <td className="px-2 py-1 border-b">{medico.apellido}</td>
                                     {/* <td className="px-2 py-1 border-b">{medico.numeroRegistro}</td> */}
-                                    <td className="px-2 py-1 border-b">{medico.nro_caja}</td>
                                     <td className="px-2 py-1 border-b">{medico.especialidades
                                       .map(
                                         especialidad => <div>{especialidad.nombre}</div>
                                       )}
                                     </td>
+                                    <td className="px-2 py-1 border-b">{medico.nro_caja}</td>
                                     <td className="px-2 py-1 border-b">
                                       <button 
                                         className='bg-blue-400 px-2 py-0.5 rounded-sm shadow-sm text-white hover:bg-blue-600'
                                         onClick={() => {
-                                            handleSetMedico(medico.id, medico.nombre, medico.apellido, medico.numeroRegistro, medico.nro_caja, medico.especialidad);
+                                            handleSetMedico(medico.id, medico.nombre, medico.apellido, medico.numeroRegistro, medico.nro_caja, medico.especialidades.map(especialidad => especialidad.nombre).join(", "));
                                             setShowMedicoModal(false);
                                             // setMedico
                                           }
