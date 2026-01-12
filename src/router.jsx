@@ -9,6 +9,11 @@ import { Abastecimiento } from "./views/Abastecimiento.jsx";
 import { PedidosRemotos } from "./views/PedidosRemotos.jsx";
 import Caja from "./views/Caja.jsx";
 import Preparacion from "./views/Preparacion.jsx";
+import AbastecimientoIngresos from "./components/abastecimiento/AbastecimientoIngresos.jsx";
+import AbastecimientoStock from "./components/abastecimiento/AbastecimientoStock.jsx";
+import AbastecimientoMovimientos from "./components/abastecimiento/AbastecimientoMovimientos.jsx";
+import AbastecimientoAlertas from "./components/abastecimiento/AbastecimientoAlertas.jsx";
+import AbastecimientoCatalogo from "./components/abastecimiento/AbastecimientoCatalogo.jsx";
 
 // parece que las rutas tienen un orden determinado, ojo con cual 
 // va primero en el codigo
@@ -77,7 +82,33 @@ const router = createBrowserRouter([
             },
             {
                 path: '/abastecimiento', //cambiar esto despues de probar a guest
-                element: <Abastecimiento />
+                element: <Abastecimiento />,
+                children: [
+                  {
+                    index: true, // this makes it the default route
+                    element: <Navigate to="/abastecimiento/medicacion" />
+                  },
+                  {
+                    path: 'medicacion',
+                    element: <AbastecimientoIngresos />
+                  },
+                  {
+                    path: 'stock',
+                    element: <AbastecimientoStock />
+                  },
+                  {
+                    path: 'catalogos',
+                    element: <AbastecimientoCatalogo />
+                  },
+                  {
+                    path: 'movimientos',
+                    element: <AbastecimientoMovimientos/>
+                  },
+                  {
+                    path: 'alertas',
+                    element: <AbastecimientoAlertas />
+                  },
+                ]
             },
             {
                 path: '/TV', //cambiar esto despues de probar a guest
@@ -114,6 +145,8 @@ const router = createBrowserRouter([
         //se dirige al guestlayout que muestra el login
         element: <AdminLayout />
     },
+
+    
 ])
 
 export default router;

@@ -1,9 +1,9 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import SideBar from './SideBar';
+import SideBar from '../SideBar';
 import { ClipboardDocumentListIcon, CubeIcon, DocumentMagnifyingGlassIcon, DocumentPlusIcon, ExclamationCircleIcon, SunIcon } from '@heroicons/react/24/outline';
 import { BellAlertIcon } from '@heroicons/react/24/solid';
-import { userStateContext } from '../context/ContextProvider';
+import { userStateContext } from '../../context/ContextProvider';
 
 export default function AbastecimientoSideBar() {
 
@@ -12,7 +12,7 @@ export default function AbastecimientoSideBar() {
   return (
     <SideBar>
       <NavLink
-        to="/ventanilla/nuevoIngresoVentanilla"
+        to="/abastecimiento/medicacion"
         className={({ isActive }) =>
           isActive
             ? 'rounded-sm py-1 text-left pl-1 bg-blue-500 text-white px-10'
@@ -25,7 +25,7 @@ export default function AbastecimientoSideBar() {
         </div>
       </NavLink>
       <NavLink
-        to="/ventanilla/nuevoIngresoVentanillaCC"
+        to="/abastecimiento/stock"
         className={({ isActive }) =>
           isActive
             ? 'rounded-sm py-1 text-left pl-1 bg-blue-500 text-white px-10'
@@ -38,7 +38,7 @@ export default function AbastecimientoSideBar() {
         </div>
       </NavLink>
       <NavLink
-        to="/ventanilla/historialRetiros"
+        to="/abastecimiento/catalogos"
         className={({ isActive }) =>
           isActive
             ? 'rounded-sm py-1 text-left pl-1 bg-blue-500 text-white px-10'
@@ -51,7 +51,7 @@ export default function AbastecimientoSideBar() {
         </div>
       </NavLink>
       <NavLink
-        to="/ventanilla/historialRetiros"
+        to="/abastecimiento/movimientos"
         className={({ isActive }) =>
           isActive
             ? 'rounded-sm py-1 text-left pl-1 bg-blue-500 text-white px-10'
@@ -64,15 +64,11 @@ export default function AbastecimientoSideBar() {
         </div>
       </NavLink>
       <NavLink
-        to="/ventanilla/retiroActual"
+        to="/abastecimiento/alertas"
         className={({ isActive }) =>
           isActive
-            ? 'rounded-sm py-1 text-left pl-1 bg-orange-400 text-white px-10'
-            //si el localstorage tiene el item 'preconfirmacion'
-            : (preConfirmacion.length > 0) 
-              ? 'rounded-sm py-1 text-left pl-1 bg-orange-500 text-slate-100 px-10 animate-pulse'
-              //si no, será gris
-              : 'rounded-sm py-1 text-left pl-1 hover:bg-blue-400 hover:text-slate-100 bg-slate-100 text-slate-700 px-10'
+            ? 'rounded-sm py-1 text-left pl-1 bg-blue-500 text-white px-10'
+            : 'rounded-sm py-1 text-left pl-1 hover:bg-blue-400 hover:text-slate-100 bg-slate-100 text-slate-700 px-10'
         }
       >
         <div className='flex gap-1 justify-between w-full'>
