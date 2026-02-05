@@ -475,10 +475,9 @@ export default function IngresarMed () {
                                         <td className="px-2 py-1 border-b">{medication.droga_concentracion}</td>
                                         <td className="px-2 py-1 border-b">{medication.presentacion_farmaceutica.presentacion}</td>
                                         <td className="px-2 py-1 border-b">{medication.unidad_medida.unidad_medida}</td>
-                                        <td className="px-2 py-1 border-b">{medication.via_administracion.map(via => via.nombre)}</td>
+                                        <td className="px-2 py-1 border-b">{medication.via_administracion.map(via => via.nombre).join(", ")}</td>
                                         <td className={`px-2 py-1 border-b ${(medication.categoria.nombre_categoria == "Controlado") ? "text-orange-600" : ""}`}>{medication.categoria.nombre_categoria}</td>
-                                        <td className="px-2 py-1 border-b"><p className='bg-blue-200 text-slate-700 px-2 rounded-md'>TEST{medication.grupos_terapeuticos.nombre}</p></td>
-                                        {/* {console.log(medication.grupos_terapeuticos)} */}
+                                        <td className="px-2 py-1 border-b"><p>{medication.grupos_terapeuticos[0]?.nombre}</p></td>
                                         {/* <td className="px-2 py-1 border-b">{medication.estado}</td> */}
                                         <td className="px-2 py-1 border-b">{medication.ranurable}</td>
                                         <td className="px-2 py-1 border-b">{medication.laboratorio.razon_social}</td>
