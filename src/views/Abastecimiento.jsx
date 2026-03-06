@@ -3,7 +3,7 @@ import { Outlet } from 'react-router-dom'
 
 export const Abastecimiento = () => {
   return (
-    <div className="flex min-h-screen">
+    <div className="flex">
       
       {/* Sidebar */}
       <aside className="w-64 border-r bg-gray-50">
@@ -11,7 +11,7 @@ export const Abastecimiento = () => {
       </aside>
 
       {/* Contenido */}
-      <main className="flex-1 p-4">
+      <main className="w-full">
         <Outlet />
       </main>
 
