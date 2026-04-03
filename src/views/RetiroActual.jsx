@@ -193,9 +193,8 @@ export default function RetiroActual() {
                         <th className="px-2 py-1 border-b">Concentracion</th>
                         <th className="px-2 py-1 border-b">N. comercial</th>
                         <th className="px-2 py-1 border-b">Médico</th>
-                        <th className="px-2 py-1 border-b">Especialidad</th>
+                        {/* <th className="px-2 py-1 border-b">Especialidad</th> */}
                         <th className="px-2 py-1 border-b">Tipo Cuenta</th>
-                        <th className="px-2 py-1 border-b">Funcionario</th>
                         <th className="px-2 py-1 border-b">Fecha inicio tto.</th>
                         <th className="px-2 py-1 border-b">Fecha fin tto.</th>
                         <th className="px-2 py-1 border-b">Tipo retiro</th>
@@ -205,6 +204,7 @@ export default function RetiroActual() {
                     { preConfirmacion && preConfirmacion.length > 0
                       ? preConfirmacion.map((item, index) => (
                       <tbody>
+                        {console.log('item en preconfirmacion:', item)}
                         <tr className='rounded-sm py-1 text-left pl-1 capitalize font-roboto text-sm odd:bg-slate-50 even:bg-gray-100 hover:bg-slate-200 cursor-pointer'
                           onClick={() => {
                             handleModalOpen(item);
@@ -213,16 +213,15 @@ export default function RetiroActual() {
                           <td className="px-2 py-1 border-b text-slate-700 font-semibold">{item.medicationNombre}</td>
                           <td className="px-2 py-1 border-b">{item.medicationConcentracion}</td>
                           <td className="px-2 py-1 border-b">{item.medicationMarca}</td>
-                          <td className="px-2 py-1 border-b">{item.medicoNombre}</td>
-                          <td className="px-2 py-1 border-b">{item.medicoEspecialidad}</td>
+                          <td className="px-2 py-1 border-b">{item.medicoNombre} {item.medicoApellido}</td>
+                          {/* <td className="px-2 py-1 border-b">{item.medicoEspecialidad.split(",").map((especialidad) => (<div>{especialidad}</div>))}</td> */}
                           <td className="px-2 py-1 border-b">{item.tipo_tto}</td>
-                          <td className="px-2 py-1 border-b">{item.userName}</td>
                           <td className="px-2 py-1 border-b">{new Date(item.startDate).toLocaleDateString('es-ES')}</td>
                           <td className="px-2 py-1 border-b">{new Date(new Date(item.startDate).setDate(new Date(item.startDate).getDate() + item.treatmentDays)).toLocaleDateString('es-ES')}</td>
                           <td className="px-2 py-1 border-b">Cuenta pendiente | Nuevo ingreso medicación</td>
                         </tr>
                       </tbody>
-                      )) : 'no hay datos' }
+                      )) : <tr><td className="px-2 py-4 border-b text-center text-slate-400 font-semibold" colSpan={15}>No hay medicacion agregada</td></tr> }
                     </table>
                     {/* Modal para ver info detallada -------------------------------------- */}
                     <Modal show={openModalCC} handleClose={() => setOpenModalCC(false)}>
@@ -236,7 +235,7 @@ export default function RetiroActual() {
                           <div className='bg-yellow-100 rounded-md shadow-md p-1 text-slate-500'>
                             <h3 className="text-lg font-bold">{(selectedItem) ? selectedItem.medicationNombre : ''} {(selectedItem) ? `( ${selectedItem.medicationMarca} )` : ''}</h3>
                             <p className='border-b'>Médico: {(selectedItem) ? selectedItem.medicoNombre : ''}</p>
-                            <p className='border-b'>Especialidad: {(selectedItem) ? selectedItem.medicoEspecialidad : ''}</p>
+                            <ul className='border-b'><span className='font-bold'>Especialidad: </span>{(selectedItem) ? selectedItem.medicoEspecialidad.split(',').map((especialidad) => (<div> - {especialidad}</div>)) : ''}</ul>
                             <p className='border-b'>Tipo de tratamiento: {(selectedItem) ? selectedItem.tipo_tto : ''}</p>
                             <p className='border-b'>Tratamiento: {(selectedItem) ? selectedItem.treatmentDays : ''} dias</p>
                             <p className='border-b'>Frecuencia: cada {(selectedItem) ? selectedItem.interval : ''} hs</p>
@@ -324,19 +323,23 @@ export default function RetiroActual() {
                         </Document>
                       </PDFViewer>
                     </Modal>
+                
                 <button
                   onClick={() => {
                     //borra el localstorage y recarga la página
                     setPreConfirmacion([]); // Esto limpia el estado y el localStorage
                   }} 
-                className='bg-red-500 text-white px-4 py-2 rounded-md mx-2 my-3'>Eliminar todas</button>
+                  disabled={preConfirmacion.length === 0}
+                className='bg-red-500 text-white px-4 py-2 rounded-md mx-2 my-3 disabled:bg-transparent'>Eliminar todas</button>
                 <button
                   onClick={() => {
                     //Crea el ticket de retiro de la medicacion y lo que debe abonar la persona
                     //Muestra un mockup de un ticket en pdf en un modal
                     setModalTicket(true);
                   }} 
-                className='bg-green-500 text-white shadow-md font-semibold px-4 py-2 rounded-sm hover:bg-green-100 hover:text-slate-500 mx-2 my-3'>Confirmar ticket</button>
+                  disabled={preConfirmacion.length === 0}
+                className='bg-green-500 text-white px-4 py-2 rounded-md mx-2 my-3 disabled:bg-transparent'>Confirmar ticket</button>
+
             </div>
           </div>
         </div>

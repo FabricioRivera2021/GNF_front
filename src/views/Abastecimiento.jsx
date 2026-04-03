@@ -1,10 +1,20 @@
-import React from 'react'
+import AbastecimientoSideBar from '../components/abastecimiento/AbastecimientoSideBar'
+import { Outlet } from 'react-router-dom'
 
 export const Abastecimiento = () => {
   return (
-    <div className='flex flex-col items-center justify-center w-full h-[100vh]'>
-      <h1 className='text-3xl font-bold text-slate-600'>Abastecimiento</h1>
-      <p className='text-orange-500 text-xl'>Esta funcionalidad no esta disponible en este momento.</p>
+    <div className="flex">
+      
+      {/* Sidebar */}
+      <aside className="w-64 border-r bg-gray-50">
+        <AbastecimientoSideBar />
+      </aside>
+
+      {/* Contenido */}
+      <main className="w-full">
+        <Outlet />
+      </main>
+
     </div>
   )
 }

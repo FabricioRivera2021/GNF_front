@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Modal, CalendarTreatment } from '../components/index';
 import LlamadorPanel from "../components/LlamadorPanel";
 import { userStateContext } from '../context/ContextProvider';
-import { ExclamationTriangleIcon, PlusIcon } from '@heroicons/react/24/outline';
+import { ExclamationCircleIcon, ExclamationTriangleIcon, PlusIcon } from '@heroicons/react/24/outline';
 import IngresarMedSideBar from '../components/IngresarMedSideBar';
 import { fetchAllMedicamentos, getCurrentSelectedNumber,handleSetNextState, handlePauseNumber,handleCancelNumber,handleDerivateToPosition,handleDerivateTo,fetchAllMedicos, createTreatment} from '../API/apiServices';
 import Message from '../components/Message';
@@ -38,6 +38,7 @@ export default function IngresarMed () {
             // tto_dias_mes -> esta en la bd pero ni idea que hace 
             medicoID: medico.id,
             medicoNombre: medico.nombre,
+            medicoApellido: medico.apellido,
             medicoEspecialidad: medico.especialidad,
             medicationID: addMedication.id,
             medicationNombre: addMedication.droga,
@@ -106,16 +107,18 @@ export default function IngresarMed () {
     };
 
     //setea el medico que indico la medicacion
-    const handleSetMedico = (id, nombre, apellido, numeroRegistro, nro_caja, especialidad) => {
+    //esto esta mal, solo necesito el id del medico
+    const handleSetMedico = (id, nombre, apellido, numeroRegistro, nro_caja, especialidades) => {
         setMedico({
             id: id,
             nombre: nombre,
             apellido: apellido,
             numeroRegistro: 111, //hardcodear por ahora
             nro_caja: nro_caja,
-            especialidad: especialidad
+            especialidad: especialidades
         });
-    }
+      }
+    console.log("medico seteado:", medico);
 
     //limpia la variable de medicacion agregada, cuando se cierra el modal de medicacion
     const handleClearAddMedication = () => {
@@ -386,12 +389,10 @@ export default function IngresarMed () {
                               {
                                 (medico.nombre) 
                                 ?  (
-                                      <div className='flex px-1 text-slate-500 items-start font-semibold gap-4 bg-yellow-100 rounded-md shadow-sm mt-2'>
+                                      <div className='flex pl-1 pr-3 text-slate-500 items-start font-semibold gap-4 bg-yellow-100 rounded-md shadow-sm mt-2'>
                                         <div className='flex flex-col'>
                                           <p className='text-slate-700 font-semibold'>{medico.nombre} {medico.apellido}</p>
                                           <p className='text-slate-400 font-semibold'>{medico.especialidad}</p>
-                                        </div>
-                                        <div className='flex flex-col'>
                                           <p className='text-slate-400 font-semibold'>CJP: {medico.nro_caja}</p>
                                           <p className='text-slate-400 font-semibold'>Reg: 225487</p>
                                         </div>
@@ -417,6 +418,7 @@ export default function IngresarMed () {
                     <div className="rounded-lg w-[calc(100vw-16rem)] h-[calc(100vh-27rem)] overflow-auto">
                         <form className="space-y-4">
                             <div className='min-h-20 py-1 px-4'>
+                            {(groupedMedications && Object.keys(groupedMedications).length > 0) && (
                             <table className="shadow-sm min-w-full text-left text-sm font-roboto font-medium text-slate-600 text-surface p-2">
                             <thead className='sticky top-0 bg-blue-400 text-white'>
                                 <tr>
@@ -491,6 +493,12 @@ export default function IngresarMed () {
                                 ))}
                             </tbody>
                             </table>
+                            ) || (
+                                <div className='flex flex-col items-center justify-center mt-10'>
+                                  <ExclamationCircleIcon className='w-12 text-yellow-400 mb-2' />
+                                  <p className='text-slate-500 font-semibold'>Cargando medicamentos</p>
+                                </div>
+                            )}
                             </div>
                         </form>
                     </div>
@@ -509,8 +517,8 @@ export default function IngresarMed () {
                                 <th className="px-2 py-1 border-b">Nombre</th>
                                 <th className="px-2 py-1 border-b">Apellido</th>
                                 {/* <th className="px-2 py-1 border-b">Número de Registro</th> */}
-                                <th className="px-2 py-1 border-b">Número de Caja Médica</th>
                                 <th className="px-2 py-1 border-b">Especialidad</th>
+                                <th className="px-2 py-1 border-b">N. Caja</th>
                                 <th className="px-2 py-1 border-b"></th>
                                 </tr>
                             </thead>
@@ -520,17 +528,17 @@ export default function IngresarMed () {
                                     <td className="px-2 py-1 border-b">{medico.nombre}</td>
                                     <td className="px-2 py-1 border-b">{medico.apellido}</td>
                                     {/* <td className="px-2 py-1 border-b">{medico.numeroRegistro}</td> */}
-                                    <td className="px-2 py-1 border-b">{medico.nro_caja}</td>
                                     <td className="px-2 py-1 border-b">{medico.especialidades
                                       .map(
                                         especialidad => <div>{especialidad.nombre}</div>
                                       )}
                                     </td>
+                                    <td className="px-2 py-1 border-b">{medico.nro_caja}</td>
                                     <td className="px-2 py-1 border-b">
                                       <button 
                                         className='bg-blue-400 px-2 py-0.5 rounded-sm shadow-sm text-white hover:bg-blue-600'
                                         onClick={() => {
-                                            handleSetMedico(medico.id, medico.nombre, medico.apellido, medico.numeroRegistro, medico.nro_caja, medico.especialidad);
+                                            handleSetMedico(medico.id, medico.nombre, medico.apellido, medico.numeroRegistro, medico.nro_caja, medico.especialidades.map(especialidad => especialidad.nombre).join(", "));
                                             setShowMedicoModal(false);
                                             // setMedico
                                           }

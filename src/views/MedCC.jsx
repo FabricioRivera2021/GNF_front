@@ -12,6 +12,7 @@ export default function MedCC () {
     const { setFilterCancel, setFilterPaused, setAllDerivates, setShowModal, showModal, numero, setNumero, 
             showMedicoModal, setShowMedicoModal, showMedicationModal, setShowMedicationModal, tratamientos, setTratamientos, setEvents } = userStateContext();
     const [selectedFilter, setSelectedFilter] = useState(1);
+    const [ccloaded, setCcLoaded] = useState(false);
     const [openModalCC, setOpenModalCC] = useState(false);
     const [viewTreatment, setViewTreatment] = useState({});
     const [ttoShowMedicationOnModal, setTtoShowMedicationOnModal] = useState({});
@@ -74,6 +75,7 @@ export default function MedCC () {
             <h2 className="text-2xl font-bold mb-2">Cuenta corriente</h2>
             <div className="rounded-lg overflow-auto w-full">
               <div className='py-1 px-4 w-11/12'>
+                {tratamientos && tratamientos.length > 0 ? (
                 <table className="shadow-sm text-left text-xs font-roboto font-medium text-slate-600 text-surface p-2 w-full">
                   <thead className='sticky top-0 bg-blue-400 text-white whitespace-nowrap'>
                     <tr>
@@ -165,6 +167,12 @@ export default function MedCC () {
                     ))}
                   </tbody>
                 </table>
+                ) : (
+                  <div className='flex flex-col items-center justify-center mt-10'>
+                    <ExclamationCircleIcon className='w-12 text-yellow-400 mb-2' />
+                    <p className='text-slate-500 font-semibold'>Cargando tratamientos....</p>
+                  </div>
+                )}
               </div>
               <Modal show={openModalCC} handleClose={() => setOpenModalCC(false)}>
                 <div className='flex gap-4'>

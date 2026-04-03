@@ -18,7 +18,6 @@ const navigation = [
   { name: 'Ventanilla', to: '/ventanilla'},
   { name: 'Preparación', to: '/menuPreparacion'},
   { name: 'Caja', to: '/caja'},
-  { name: 'Stock', to: '/consultasStock'},
   { name: 'Abastecimiento', to: '/abastecimiento'},
   { name: 'Pedidos', to: '/pedidosRemotos'},
 ]
