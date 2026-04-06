@@ -4,10 +4,21 @@ import Modal from '../Modal';
 function AbastecimientoNuevoMed() {
 
   const [modal, setModal] = useState(false)
+  const [confirmationModal, setConfirmationModal] = useState(false)
 
   const handleCreateNewCatalogDrug = () => {
     setModal(true);
   }
+
+  const handleConfirmCreateDrug = () => {
+    setConfirmationModal(true);
+  }
+
+  const [newDrugName, setNewDrugName] = useState('');
+  const [selectedDrugName, setSelectedDrugName] = useState('Droga seleccionada');
+
+  const scrolllock = modal ? 'hidden' : 'auto';
+  document.body.style.overflow = scrolllock;
 
   return (
     <>
@@ -127,10 +138,10 @@ function AbastecimientoNuevoMed() {
                   </thead>
                   <tbody>
                     <tr className='border hover:bg-gray-100'>
-                      <td className='border'>Ibuprofeno</td>
-                      <td className='border'>600 mg</td>
-                      <td className='border'>600 mg cada 100 ml</td>
-                      <td className='border text-red-500 hover:bg-red-500 hover:text-white px-1 py-0.5 rounded-md transition-colors duration-200 cursor-pointer'>Quitar</td>
+                      <td className='border'> -- </td>
+                      <td className='border'> -- </td>
+                      <td className='border'> -- </td>
+                      <td className='border text-red-500 hover:bg-red-500 hover:text-white px-1 py-0.5 rounded-md transition-colors duration-200 cursor-pointer'> -- </td>
                     </tr>
                   </tbody>
                 </table>
@@ -216,12 +227,10 @@ function AbastecimientoNuevoMed() {
               <div className='col-span-1 border-2 rounded-lg border-gray-200 px-2 py-4 shadow-md'>
                 <div className='flex gap-4 items-start justify-start mb-2'>
                   <input 
-                    className='leading-none px-2 py-0.5 bg-transparent border-0 border-b border-gray-300 focus:outline-none focus:ring-0 focus:shadow-none focus:border-blue-500 transition-colors duration-200' 
-                    placeholder='Buscar' 
+                    className='leading-none px-2 py-0.5 bg-transparent border-1 border-blue-400 rounded-md focus:outline-none focus:ring-0 focus:shadow-none focus:border-blue-500 transition-colors duration-200' 
+                    placeholder='Buscar...' 
                     type="text" 
                   />
-                  <p className='text-gray-500 border-2 border-green-400 rounded-lg px-2'>Ibuprofeno 600 mg</p>
-                  check mark
                 </div>
                 <div className='h-52 overflow-auto'>
                   <table className='w-full border mt-1 text-sm text-left text-gray-500 overflow-auto'>
@@ -232,34 +241,19 @@ function AbastecimientoNuevoMed() {
                     </thead>
                     <tbody>
                       <tr className='border hover:bg-gray-200 transition duration-200 cursor-pointer'>
-                        <td className='border'>Ibuprofeno</td>
+                        <td className='border' onClick={() => setSelectedDrugName('Ibuprofeno')}>Ibuprofeno</td>
                       </tr>
                       <tr className='border hover:bg-gray-200 transition duration-200 cursor-pointer'>
-                        <td className='border'>Paracetamol</td>
+                        <td className='border' onClick={() => setSelectedDrugName('Paracetamol')}>Paracetamol</td>
                       </tr>
                       <tr className='border hover:bg-gray-200 transition duration-200 cursor-pointer'>
-                        <td className='border'>Amoxicilina</td>
+                        <td className='border' onClick={() => setSelectedDrugName('Amoxicilina')}>Amoxicilina</td>
                       </tr>
                       <tr className='border hover:bg-gray-200 transition duration-200 cursor-pointer'>
-                        <td className='border'>Acido clavulánico</td>
+                        <td className='border' onClick={() => setSelectedDrugName('Acido clavulánico')}>Acido clavulánico</td>
                       </tr>
                       <tr className='border hover:bg-gray-200 transition duration-200 cursor-pointer'>
-                        <td className='border'>Acido clavulánico</td>
-                      </tr>
-                      <tr className='border hover:bg-gray-200 transition duration-200 cursor-pointer'>
-                        <td className='border'>Acido clavulánico</td>
-                      </tr>
-                      <tr className='border hover:bg-gray-200 transition duration-200 cursor-pointer'>
-                        <td className='border'>Acido clavulánico</td>
-                      </tr>
-                      <tr className='border hover:bg-gray-200 transition duration-200 cursor-pointer'>
-                        <td className='border'>Acido clavulánico</td>
-                      </tr>
-                      <tr className='border hover:bg-gray-200 transition duration-200 cursor-pointer'>
-                        <td className='border'>Acido clavulánico</td>
-                      </tr>
-                      <tr className='border hover:bg-gray-200 transition duration-200 cursor-pointer'>
-                        <td className='border'>Acido clavulánico</td>
+                        <td className='border' onClick={() => setSelectedDrugName('Acido clavulánico')}>Acido clavulánico</td>
                       </tr>
                     </tbody>
                   </table>
@@ -268,12 +262,48 @@ function AbastecimientoNuevoMed() {
               {/* ---------------------- ingresar nueva droga */}
               <div className='flex flex-col border-2 rounded-md border-gray-300 px-2 py-1 mt-4 text-gray-800 shadow-md'>
                 <div>
-                  <p>Ingresar nueva droga</p>
-                  <input 
-                    className='leading-none px-2 py-0.5 bg-transparent border-0 border-b border-gray-300 focus:outline-none focus:ring-0 focus:shadow-none focus:border-blue-500 transition-colors duration-200' 
-                    placeholder='Ej: Ibuprofeno' 
-                    type="text" 
-                    />
+                  <div className='flex flex-col items-start border-2 p-2 mb-4 rounded-lg shadow-sm'>
+                    <div className='flex items-start'>
+                      <p>Ingresar nueva droga: </p>
+                      <input 
+                        className='leading-none px-2 py-0.5 bg-transparent border-0 border-b border-gray-300 focus:outline-none focus:ring-0 focus:shadow-none focus:border-blue-500 transition-colors duration-200' 
+                        value={newDrugName}
+                        onChange={(e) => setNewDrugName(e.target.value)}
+                        placeholder='Nombre' 
+                        type="text" 
+                      />
+                    </div>
+                    <div className='flex flex-col w-full items-start'>
+                      <button 
+                        className='border w-full border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white mt-4 px-1 py-0.5 rounded-md transition-colors duration-200' 
+                        onClick={() => handleConfirmCreateDrug()}
+                      >
+                        Guardar
+                      </button>
+                    </div>
+                    <Modal show={confirmationModal} handleClose={() => setConfirmationModal(false)} cancelButtonShown={false}>
+                      <h2 className='font-bold text-xl mb-4'>Confirmar creación de droga</h2>
+                        <p>¿Estás seguro de que deseas crear esta nueva droga?</p>
+                        <div className='flex gap-4 mt-4 justify-end items-center'>
+                        <p className='text-xl font-semibold text-blue-400'>{newDrugName}</p>
+                          <button 
+                            className='border border-red-400 text-red-400 hover:bg-red-400 hover:text-white px-2 py-0.5 rounded-md transition-colors duration-200'
+                            onClick={() => setConfirmationModal(false)}
+                          >Cancelar</button>
+                          <button 
+                            className='border border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white px-2 py-0.5 rounded-md transition-colors duration-200'
+                            onClick={() => {
+                              // Lógica para guardar la nueva droga en el catálogo
+                              setConfirmationModal(false);
+                            }}
+                          >
+                            Confirmar</button>
+                        </div>
+                    </Modal>
+                  </div>
+                  <div className='w-full border-2'>
+                    <p className='text-lg font-semibold'>{selectedDrugName}</p>
+                  </div>
                   <input 
                     className='leading-none px-2 py-0.5 bg-transparent border-0 border-b border-gray-300 focus:outline-none focus:ring-0 focus:shadow-none focus:border-blue-500 transition-colors duration-200' 
                     placeholder='Ej: 600' 
