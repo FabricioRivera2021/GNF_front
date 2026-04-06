@@ -14,6 +14,7 @@ import AbastecimientoStock from "./components/abastecimiento/AbastecimientoStock
 import AbastecimientoMovimientos from "./components/abastecimiento/AbastecimientoMovimientos.jsx";
 import AbastecimientoAlertas from "./components/abastecimiento/AbastecimientoAlertas.jsx";
 import AbastecimientoCatalogo from "./components/abastecimiento/AbastecimientoCatalogo.jsx";
+import AbastecimientoNuevoMed from "./components/abastecimiento/AbastecimientoNuevoMed.jsx";
 
 // parece que las rutas tienen un orden determinado, ojo con cual 
 // va primero en el codigo
@@ -99,6 +100,10 @@ const router = createBrowserRouter([
                   {
                     path: 'catalogos',
                     element: <AbastecimientoCatalogo />
+                  },
+                  {
+                    path: 'nuevoCatalogo',
+                    element: <AbastecimientoNuevoMed />
                   },
                   {
                     path: 'movimientos',

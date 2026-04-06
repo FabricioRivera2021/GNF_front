@@ -51,6 +51,19 @@ export default function AbastecimientoSideBar() {
         </div>
       </NavLink>
       <NavLink
+        to="/abastecimiento/nuevoCatalogo"
+        className={({ isActive }) =>
+          isActive
+            ? 'rounded-sm py-1 text-left pl-1 bg-blue-500 text-white px-10'
+            : 'rounded-sm py-1 text-left pl-1 hover:bg-blue-400 hover:text-slate-100 bg-slate-100 text-slate-700 px-10'
+        }
+      >
+        <div className='flex gap-1'>
+          <DocumentPlusIcon className='w-6'/>
+          <p className='font-semibold'>Medicamentos</p>
+        </div>
+      </NavLink>
+      <NavLink
         to="/abastecimiento/movimientos"
         className={({ isActive }) =>
           isActive

@@ -41,6 +41,7 @@ function AbastecimientoCatalogo() {
               <th className='border'>Nombre</th>
               <th className='border'>Presentación</th>
               <th className='border'>Lab</th>
+              <th className='border'>Composición</th>
               <th className='border'>Estado</th>
               <th className='border'>Acciones</th>
             </tr>
@@ -50,6 +51,7 @@ function AbastecimientoCatalogo() {
               <td className='border'>Perifar 600</td>
               <td className='border'>Comprimido</td>
               <td className='border'>Roe</td>
+              <td className='border'>Ibuprofeno</td>
               <td className='border'>Activo</td>
               <td className='border'>
                 <button className='bg-blue-500 text-white px-2 py-1 rounded'>Ver</button>
@@ -60,6 +62,7 @@ function AbastecimientoCatalogo() {
               <td className='border'>Actron 600</td>
               <td className='border'>Cápsula</td>
               <td className='border'>Bay</td>
+              <td className='border'>Ibuprofeno</td>
               <td className='border'>Activo</td>
               <td className='border'>
                 <button className='bg-blue-500 text-white px-2 py-1 rounded'>Ver</button>
@@ -70,6 +73,7 @@ function AbastecimientoCatalogo() {
               <td className='border'>Amoxidal 500</td>
               <td className='border'>Comprimido</td>
               <td className='border'>Roe</td>
+              <td className='border'>Amoxicilina</td>
               <td className='border'>Inactivo</td>
               <td className='border'>
                 <button className='bg-blue-500 text-white px-2 py-1 rounded'>Ver</button>
@@ -77,60 +81,165 @@ function AbastecimientoCatalogo() {
             </tr>
           </tbody>
         </table>
-        <button 
-          className='bg-green-500 text-white px-4 py-2 rounded mt-4'
-          onClick={() => handleCreateNewCatalogDrug()}  
-        >+ Nuevo Medicamento</button>
+        <div className='flex gap-4 mt-4'>
+          <button 
+            className='bg-green-500 text-white px-4 py-2 rounded mt-4'
+            onClick={() => handleCreateNewCatalogDrug()}  
+          >+ Nuevo Medicamento</button>
+          <button 
+            className='bg-green-500 text-white px-4 py-2 rounded mt-4'
+            onClick={() => handleCreateNewCatalogDrug()}  
+          >+ Nueva droga</button>
+        </div>
       </div>
 
       {/* Modal para crear nuevo medicamento */}
     <Modal show={modal} handleClose={() => setModal(false)}>
-      <div className='bg-white p-6 rounded-lg w-full max-w-2xl overflow-auto max-h-[80vh]'>
+      <div className='bg-white p-6 rounded-lg w-full max-w-4xl overflow-auto max-h-[80vh]'>
         <h1 className='font-bold text-2xl'>Crear Medicamento</h1>
+        <div className='grid grid-cols-3 gap-6 mt-4'>
+          <div className='border-2 p-4 rounded-lg'>
+            <h2 className='font-semibold text-lg mb-2'>Datos generales</h2>
+            <div className='flex flex-col items-start justify-center gap-2'>
+              <label className='whitespace-nowrap' title='nombre comercial'>
+                <input type="text" placeholder='Nombre Comercial' className='leading-none px-2 py-0.5 w-full bg-transparent border-0 border-b border-gray-300 focus:outline-none focus:ring-0 focus:shadow-none focus:border-blue-500 transition-colors duration-200'/>
+              </label>
+            </div>
+            <div className='flex flex-col items-start justify-center gap-2'>
+              <label className='whitespace-nowrap' title='laboratorio'>
+                <select className='w-full px-2 py-0.5 bg-transparent border-0 border-b border-gray-300 focus:outline-none focus:ring-0 focus:shadow-none focus:border-blue-500 transition-colors duration-200' name="laboratorio" id="laboratorio">
+                  <option value="">Laboratorio---------</option>
+                  <option value="lab1">Laboratorio 1</option>
+                  <option value="lab2">Laboratorio 2</option>
+                  <option value="lab3">Laboratorio 3</option>
+                </select>
+              </label>
+            </div>
+            <div className='flex flex-col items-start justify-center gap-2'>
+              <label className='whitespace-nowrap' title='Codigo interno'>
+                <input type="text" placeholder='Código Interno' className='leading-none px-2 py-0.5 w-full bg-transparent border-0 border-b border-gray-300 focus:outline-none focus:ring-0 focus:shadow-none focus:border-blue-500 transition-colors duration-200'/>
+              </label>
+            </div>
+            <div className='flex flex-col items-start justify-center gap-2'>
+              <label className='whitespace-nowrap' title='Codigo de barras'>
+                <input type="text" placeholder='Código de Barras' className='leading-none px-2 py-0.5 w-full bg-transparent border-0 border-b border-gray-300 focus:outline-none focus:ring-0 focus:shadow-none focus:border-blue-500 transition-colors duration-200'/>
+              </label>
+            </div>
+            <div className='flex flex-col items-start justify-center px-2'>
+                Vademecum: 
+                <label htmlFor="vademecum-si" className='text-xs ml-2'>
+                  <input type="radio" name="vademecum" id="vademecum-si" /> Sí
+                </label>
+                <label htmlFor="vademecum-no" className='text-xs ml-2'>
+                  <input type="radio" name="vademecum" id="vademecum-no" /> No
+                </label>
+            </div>
+            <div className='flex flex-col items-start justify-center px-2'>
+                Estado: 
+                <label htmlFor="estado-activo" className='text-xs ml-2'>
+                  <input type="radio" name="estado" id="estado-activo" /> Activo
+                </label>
+                <label htmlFor="estado-inactivo" className='text-xs ml-2'>
+                  <input type="radio" name="estado" id="estado-inactivo" /> Inactivo
+                </label>
+            </div>
+            <hr />
+            <div>
+              <h2 className='font-semibold text-lg mt-4'>Presentación farmacéutica</h2>
+              <div className='flex flex-col items-start justify-center gap-2'>
+                <label className='whitespace-nowrap' title='forma_farmaceutica'>
+                  <select className='w-full px-2 py-0.5 bg-transparent border-0 border-b border-gray-300 focus:outline-none focus:ring-0 focus:shadow-none focus:border-blue-500 transition-colors duration-200' name="forma_farmaceutica" id="forma_farmaceutica">
+                    <option value="">Forma farmacéutica</option>
+                    <option value="comprimidos">Comprimidos</option>
+                    <option value="jarabe">Jarabe</option>
+                    <option value="crema">Crema</option>
+                    <option value="inhalador">Inhalador</option>
+                  </select>
+                </label>
+              </div>
+              <div className='flex flex-col items-start justify-center gap-2'>
+                <label className='whitespace-nowrap' title='Unidades por envase'>
+                  <input type="number" placeholder='Unidades por envase' className='leading-none px-2 py-0.5 w-full bg-transparent border-0 border-b border-gray-300 focus:outline-none focus:ring-0 focus:shadow-none focus:border-blue-500 transition-colors duration-200'/>
+                </label>
+              </div>
+            </div>
+          </div>
 
-        <h2 className='font-semibold text-xl'>Datos comerciales</h2>
-        <p>Nombre comercial: [________________________________]</p>
-        <p>Laboratorio: [ Select ▼ ]</p>
-        <p>Categoría: [ Vademecum ▼ ]</p>
-        <p>Código interno: [________________]</p>
-        <p>Código de barras: [________________]</p>
-        <p>Estado: (•) Activo   ( ) Inactivo</p>
+          <div className='flex gap-4 border-2 p-4 rounded-lg col-span-2'>
+            <div>
 
-        <h2 className='font-semibold text-xl'>Presentación farmacéutica</h2>
-        <p>Forma farmacéutica: [ Comprimido ▼ ]</p>
-        <p>Unidades por envase: [ 30 ]</p>
-        <p>Unidad del envase: [ comprimidos ▼ ]</p>
+            </div>
+            {/* 
+              unidad minima de dispensacion, lo dejo por las dudas pero creo que no va
+              <div className='flex flex-col items-start justify-center gap-2'>
+              <label className='whitespace-nowrap' title='unidad minima dispensable'>
+                <select className='w-full px-2 py-0.5 bg-transparent border-0 border-b border-gray-300 focus:outline-none focus:ring-0 focus:shadow-none focus:border-blue-500 transition-colors duration-200' name="unidad_minima_dispensable" id="unidad_minima_dispensable">
+                  <option value="">Unidad de dispensación</option>
+                  <option value="comprimidos">mg</option>
+                  <option value="jarabe">ml</option>
+                  <option value="crema">g</option>
+                  <option value="inhalador">U.I.</option>
+                  <option value="inhalador">porcentaje</option>
+                </select>
+              </label>
+            </div> */}
+            <div>
+              <h2 className='font-semibold text-lg'>Concentracion</h2>
+              <div className='flex flex-col items-start justify-center gap-2'>
+                <label className='whitespace-nowrap' title='unidad de concentracion'>
+                  <select className='w-full px-2 py-0.5 bg-transparent border-0 border-b border-gray-300 focus:outline-none focus:ring-0 focus:shadow-none focus:border-blue-500 transition-colors duration-200' name="unidad" id="unidad">
+                    <option value="">Unidad de concentracion</option>
+                    <option value="mg">mg</option>
+                    <option value="ml">ml</option>
+                    <option value="g">g</option>
+                    <option value="unidades_internacionales">U.I.</option>
+                    <option value="porcentaje">porcentaje</option>
+                  </select>
+                </label>
+              </div>
+              <div className='flex flex-col items-start justify-center gap-2'>
+                <label className='whitespace-nowrap' title='cantidad de concentracion'>
+                  <input type="number" placeholder='Cantidad de concentracion' className='leading-none px-2 py-0.5 w-full bg-transparent border-0 border-b border-gray-300 focus:outline-none focus:ring-0 focus:shadow-none focus:border-blue-500 transition-colors duration-200'/>
+                </label>
+              </div>
+              <div className='flex flex-col items-start justify-center gap-2'>
+                <label className='whitespace-nowrap' title='unidad de concentracion por item'>
+                  <select className='w-full px-2 py-0.5 bg-transparent border-0 border-b border-gray-300 focus:outline-none focus:ring-0 focus:shadow-none focus:border-blue-500 transition-colors duration-200' name="unidad_por_item" id="unidad_por_item">
+                    <option value="">Por:</option>
+                    <option value="comprimidos">Comprimidos</option>
+                    <option value="mg">mg</option>
+                    <option value="ml">ml</option>
+                    <option value="g">g</option>
+                    <option value="unidades_internacionales">U.I.</option>
+                    <option value="porcentaje">porcentaje</option>
+                  </select>
+                </label>
+              </div>
+            </div>
+            <div>
+              <h2 className='font-semibold text-xl'>Composición</h2>
+              <p>Droga: [ Ibuprofeno ▼ ]</p>
+              <p>Cantidad: [600]</p>
+              <p>Unidad: [mg ▼]</p>
+              <p>Acción: [Eliminar]</p>
+              <button>[ + Agregar droga ]</button>
 
-        <h2 className='font-semibold text-xl'>Unidad de dispensación</h2>
-        <p>Unidad mínima dispensable: [ comprimido ▼ ]</p>
+              <h2 className='font-semibold text-xl'>Condiciones especiales</h2>
+              <p>[ ] Requiere refrigeración</p>
+              <p>[ ] Ranurable</p>
+              <p>[ ] Venta bajo receta</p>
+              <p>[ ] Medicación controlada</p>
 
-        <h2 className='font-semibold text-xl'>Concentración principal</h2>
-        <p>Cantidad: [ 600 ]</p>
-        <p>Unidad: [ mg ▼ ]</p>
-        <p>Por: [ comprimido ▼ ]</p>
-
-        <h2 className='font-semibold text-xl'>Composición</h2>
-        <p>Droga: [ Ibuprofeno ▼ ]</p>
-        <p>Cantidad: [600]</p>
-        <p>Unidad: [mg ▼]</p>
-        <p>Acción: [Eliminar]</p>
-        <button>[ + Agregar droga ]</button>
-
-        <h2 className='font-semibold text-xl'>Condiciones especiales</h2>
-        <p>[ ] Requiere refrigeración</p>
-        <p>[ ] Ranurable</p>
-        <p>[ ] Venta bajo receta</p>
-        <p>[ ] Medicación controlada</p>
-
-        <h2 className='font-semibold text-xl'>Observaciones</h2>
-        <p>[__________________________________________]</p>
-        <p>[__________________________________________]</p>
-
-        <button>[ Cancelar ]</button>
-        <button>[ Guardar Medicamento ]</button>           <p>Formulario para crear nuevo medicamento...</p>
+              <h2 className='font-semibold text-xl'>Observaciones</h2>
+              <p>[__________________________________________]</p>
+              <p>[__________________________________________]</p>
+            </div>
+          </div>
+        </div>
+      <button>[ Guardar Medicamento ]</button>           
+      <button>[ Formulario para crear nuevo medicamento...] </button>
       </div>
     </Modal>
-
     </div>
     </>
   )
