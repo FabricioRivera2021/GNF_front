@@ -313,7 +313,7 @@ function AbastecimientoNuevoMed() {
                     <div className='flex flex-col w-full items-start'>
                       <button 
                         disabled={!enableNewDrugInput || newDrugName.trim() === ''}
-                        className={`border w-full ${enableNewDrugInput ? `border-blue-500 text-blue-500 ${newDrugName.trim() === '' ? 'bg-gray-300 text-gray-400 border-blue-50 text-gray-50' : 'hover:bg-blue-500 hover:text-white'}` : 'border-gray-300 text-gray-400'} mt-4 px-1 py-0.5 rounded-md transition-colors duration-200`} 
+                        className={`border w-full ${enableNewDrugInput ? `border-blue-500 text-blue-500 ${newDrugName.trim() === '' ? 'bg-gray-300 border-blue-50 text-gray-50' : 'hover:bg-blue-500 hover:text-white'}` : 'border-gray-300 text-gray-400'} mt-4 px-1 py-0.5 rounded-md transition-colors duration-200`} 
                         onClick={() => handleConfirmCreateDrug()}
                       >
                         Guardar
