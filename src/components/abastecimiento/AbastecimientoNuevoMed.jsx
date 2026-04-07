@@ -242,46 +242,37 @@ function AbastecimientoNuevoMed() {
                     </thead>
                     <tbody>
                       <tr className='border hover:bg-gray-200 transition duration-200 cursor-pointer'>
-                        <td className='border' onClick={() => setSelectedDrugName('Ibuprofeno')}>Ibuprofeno</td>
+                        <td className='border' onClick={() => {setSelectedDrugName('Ibuprofeno'), setEnableNewDrugInput(false);}}>Ibuprofeno</td>
                       </tr>
                       <tr className='border hover:bg-gray-200 transition duration-200 cursor-pointer'>
-                        <td className='border' onClick={() => setSelectedDrugName('Paracetamol')}>Paracetamol</td>
+                        <td className='border' onClick={() => {setSelectedDrugName('Paracetamol'), setEnableNewDrugInput(false);}}>Paracetamol</td>
                       </tr>
                       <tr className='border hover:bg-gray-200 transition duration-200 cursor-pointer'>
-                        <td className='border' onClick={() => setSelectedDrugName('Amoxicilina')}>Amoxicilina</td>
+                        <td className='border' onClick={() => {setSelectedDrugName('Amoxicilina'), setEnableNewDrugInput(false);}}>Amoxicilina</td>
                       </tr>
                       <tr className='border hover:bg-gray-200 transition duration-200 cursor-pointer'>
-                        <td className='border' onClick={() => setSelectedDrugName('Acido clavulánico')}>Acido clavulánico</td>
+                        <td className='border' onClick={() => {setSelectedDrugName('Acido clavulánico'), setEnableNewDrugInput(false);}}>Acido clavulánico</td>
                       </tr>
                       <tr className='border hover:bg-gray-200 transition duration-200 cursor-pointer'>
-                        <td className='border' onClick={() => setSelectedDrugName('Acido clavulánico')}>Acido clavulánico</td>
+                        <td className='border' onClick={() => {setSelectedDrugName('Acido clavulánico'), setEnableNewDrugInput(false);}}>Acido clavulánico</td>
                       </tr>
                       <tr className='border hover:bg-gray-200 transition duration-200 cursor-pointer'>
-                        <td className='border' onClick={() => setSelectedDrugName('Acido clavulánico')}>Acido clavulánico</td>
+                        <td className='border' onClick={() => {setSelectedDrugName('Acido clavulánico'), setEnableNewDrugInput(false);}}>Acido clavulánico</td>
                       </tr>
                       <tr className='border hover:bg-gray-200 transition duration-200 cursor-pointer'>
-                        <td className='border' onClick={() => setSelectedDrugName('Acido clavulánico')}>Acido clavulánico</td>
+                        <td className='border' onClick={() => {setSelectedDrugName('Acido clavulánico'), setEnableNewDrugInput(false);}}>Acido clavulánico</td>
                       </tr>
                       <tr className='border hover:bg-gray-200 transition duration-200 cursor-pointer'>
-                        <td className='border' onClick={() => setSelectedDrugName('Acido clavulánico')}>Acido clavulánico</td>
+                        <td className='border' onClick={() => {setSelectedDrugName('Acido clavulánico'), setEnableNewDrugInput(false);}}>Acido clavulánico</td>
                       </tr>
                       <tr className='border hover:bg-gray-200 transition duration-200 cursor-pointer'>
-                        <td className='border' onClick={() => setSelectedDrugName('Acido clavulánico')}>Acido clavulánico</td>
+                        <td className='border' onClick={() => {setSelectedDrugName('Acido clavulánico'), setEnableNewDrugInput(false);}}>Acido clavulánico</td>
                       </tr>
                       <tr className='border hover:bg-gray-200 transition duration-200 cursor-pointer'>
-                        <td className='border' onClick={() => setSelectedDrugName('Acido clavulánico')}>Acido clavulánico</td>
+                        <td className='border' onClick={() => {setSelectedDrugName('Acido clavulánico'), setEnableNewDrugInput(false);}}>Acido clavulánico</td>
                       </tr>
                       <tr className='border hover:bg-gray-200 transition duration-200 cursor-pointer'>
-                        <td className='border' onClick={() => setSelectedDrugName('Acido clavulánico')}>Acido clavulánico</td>
-                      </tr>
-                      <tr className='border hover:bg-gray-200 transition duration-200 cursor-pointer'>
-                        <td className='border' onClick={() => setSelectedDrugName('Acido clavulánico')}>Acido clavulánico</td>
-                      </tr>
-                      <tr className='border hover:bg-gray-200 transition duration-200 cursor-pointer'>
-                        <td className='border' onClick={() => setSelectedDrugName('Acido clavulánico')}>Acido clavulánico</td>
-                      </tr>
-                      <tr className='border hover:bg-gray-200 transition duration-200 cursor-pointer'>
-                        <td className='border' onClick={() => setSelectedDrugName('Acido clavulánico')}>Acido clavulánico</td>
+                        <td className='border' onClick={() => {setSelectedDrugName('Acido clavulánico'), setEnableNewDrugInput(false);}}>Acido clavulánico</td>
                       </tr>
                     </tbody>
                   </table>
@@ -306,6 +297,7 @@ function AbastecimientoNuevoMed() {
               {/* ---------------------- ingresar nueva droga */}
               <div className='flex flex-col border-2 rounded-md border-gray-300 px-2 py-1 mt-4 text-gray-800 shadow-md'>
                 <div>
+                  {(enableNewDrugInput) ? (
                   <div className={`flex flex-col items-start border-2 ${enableNewDrugInput ? '' : 'bg-gray-200'} p-2 mb-4 rounded-lg shadow-sm`}>
                     <div className='flex items-start'>
                       <p className={`${enableNewDrugInput ? 'text-slate-800' : 'text-gray-400'}`}>Ingresar nueva droga: </p>
@@ -320,13 +312,14 @@ function AbastecimientoNuevoMed() {
                     </div>
                     <div className='flex flex-col w-full items-start'>
                       <button 
-                        disabled={!enableNewDrugInput}
-                        className={`border w-full ${enableNewDrugInput ? 'border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white' : 'border-gray-300 text-gray-400'} mt-4 px-1 py-0.5 rounded-md transition-colors duration-200`} 
+                        disabled={!enableNewDrugInput || newDrugName.trim() === ''}
+                        className={`border w-full ${enableNewDrugInput ? `border-blue-500 text-blue-500 ${newDrugName.trim() === '' ? 'bg-gray-300 text-gray-400 border-blue-50 text-gray-50' : 'hover:bg-blue-500 hover:text-white'}` : 'border-gray-300 text-gray-400'} mt-4 px-1 py-0.5 rounded-md transition-colors duration-200`} 
                         onClick={() => handleConfirmCreateDrug()}
                       >
                         Guardar
                       </button>
                     </div>
+
                     <Modal show={confirmationModal} handleClose={() => setConfirmationModal(false)} cancelButtonShown={false}>
                       <h2 className='font-bold text-xl mb-4'>Confirmar creación de droga</h2>
                         <p>¿Estás seguro de que deseas crear esta nueva droga?</p>
@@ -347,31 +340,38 @@ function AbastecimientoNuevoMed() {
                         </div>
                     </Modal>
                   </div>
-                  <div className='w-full border-2 border-gray-100 rounded-lg p-2 mb-4 shadow-sm bg-lime-600 text-white'>
+                  ) : (selectedDrugName === '') && (
+                    <p className='text-gray-400'>Selecciona la droga para ingresar su concentración.</p>
+                  )}
+                  {(selectedDrugName && !enableNewDrugInput) && (
+                  <div className='w-full border-2 border-gray-100 rounded-lg p-2 mb-4 shadow-sm bg-lime-600 text-white transition-all duration-200'>
                     <p className='text-lg font-semibold capitalize'>{selectedDrugName}</p>
                   </div>
-                  <input 
-                    className='leading-none px-2 py-0.5 bg-transparent border-0 border-b border-gray-300 focus:outline-none focus:ring-0 focus:shadow-none focus:border-blue-500 transition-colors duration-200' 
-                    placeholder='Ej: 600' 
-                    type="number" 
-                  />
-                  <select name="unidad_medida" id="unidad_medida" className='!appearance-none py-0.5 bg-transparent border-0 border-gray-300 focus:outline-none focus:ring-0 focus:shadow-none focus:border-blue-500 transition-colors duration-200'>
-                    <option value="mg" selected>mg</option>
-                    <option value="ml">ml</option>
-                  </select>
-                  <p className='text-sm px-2 bg-orange-50 rounded-md mt-2'>Ingrese la concentración indicando la cantidad de sustancia activa contenida en una cantidad total del producto.</p>
-                  <p className='text-sm px-2 bg-orange-50 rounded-md mt-2'>La concentración debe expresarse de forma clara, por ejemplo: mg/mL, g/L o porcentaje (%).</p>
-                  <p className='text-sm px-2 bg-orange-50 rounded-md mt-2'>Asegúrese de que los valores sean correctos, ya que esta información se utiliza para el cálculo de dosis y administración del medicamento.</p>
-                  <input 
-                    className='leading-none px-2 py-0.5 bg-transparent border-0 border-b border-gray-300 focus:outline-none focus:ring-0 focus:shadow-none focus:border-blue-500 transition-colors duration-200' 
-                    placeholder='Ej: 600' 
-                    type="number" 
-                  />
-                  <select name="unidad_medida" id="unidad_medida" className='!appearance-none py-0.5 bg-transparent border-0 border-gray-300 focus:outline-none focus:ring-0 focus:shadow-none focus:border-blue-500 transition-colors duration-200'>
-                    <option value="mg" selected>mg</option>
-                    <option value="ml">ml</option>
-                    <option value="comp">comp</option>
-                  </select>
+                  )}
+                  <div>
+                    <input 
+                      className='leading-none px-2 py-0.5 bg-transparent border-0 border-b border-gray-300 focus:outline-none focus:ring-0 focus:shadow-none focus:border-blue-500 transition-colors duration-200' 
+                      placeholder='Ej: 600' 
+                      type="number" 
+                      />
+                    <select name="unidad_medida" id="unidad_medida" className='!appearance-none py-0.5 bg-transparent border-0 border-gray-300 focus:outline-none focus:ring-0 focus:shadow-none focus:border-blue-500 transition-colors duration-200'>
+                      <option value="mg" selected>mg</option>
+                      <option value="ml">ml</option>
+                    </select>
+                    <p className='text-sm px-2 bg-orange-50 rounded-md mt-2'>Ingrese la concentración indicando la cantidad de sustancia activa contenida en una cantidad total del producto.</p>
+                    <p className='text-sm px-2 bg-orange-50 rounded-md mt-2'>La concentración debe expresarse de forma clara, por ejemplo: mg/mL, g/L o porcentaje (%).</p>
+                    <p className='text-sm px-2 bg-orange-50 rounded-md mt-2'>Asegúrese de que los valores sean correctos, ya que esta información se utiliza para el cálculo de dosis y administración del medicamento.</p>
+                    <input 
+                      className='leading-none px-2 py-0.5 bg-transparent border-0 border-b border-gray-300 focus:outline-none focus:ring-0 focus:shadow-none focus:border-blue-500 transition-colors duration-200' 
+                      placeholder='Ej: 600' 
+                      type="number" 
+                    />
+                    <select name="unidad_medida" id="unidad_medida" className='!appearance-none py-0.5 bg-transparent border-0 border-gray-300 focus:outline-none focus:ring-0 focus:shadow-none focus:border-blue-500 transition-colors duration-200'>
+                      <option value="mg" selected>mg</option>
+                      <option value="ml">ml</option>
+                      <option value="comp">comp</option>
+                    </select>
+                  </div>
                 </div>
                 <button className='border border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white mt-4 px-1 py-0.5 rounded-md transition-colors duration-200'>Ingresar</button>
               </div>
