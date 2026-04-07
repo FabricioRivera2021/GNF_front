@@ -1,5 +1,7 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Modal from '../Modal';
+import { fetchAllDrugs } from '../../API/apiServices';
+import axios from 'axios';
 
 function AbastecimientoNuevoMed() {
 
@@ -17,9 +19,14 @@ function AbastecimientoNuevoMed() {
   const [newDrugName, setNewDrugName] = useState('');
   const [selectedDrugName, setSelectedDrugName] = useState('');
   const [enableNewDrugInput, setEnableNewDrugInput] = useState(false);
+  const [drugs, setDrugs] = useState([]);
 
   const scrolllock = modal ? 'hidden' : 'auto';
   document.body.style.overflow = scrolllock;
+
+  useEffect(() => {
+    fetchAllDrugs(setDrugs);
+  }, []);
 
   return (
     <>
@@ -241,39 +248,27 @@ function AbastecimientoNuevoMed() {
                       </tr>
                     </thead>
                     <tbody>
-                      <tr className='border hover:bg-gray-200 transition duration-200 cursor-pointer'>
-                        <td className='border' onClick={() => {setSelectedDrugName('Ibuprofeno'), setEnableNewDrugInput(false);}}>Ibuprofeno</td>
-                      </tr>
-                      <tr className='border hover:bg-gray-200 transition duration-200 cursor-pointer'>
-                        <td className='border' onClick={() => {setSelectedDrugName('Paracetamol'), setEnableNewDrugInput(false);}}>Paracetamol</td>
-                      </tr>
-                      <tr className='border hover:bg-gray-200 transition duration-200 cursor-pointer'>
-                        <td className='border' onClick={() => {setSelectedDrugName('Amoxicilina'), setEnableNewDrugInput(false);}}>Amoxicilina</td>
-                      </tr>
-                      <tr className='border hover:bg-gray-200 transition duration-200 cursor-pointer'>
-                        <td className='border' onClick={() => {setSelectedDrugName('Acido clavulánico'), setEnableNewDrugInput(false);}}>Acido clavulánico</td>
-                      </tr>
-                      <tr className='border hover:bg-gray-200 transition duration-200 cursor-pointer'>
-                        <td className='border' onClick={() => {setSelectedDrugName('Acido clavulánico'), setEnableNewDrugInput(false);}}>Acido clavulánico</td>
-                      </tr>
-                      <tr className='border hover:bg-gray-200 transition duration-200 cursor-pointer'>
-                        <td className='border' onClick={() => {setSelectedDrugName('Acido clavulánico'), setEnableNewDrugInput(false);}}>Acido clavulánico</td>
-                      </tr>
-                      <tr className='border hover:bg-gray-200 transition duration-200 cursor-pointer'>
-                        <td className='border' onClick={() => {setSelectedDrugName('Acido clavulánico'), setEnableNewDrugInput(false);}}>Acido clavulánico</td>
-                      </tr>
-                      <tr className='border hover:bg-gray-200 transition duration-200 cursor-pointer'>
-                        <td className='border' onClick={() => {setSelectedDrugName('Acido clavulánico'), setEnableNewDrugInput(false);}}>Acido clavulánico</td>
-                      </tr>
-                      <tr className='border hover:bg-gray-200 transition duration-200 cursor-pointer'>
-                        <td className='border' onClick={() => {setSelectedDrugName('Acido clavulánico'), setEnableNewDrugInput(false);}}>Acido clavulánico</td>
-                      </tr>
-                      <tr className='border hover:bg-gray-200 transition duration-200 cursor-pointer'>
-                        <td className='border' onClick={() => {setSelectedDrugName('Acido clavulánico'), setEnableNewDrugInput(false);}}>Acido clavulánico</td>
-                      </tr>
-                      <tr className='border hover:bg-gray-200 transition duration-200 cursor-pointer'>
-                        <td className='border' onClick={() => {setSelectedDrugName('Acido clavulánico'), setEnableNewDrugInput(false);}}>Acido clavulánico</td>
-                      </tr>
+                        {drugs == null ? (
+                          <tr className='border'>Cargando...</tr>
+                        ) : (
+                          drugs.map((drug, index) => (
+                            <tr 
+                              className={`border hover:bg-gray-200 transition duration-200 cursor-pointer ${selectedDrugName === drug.droga ? 'bg-blue-100' : ''}`}
+                              key={index}
+                              onClick={() => {
+                                setSelectedDrugName(drug.droga);
+                                setEnableNewDrugInput(false);
+                              }}
+                            >
+                              {drug.droga}
+                            </tr>
+                          ))
+                        )}
+                        {/* {drugs.map((drug, index) => {
+                          <td className='border' key={index} onClick={() => {setSelectedDrugName(drug.droga), setEnableNewDrugInput(false);}}>
+                            {drug.droga}
+                          </td>
+                        })} */}
                     </tbody>
                   </table>
                 </div>

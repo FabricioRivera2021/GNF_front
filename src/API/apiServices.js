@@ -334,3 +334,19 @@ export const fetchHistoricoRetiros = (customer_id, setHistoricoRetiros) => {
             console.error('Error fetching historico retiros:', error);
         });
 }
+
+
+//medicaciones que se estan creando en el catalogo
+
+//drogas
+export const fetchAllDrugs = (setDrugs) => {
+    console.log(`${API_URL}/allDrugs`);
+    axios
+        .get(`${API_URL}/allDrugs`)
+        .then(response => {
+            setDrugs(response.data);
+        })
+        .catch(error => {
+            console.error('Error fetching drugs:', error);
+        });
+}
