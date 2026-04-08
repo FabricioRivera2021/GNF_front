@@ -344,6 +344,7 @@ export const fetchAllDrugs = (setDrugs) => {
     axios
         .get(`${API_URL}/allDrugs`)
         .then(response => {
+            response.data.sort((a, b) => a.droga.localeCompare(b.droga)); //ordenar por orden alfabetico
             setDrugs(response.data);
         })
         .catch(error => {

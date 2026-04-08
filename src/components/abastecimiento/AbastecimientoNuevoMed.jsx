@@ -248,7 +248,7 @@ function AbastecimientoNuevoMed() {
                       </tr>
                     </thead>
                     <tbody>
-                        {drugs == null ? (
+                        {drugs == '' ? (
                           <tr className='border'>Cargando...</tr>
                         ) : (
                           drugs.map((drug, index) => (
