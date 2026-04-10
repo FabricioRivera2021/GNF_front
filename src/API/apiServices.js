@@ -351,3 +351,17 @@ export const fetchAllDrugs = (setDrugs) => {
             console.error('Error fetching drugs:', error);
         });
 }
+
+//crear nueva droga
+export const createNewDrug = async (drugName) => {
+    axios.post(`${API_URL}/createDrug`, { droga: drugName })
+      .then(response => {
+        console.log('Droga creada exitosamente:', response.data);
+        fetchAllDrugs(setDrugs);
+        // Aquí puedes agregar lógica adicional, como actualizar la lista de drogas o mostrar un mensaje de éxito
+      })
+      .catch(error => {
+        console.error('Error al crear la droga:', error);
+        // Aquí puedes manejar el error, como mostrar un mensaje de error al usuario
+      });
+}

@@ -16,6 +16,10 @@ function AbastecimientoNuevoMed() {
     setConfirmationModal(true);
   }
 
+  const handleCreateNewDrug = async (drugName) => {
+    createNewDrug(drugName);
+  }
+
   const [newDrugName, setNewDrugName] = useState('');
   const [selectedDrugName, setSelectedDrugName] = useState('');
   const [enableNewDrugInput, setEnableNewDrugInput] = useState(false);
@@ -308,13 +312,13 @@ function AbastecimientoNuevoMed() {
                     <div className='flex flex-col w-full items-start'>
                       <button 
                         disabled={!enableNewDrugInput || newDrugName.trim() === ''}
-                        className={`border w-full ${enableNewDrugInput ? `border-blue-500 text-blue-500 ${newDrugName.trim() === '' ? 'bg-gray-300 border-blue-50 text-gray-50' : 'hover:bg-blue-500 hover:text-white'}` : 'border-gray-300 text-gray-400'} mt-4 px-1 py-0.5 rounded-md transition-colors duration-200`} 
+                        className={`border w-full ${enableNewDrugInput ? `border-gray-200 text-blue-500 ${newDrugName.trim() === '' ? 'bg-gray-300 border-blue-50 text-gray-50' : 'hover:bg-blue-500 hover:text-white'}` : 'border-gray-300 text-gray-400'} mt-4 px-1 py-0.5 rounded-md transition-colors duration-200`} 
                         onClick={() => handleConfirmCreateDrug()}
                       >
                         Guardar
                       </button>
                     </div>
-
+                    {/* Confirmar creación de droga - MODAL */}
                     <Modal show={confirmationModal} handleClose={() => setConfirmationModal(false)} cancelButtonShown={false}>
                       <h2 className='font-bold text-xl mb-4'>Confirmar creación de droga</h2>
                         <p>¿Estás seguro de que deseas crear esta nueva droga?</p>
@@ -328,7 +332,14 @@ function AbastecimientoNuevoMed() {
                             className='border border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white px-2 py-0.5 rounded-md transition-colors duration-200'
                             onClick={() => {
                               // Lógica para guardar la nueva droga en el catálogo
+                              // Enviar la nueva droga a la API para guardarla en la base de datos
+                              handleCreateNewDrug(newDrugName);
+
+                              //limpiar estado y cerrar modales
                               setConfirmationModal(false);
+                              setEnableNewDrugInput(false);
+                              setNewDrugName('');
+                              setSelectedDrugName(newDrugName);
                             }}
                           >
                             Confirmar</button>
