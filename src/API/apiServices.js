@@ -357,7 +357,6 @@ export const createNewDrug = async (drugName) => {
     axios.post(`${API_URL}/createDrug`, { droga: drugName })
       .then(response => {
         console.log('Droga creada exitosamente:', response.data);
-        fetchAllDrugs(setDrugs);
         // Aquí puedes agregar lógica adicional, como actualizar la lista de drogas o mostrar un mensaje de éxito
       })
       .catch(error => {

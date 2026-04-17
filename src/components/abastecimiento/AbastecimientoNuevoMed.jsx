@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Modal from '../Modal';
-import { fetchAllDrugs } from '../../API/apiServices';
+import { createNewDrug, fetchAllDrugs } from '../../API/apiServices';
 import axios from 'axios';
 
 function AbastecimientoNuevoMed() {
@@ -20,10 +20,21 @@ function AbastecimientoNuevoMed() {
     createNewDrug(drugName);
   }
 
+  const handleAddDrugToForm = () => {
+    // Lógica para agregar la droga seleccionada al formulario de creación de medicamento
+    // Se debe actualizar la tabla con las drogas que componen el medicamento
+    // nombre de la droga, concentracion de la droga en x cantidad de medicacion, etc. se toman de los inputs del modal
+    console.log("Adding drug to form:", selectedDrugName);
+    console.log("Concentration and unit would be taken from the modal inputs");
+    console.log("Aquí se debería agregar la droga seleccionada a la tabla de composición del medicamento en el formulario principal");
+  }
+
   const [newDrugName, setNewDrugName] = useState('');
   const [selectedDrugName, setSelectedDrugName] = useState('');
   const [enableNewDrugInput, setEnableNewDrugInput] = useState(false);
   const [drugs, setDrugs] = useState([]);
+  const [medicationBaseConcentration, setMedicationBaseConcentration] = useState('');
+  const [medicationBaseConcentrationUnit, setMedicationBaseConcentrationUnit] = useState('');
 
   const scrolllock = modal ? 'hidden' : 'auto';
   document.body.style.overflow = scrolllock;
@@ -31,6 +42,10 @@ function AbastecimientoNuevoMed() {
   useEffect(() => {
     fetchAllDrugs(setDrugs);
   }, []);
+
+  useEffect(() => {
+    console.log("Unidad:", medicationBaseConcentrationUnit);
+  }, [medicationBaseConcentrationUnit]);
 
   return (
     <>
@@ -109,8 +124,16 @@ function AbastecimientoNuevoMed() {
                     className='leading-none px-2 py-0.5 bg-transparent border-0 border-b border-gray-300 focus:outline-none focus:ring-0 focus:shadow-none focus:border-blue-500 transition-colors duration-200' 
                     placeholder='Ej: 600' 
                     type="number" 
+                    onChange={(e) => setMedicationBaseConcentration(e.target.value)}
                     />
-                  <select name="unidad_medida" id="unidad_medida" className='!appearance-none py-0.5 pl-2 bg-transparent border-0 border-gray-300 focus:outline-none focus:ring-0 focus:shadow-none focus:border-blue-500 transition-colors duration-200'>
+                  <select 
+                    name="unidad_medida" 
+                    id="unidad_medida" 
+                    className='!appearance-none py-0.5 pl-2 bg-transparent border-0 border-gray-300 focus:outline-none focus:ring-0 focus:shadow-none focus:border-blue-500 transition-colors duration-200'
+                    onChange={(e) => setMedicationBaseConcentrationUnit(e.target.value)}
+                    value={medicationBaseConcentrationUnit}
+                  >
+                    {/* atrapar el valor de la option y cargarlo en setMedicationBaseConcentrationUnit */}
                     <option value="comp" selected>comp.</option>
                     <option value="mg">mg</option>
                     <option value="ml">ml</option>
@@ -340,6 +363,7 @@ function AbastecimientoNuevoMed() {
                               setEnableNewDrugInput(false);
                               setNewDrugName('');
                               setSelectedDrugName(newDrugName);
+                              fetchAllDrugs(setDrugs);
                             }}
                           >
                             Confirmar</button>
@@ -367,19 +391,37 @@ function AbastecimientoNuevoMed() {
                     <p className='text-sm px-2 bg-orange-50 rounded-md mt-2'>Ingrese la concentración indicando la cantidad de sustancia activa contenida en una cantidad total del producto.</p>
                     <p className='text-sm px-2 bg-orange-50 rounded-md mt-2'>La concentración debe expresarse de forma clara, por ejemplo: mg/mL, g/L o porcentaje (%).</p>
                     <p className='text-sm px-2 bg-orange-50 rounded-md mt-2'>Asegúrese de que los valores sean correctos, ya que esta información se utiliza para el cálculo de dosis y administración del medicamento.</p>
-                    <input 
-                      className='leading-none px-2 py-0.5 bg-transparent border-0 border-b border-gray-300 focus:outline-none focus:ring-0 focus:shadow-none focus:border-blue-500 transition-colors duration-200' 
-                      placeholder='Ej: 600' 
-                      type="number" 
-                    />
-                    <select name="unidad_medida" id="unidad_medida" className='!appearance-none py-0.5 bg-transparent border-0 border-gray-300 focus:outline-none focus:ring-0 focus:shadow-none focus:border-blue-500 transition-colors duration-200'>
-                      <option value="mg" selected>mg</option>
-                      <option value="ml">ml</option>
-                      <option value="comp">comp</option>
-                    </select>
+                    <div className='flex flex-row items-center'>
+                      <input 
+                        className='leading-none px-2 py-0.5 bg-transparent border-0 border-b border-gray-300 focus:outline-none focus:ring-0 focus:shadow-none focus:border-blue-500 transition-colors duration-200' 
+                        placeholder='Ej: 600' 
+                        type="number" 
+                        value={medicationBaseConcentration}
+                      />
+                      <div className='text-sm px-2 bg-orange-50 rounded-md mt-2'>
+                        <p>{medicationBaseConcentrationUnit}</p>
+                      </div>
+                      {/* <select 
+                        name="unidad_medida" 
+                        id="unidad_medida" 
+                        className='!appearance-none py-0.5 bg-transparent bg-gray-400 text-gray-500 border-0 border-gray-300 focus:outline-none focus:ring-0 focus:shadow-none focus:border-blue-500 transition-colors duration-200'
+                        value={medicationBaseConcentrationUnit}
+                        disabled={!medicationBaseConcentration}
+                        >
+                        <option value="mg">mg</option>
+                        <option value="ml">ml</option>
+                        <option value="comp">comp</option>
+                        </select>
+                        <p className='text-sm px-2 bg-orange-50 rounded-md mt-2'>La unidad de medida se actualizará automáticamente según la concentración ingresada.</p> */}
+                    </div>
                   </div>
                 </div>
-                <button className='border border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white mt-4 px-1 py-0.5 rounded-md transition-colors duration-200'>Ingresar</button>
+                <button 
+                className='border border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white mt-4 px-1 py-0.5 rounded-md transition-colors duration-200'
+                onClick={() => handleAddDrugToForm()}
+                >
+                  Ingresar
+                </button>
               </div>
               {/* ----------------------- fin ingresar nueva droga */}
             </div>
