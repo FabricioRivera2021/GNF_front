@@ -26,47 +26,66 @@ function AbastecimientoNuevoMed() {
     // nombre de la droga, concentracion de la droga en x cantidad de medicacion, etc. se toman de los inputs del modal
     console.log("Adding drug to form:", selectedDrugName);
     console.log("Concentration de la droga: ", drugConcentration," ", drugConcentrationUnit, " en ", medicationBaseConcentration, " ", medicationBaseConcentrationUnit);
-    // agregarla al local storage y si ya hay algo en el local storage agregarlo a la lista y actualizarla, si no hay nada crear la lista con la droga seleccionada
-    const existingDrugs = JSON.parse(localStorage.getItem('selectedDrugs')) || [];
-    const updatedDrugs = [
-        ...existingDrugs,
-        {
-          name: selectedDrugName,
-          concentration: drugConcentration,
-          unit: drugConcentrationUnit,
-          baseConcentration: medicationBaseConcentration,
-          baseUnit: medicationBaseConcentrationUnit
-        }
-      ];
-    localStorage.setItem('selectedDrugs', JSON.stringify(updatedDrugs));
-    setDrugCounter(drugCounter + 1);
+    // agregarla a la lista de drugs
+    const newDrug = {
+      id: Date.now(),
+      name: selectedDrugName,
+      concentration: drugConcentration,
+      unit: drugConcentrationUnit,
+      base: medicationBaseConcentration,
+      baseUnit: medicationBaseConcentrationUnit
+    };
+    setDrugsInMedicationBase(prev => [...prev, newDrug]);
   }
 
-  const handleRemoveDrug = (index) => {
-    const existingDrugs = JSON.parse(localStorage.getItem('selectedDrugs')) || [];
-    const updatedDrugs = existingDrugs.filter((_, i) => i !== index); // Eliminar la droga en el índice especificado
-    localStorage.setItem('selectedDrugs', JSON.stringify(updatedDrugs));
-    setDrugCounter(drugCounter - 1);
-  }
+  const handleRemoveDrug = (id) => {
+    setDrugsInMedicationBase(prev =>
+      prev.filter(drug => drug.id !== id)
+    );
+  };
+
+  // const handleRemoveDrug = (index) => {
+  //   const existingDrugs = JSON.parse(localStorage.getItem('selectedDrugs')) || [];
+  //   const updatedDrugs = existingDrugs.filter((_, i) => i !== index); // Eliminar la droga en el índice especificado
+  //   localStorage.setItem('selectedDrugs', JSON.stringify(updatedDrugs));
+  //   setDrugCounter(drugCounter - 1);
+  // }
 
   const [newDrugName, setNewDrugName] = useState('');
   const [selectedDrugName, setSelectedDrugName] = useState('');
   const [enableNewDrugInput, setEnableNewDrugInput] = useState(false);
-  const [drugs, setDrugs] = useState([]);
-  const [drugsInMedicationBase, setDrugsInMedicationBase] = useState([]);
+  const [drugs, setDrugs] = useState([]); //lista con las drigas que seran cargadas en la medicacion
+  const [drugsInMedicationBase, setDrugsInMedicationBase] = useState(() => {
+    const stored = localStorage.getItem('selectedDrugs');
+    return stored ? JSON.parse(stored) : [];
+  });
   const [medicationBaseConcentration, setMedicationBaseConcentration] = useState('');
   const [medicationBaseConcentrationUnit, setMedicationBaseConcentrationUnit] = useState('');
   const [drugConcentration, setDrugConcentration] = useState('');
   const [drugConcentrationUnit, setDrugConcentrationUnit] = useState('mg');
-  const [drugCounter, setDrugCounter] = useState(0);
 
-  const scrolllock = modal ? 'hidden' : 'auto';
-  document.body.style.overflow = scrolllock;
+  // USE EFFECTS--------------------------------------------------------------------
+  useEffect(() => {
+    //cuando el estado cambie actualizar el local storage como backup de lo que se esta ingresando
+    localStorage.setItem(
+      'selectedDrugs', JSON.stringify(drugsInMedicationBase)
+    );
+  }, [drugsInMedicationBase])
 
   useEffect(() => {
-    const storedDrugs = JSON.parse(localStorage.getItem('selectedDrugs')) || [];
-    setDrugsInMedicationBase(storedDrugs);
-  }, [drugCounter]);
+    document.body.style.overflow = modal ? 'hidden' : 'auto';
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, [modal]);
+
+  useEffect(() => {
+    const stored = localStorage.getItem('selectedDrugs')
+    if (stored) {
+      const drogas = JSON.parse(stored);
+      console.log("drogas:", drogas);
+    }
+  }, []);
 
   useEffect(() => {
     fetchAllDrugs(setDrugs);
@@ -205,9 +224,9 @@ function AbastecimientoNuevoMed() {
                       <tr className='border hover:bg-gray-100' key={index}>
                         <td className='border'>{drug.name}</td>
                         <td className='border'>{drug.unit}</td>
-                        <td className='border'>{drug.concentration} {drug.unit} en {drug.baseConcentration} {drug.baseUnit}</td>
+                        <td className='border'>{drug.concentration} {drug.unit} en {drug.base} {drug.baseUnit}</td>
                         <td className='border text-red-500 hover:bg-red-500 hover:text-white px-1 py-0.5 rounded-md transition-colors duration-200 cursor-pointer'>
-                          <button onClick={() => handleRemoveDrug(index)}>Eliminar</button>
+                          <button onClick={() => handleRemoveDrug(drug.id)}>Eliminar</button>
                         </td>
                       </tr>
                     ))}
@@ -238,55 +257,13 @@ function AbastecimientoNuevoMed() {
                 </div>
               </div>
             </div>
-            <div className='flex flex-col gap-2 items-start justify-between'>
-              <h2 className='font-semibold text-lg whitespace-nowrap'>Concentracion general</h2>
-              <div className='flex border-2 p-2 rounded-lg gap-4'>
-                <div className='border-2'>
-                  <div className='flex flex-col items-start justify-center gap-2'>
-                    <label className='whitespace-nowrap' title='unidad de concentracion'>
-                      <select className='w-full px-2 py-0.5 bg-transparent border-0 border-b border-gray-300 focus:outline-none focus:ring-0 focus:shadow-none focus:border-blue-500 transition-colors duration-200' name="unidad" id="unidad">
-                        <option value="">Unidades en</option>
-                        <option value="mg">mg</option>
-                        <option value="ml">ml</option>
-                        <option value="g">g</option>
-                        <option value="unidades_internacionales">U.I.</option>
-                        <option value="porcentaje">porcentaje</option>
-                      </select>
-                    </label>
-                  </div>
-                  <div className='flex flex-col items-start justify-center gap-2'>
-                    <label className='whitespace-nowrap' title='cantidad de concentracion'>
-                      <input type="number" placeholder='Cantidad de concentracion' className='leading-none px-2 py-0.5 w-full bg-transparent border-0 border-b border-gray-300 focus:outline-none focus:ring-0 focus:shadow-none focus:border-blue-500 transition-colors duration-200'/>
-                    </label>
-                  </div>
-                </div>
-                <hr />
-                <div className='border-2'>
-                  <div className='flex flex-col items-start justify-center gap-2'>
-                    <label className='whitespace-nowrap' title='unidad de concentracion'>
-                      <select className='w-full px-2 py-0.5 bg-transparent border-0 border-b border-gray-300 focus:outline-none focus:ring-0 focus:shadow-none focus:border-blue-500 transition-colors duration-200' name="unidad" id="unidad">
-                        <option value="">en tanto de producto</option>
-                        <option value="mg">mg</option>
-                        <option value="ml">ml</option>
-                        <option value="g">g</option>
-                        <option value="unidades_internacionales">U.I.</option>
-                        <option value="porcentaje">porcentaje</option>
-                      </select>
-                    </label>
-                  </div>
-                  <div className='flex flex-col items-start justify-center gap-2'>
-                    <label className='whitespace-nowrap' title='cantidad de concentracion'>
-                      <input type="number" placeholder='Cantidad de concentracion' className='leading-none px-2 py-0.5 w-full bg-transparent border-0 border-b border-gray-300 focus:outline-none focus:ring-0 focus:shadow-none focus:border-blue-500 transition-colors duration-200'/>
-                    </label>
-                  </div>
-                </div>
-              </div>
-              <div>
-                <h2 className='font-semibold text-xl'>Observaciones</h2>
-                <textarea name="observaciones" id="observaciones">
-                  {/* coso coso */}
-                </textarea>
-              </div>
+            <div className='h-full flex justify-start items-end gap-4'>
+              <button className='border border-green-600 text-green-600 font-bold hover:bg-green-600 hover:text-white px-1 py-0.5 rounded-md transition-colors duration-200'>
+                Guardar Medicamento
+              </button>
+              <button className='border border-gray-500 text-gray-500 font-bold hover:bg-gray-500 hover:text-white px-1 py-0.5 rounded-md transition-colors duration-200'>
+                Resetear fomulario
+              </button>
             </div>
           {/* ------ */}
           </div>
@@ -472,8 +449,6 @@ function AbastecimientoNuevoMed() {
             </div>
           </Modal>
         </div>
-      <button>[ Guardar Medicamento ]</button>           
-      <button>[ Formulario para crear nuevo medicamento...] </button>
       </div>
     </>
   )
