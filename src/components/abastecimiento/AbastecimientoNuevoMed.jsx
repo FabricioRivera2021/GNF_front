@@ -25,15 +25,15 @@ function AbastecimientoNuevoMed() {
     // Se debe actualizar la tabla con las drogas que componen el medicamento
     // nombre de la droga, concentracion de la droga en x cantidad de medicacion, etc. se toman de los inputs del modal
     console.log("Adding drug to form:", selectedDrugName);
-    console.log("Concentration de la droga: ", drugConcentration," ", drugConcentrationUnit, " en ", medicationBaseConcentration, " ", medicationBaseConcentrationUnit);
+    console.log("Concentration de la droga: ", drugConcentration," ", drugConcentrationUnit, " en ", newMedication.concentracionBase, " ", newMedication.unidad);
     // agregarla a la lista de drugs
     const newDrug = {
       id: Date.now(),
       name: selectedDrugName,
       concentration: drugConcentration,
       unit: drugConcentrationUnit,
-      base: medicationBaseConcentration,
-      baseUnit: medicationBaseConcentrationUnit
+      base: newMedication.concentracionBase,
+      baseUnit: newMedication.unidad
     };
     setDrugsInMedicationBase(prev => [...prev, newDrug]);
   }
@@ -43,6 +43,27 @@ function AbastecimientoNuevoMed() {
       prev.filter(drug => drug.id !== id)
     );
   };
+
+  const handleAddNewMedication = () => {
+    //se quiere ingresar una nueva medicacion
+    const newMedication = {
+      name: name,
+      lab: lab,
+      codigoInterno: cod,
+      codigoBarras: codBarras,
+      vademecum: vademecum,
+      estado: estado,
+      presentacion: presentacion,
+      unidad: unidad,
+      drug: drugsInMedicationBase,
+      requireColdStorage: reqColdStrg,
+      ranurable: ranurable,
+      ventaBajoReceta: ventaBajoReceta,
+      medicacionControlada: medicacionControlada
+    }
+
+    console.log(newMedication);
+  }
 
   // const handleRemoveDrug = (index) => {
   //   const existingDrugs = JSON.parse(localStorage.getItem('selectedDrugs')) || [];
@@ -59,10 +80,38 @@ function AbastecimientoNuevoMed() {
     const stored = localStorage.getItem('selectedDrugs');
     return stored ? JSON.parse(stored) : [];
   });
+  const [newMedication, setNewMedication] = useState(() => {
+    const storedMedications = localStorage.getItem('newMedicationForm')
+    return storedMedications ? JSON.parse(storedMedications) : {
+      name: '',
+      lab: '',
+      codigoInterno: '',
+      codigoBarras: '',
+      vademecum: '',
+      estado: '',
+      presentacion: '',
+      concentracionBase: '',
+      unidad: '',
+      drug: drugsInMedicationBase,
+      requireColdStorage: '',
+      ranurable: '',
+      ventaBajoReceta: '',
+      medicacionControlada: ''
+    }
+  }); //medicacion que va a ser creada en el formulario
   const [medicationBaseConcentration, setMedicationBaseConcentration] = useState('');
   const [medicationBaseConcentrationUnit, setMedicationBaseConcentrationUnit] = useState('');
   const [drugConcentration, setDrugConcentration] = useState('');
   const [drugConcentrationUnit, setDrugConcentrationUnit] = useState('mg');
+
+  //helper para armar el form de medicacion
+  const handleChange = (e) => {
+    const { name, type, value, checked } = e.target;
+    setNewMedication(prev => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value
+    }));
+  };
 
   // USE EFFECTS--------------------------------------------------------------------
   useEffect(() => {
@@ -71,6 +120,13 @@ function AbastecimientoNuevoMed() {
       'selectedDrugs', JSON.stringify(drugsInMedicationBase)
     );
   }, [drugsInMedicationBase])
+
+  useEffect(() => {
+    //preservar el formulario de medicacion en el local storage
+    localStorage.setItem(
+      'newMedicationForm', JSON.stringify(newMedication)
+    );
+  }, [newMedication])
 
   useEffect(() => {
     document.body.style.overflow = modal ? 'hidden' : 'auto';
@@ -84,6 +140,14 @@ function AbastecimientoNuevoMed() {
     if (stored) {
       const drogas = JSON.parse(stored);
       console.log("drogas:", drogas);
+    }
+  }, []);
+
+  useEffect(() => {
+    const storedMedications = localStorage.getItem('newMedicationForm')
+    if (storedMedications) {
+      const medications = JSON.parse(storedMedications);
+      console.log("Form de medicacion:", medications);
     }
   }, []);
 
@@ -104,12 +168,24 @@ function AbastecimientoNuevoMed() {
             <h2 className='font-semibold text-lg mb-2'>Datos generales</h2>
             <div className='flex flex-col items-start justify-center gap-2'>
               <label className='whitespace-nowrap' title='nombre comercial'>
-                <input type="text" placeholder='Nombre Comercial' className='leading-none px-2 py-0.5 w-full bg-transparent border-0 border-b border-gray-300 focus:outline-none focus:ring-0 focus:shadow-none focus:border-blue-500 transition-colors duration-200'/>
+                <input 
+                  type="text"
+                  name='name' 
+                  value={newMedication.name}
+                  placeholder='Nombre Comercial' 
+                  className='leading-none px-2 py-0.5 w-full bg-transparent border-0 border-b border-gray-300 focus:outline-none focus:ring-0 focus:shadow-none focus:border-blue-500 transition-colors duration-200'
+                  onChange={handleChange}
+                />
               </label>
             </div>
             <div className='flex flex-col items-start justify-center gap-2'>
               <label className='whitespace-nowrap' title='laboratorio'>
-                <select className='w-full pl-2 py-0.5 bg-transparent border-0 border-b rounded-sm border-gray-300 focus:outline-none focus:ring-0 focus:shadow-none focus:border-blue-500 transition-colors duration-200' name="laboratorio" id="laboratorio">
+                <select 
+                  className='w-full pl-2 py-0.5 bg-transparent border-0 border-b rounded-sm border-gray-300 focus:outline-none focus:ring-0 focus:shadow-none focus:border-blue-500 transition-colors duration-200' name="laboratorio" id="laboratorio"
+                  name='lab'
+                  value={newMedication.lab}
+                  onChange={handleChange}
+                >
                   <option value="roche" selected>Roche</option>
                   <option value="megalabs">Megalabs</option>
                   <option value="celsius">Celsius</option>
@@ -119,30 +195,72 @@ function AbastecimientoNuevoMed() {
             </div>
             <div className='flex flex-col items-start justify-center gap-2'>
               <label className='whitespace-nowrap' title='Codigo interno'>
-                <input type="text" placeholder='Código Interno' className='leading-none px-2 py-0.5 w-full bg-transparent border-0 border-b border-gray-300 focus:outline-none focus:ring-0 focus:shadow-none focus:border-blue-500 transition-colors duration-200'/>
+                <input 
+                  type="text" 
+                  placeholder='Código Interno' 
+                  className='leading-none px-2 py-0.5 w-full bg-transparent border-0 border-b border-gray-300 focus:outline-none focus:ring-0 focus:shadow-none focus:border-blue-500 transition-colors duration-200'
+                  name='codigoInterno'
+                  value={newMedication.codigoInterno}
+                  onChange={handleChange}
+                />
               </label>
             </div>
             <div className='flex flex-col items-start justify-center gap-2'>
               <label className='whitespace-nowrap' title='Codigo de barras'>
-                <input type="text" placeholder='Código de Barras' className='leading-none px-2 py-0.5 w-full bg-transparent border-0 border-b border-gray-300 focus:outline-none focus:ring-0 focus:shadow-none focus:border-blue-500 transition-colors duration-200'/>
+                <input 
+                  type="text" 
+                  placeholder='Código de Barras' 
+                  className='leading-none px-2 py-0.5 w-full bg-transparent border-0 border-b border-gray-300 focus:outline-none focus:ring-0 focus:shadow-none focus:border-blue-500 transition-colors duration-200'
+                  name='codigoBarras'
+                  value={newMedication.codigoBarras}
+                  onChange={handleChange}
+                />
               </label>
             </div>
             <div className='flex flex-col items-start justify-center px-2'>
                 Vademecum: 
                 <label htmlFor="vademecum-si" className='text-xs ml-2'>
-                  <input type="radio" name="vademecum" id="vademecum-si" /> Sí
+                  <input 
+                    type="radio" 
+                    name="vademecum" 
+                    id="vademecum-si"
+                    value="true"
+                    checked={newMedication.vademecum === 'true'}
+                    onChange={handleChange}
+                  /> Sí
                 </label>
                 <label htmlFor="vademecum-no" className='text-xs ml-2'>
-                  <input type="radio" name="vademecum" id="vademecum-no" /> No
+                  <input 
+                    type="radio" 
+                    name="vademecum" 
+                    id="vademecum-no"
+                    value="false" 
+                    checked={newMedication.vademecum === 'false'}
+                    onChange={handleChange}
+                  /> No
                 </label>
             </div>
             <div className='flex flex-col items-start justify-center px-2'>
                 Estado: 
                 <label htmlFor="estado-activo" className='text-xs ml-2'>
-                  <input type="radio" name="estado" id="estado-activo" /> Activo
+                  <input 
+                    type="radio" 
+                    name="estado" 
+                    value="true"
+                    id="estado-activo" 
+                    checked={newMedication.estado === 'true'}
+                    onChange={handleChange}
+                  /> Activo
                 </label>
                 <label htmlFor="estado-inactivo" className='text-xs ml-2'>
-                  <input type="radio" name="estado" id="estado-inactivo" /> Inactivo
+                  <input 
+                    type="radio" 
+                    name="estado"
+                    value="false" 
+                    id="estado-inactivo"
+                    checked={newMedication.estado === 'false'}
+                    onChange={handleChange} 
+                  /> Inactivo
                 </label>
             </div>
             <hr />
@@ -150,7 +268,12 @@ function AbastecimientoNuevoMed() {
               <h2 className='font-semibold text-lg mt-4'>Presentación farmacéutica</h2>
               <div className='flex flex-col items-start justify-center gap-2'>
                 <label className='whitespace-nowrap' title='forma_farmaceutica'>
-                  <select className='w-full pl-2 py-0.5 bg-transparent border-0 border-b border-gray-300 focus:outline-none focus:ring-0 focus:shadow-none focus:border-blue-500 transition-colors duration-200' name="forma_farmaceutica" id="forma_farmaceutica">
+                  <select 
+                    className='w-full pl-2 py-0.5 bg-transparent border-0 border-b border-gray-300 focus:outline-none focus:ring-0 focus:shadow-none focus:border-blue-500 transition-colors duration-200' name="forma_farmaceutica" id="forma_farmaceutica"
+                    name="presentacion"
+                    onChange={handleChange}
+                    value={newMedication.presentacion}
+                  >
                     <option value="comprimidos" selected>Comprimidos</option>
                     <option value="capsulas">Cápsulas</option>
                     <option value="solucion">Solución</option>
@@ -171,15 +294,18 @@ function AbastecimientoNuevoMed() {
                   <input 
                     className='leading-none px-2 py-0.5 bg-transparent border-0 border-b border-gray-300 focus:outline-none focus:ring-0 focus:shadow-none focus:border-blue-500 transition-colors duration-200' 
                     placeholder='Ej: 600' 
-                    type="number" 
-                    onChange={(e) => setMedicationBaseConcentration(e.target.value)}
+                    type="number"
+                    name='concentracionBase'
+                    value={newMedication.concentracionBase}
+                    onChange={handleChange}
                     />
                   <select 
                     name="unidad_medida" 
                     id="unidad_medida" 
                     className='!appearance-none py-0.5 pl-2 bg-transparent border-0 border-gray-300 focus:outline-none focus:ring-0 focus:shadow-none focus:border-blue-500 transition-colors duration-200'
-                    onChange={(e) => setMedicationBaseConcentrationUnit(e.target.value)}
-                    value={medicationBaseConcentrationUnit}
+                    name='unidad'
+                    onChange={handleChange}
+                    value={newMedication.unidad}
                   >
                     {/* atrapar el valor de la option y cargarlo en setMedicationBaseConcentrationUnit */}
                     <option value="comp" selected>comp.</option>
@@ -224,7 +350,19 @@ function AbastecimientoNuevoMed() {
                       <tr className='border hover:bg-gray-100' key={index}>
                         <td className='border'>{drug.name}</td>
                         <td className='border'>{drug.unit}</td>
-                        <td className='border'>{drug.concentration} {drug.unit} en {drug.base} {drug.baseUnit}</td>
+                        {
+                          (newMedication.unidad) == 'comp'
+                          ?
+                            (
+                              <td className='border'>
+                                {drug.concentration} {drug.unit} x {drug.baseUnit}
+                              </td>
+                            )
+                            :
+                              <td className='border'>
+                                {drug.concentration} {drug.unit} en {drug.base} {drug.baseUnit}
+                              </td>
+                        }
                         <td className='border text-red-500 hover:bg-red-500 hover:text-white px-1 py-0.5 rounded-md transition-colors duration-200 cursor-pointer'>
                           <button onClick={() => handleRemoveDrug(drug.id)}>Eliminar</button>
                         </td>
@@ -241,19 +379,43 @@ function AbastecimientoNuevoMed() {
               <div className='flex items-start justify-start gap-2'>
                 <div className='border px-2 py-0.5 rounded-lg'>
                   <p>Requiere refrigeración</p>
-                  <input type="checkbox" name="refrigeracion" id="refrigeracion" />
+                  <input 
+                    type="checkbox" 
+                    name="requireColdStorage"
+                    checked={newMedication.requireColdStorage}
+                    id="refrigeracion"
+                    onChange={handleChange} 
+                  />
                 </div>
                 <div className='border px-2 py-0.5 rounded-lg'>
                   <p>Ranurable</p>
-                  <input type="checkbox" name="ranurable" id="ranurable" />
+                  <input 
+                    type="checkbox" 
+                    name="ranurable"
+                    checked={newMedication.ranurable}  
+                    id="ranurable" 
+                    onChange={handleChange} 
+                  />
                 </div>
                 <div className='border px-2 py-0.5 rounded-lg'>
                   <p>Venta bajo receta</p>
-                  <input type="checkbox" name="venta_bajo_receta" id="venta_bajo_receta" />
+                  <input 
+                    type="checkbox" 
+                    name="ventaBajoReceta" 
+                    checked={newMedication.ventaBajoReceta} 
+                    id="venta_bajo_receta"
+                    onChange={handleChange}  
+                  />
                 </div>
                 <div className='border px-2 py-0.5 rounded-lg'>
                   <p>Medicación controlada</p>
-                  <input type="checkbox" name="medicacion_controlada" id="medicacion_controlada" />
+                  <input 
+                    type="checkbox" 
+                    name="medicacionControlada" 
+                    checked={newMedication.medicacionControlada} 
+                    id="medicacion_controlada"
+                    onChange={handleChange}  
+                  />
                 </div>
               </div>
             </div>
@@ -409,27 +571,23 @@ function AbastecimientoNuevoMed() {
                     <p className='text-sm px-2 bg-orange-50 rounded-md mt-2'>La concentración debe expresarse de forma clara, por ejemplo: mg/mL, g/L o porcentaje (%).</p>
                     <p className='text-sm px-2 bg-orange-50 rounded-md mt-2'>Asegúrese de que los valores sean correctos, ya que esta información se utiliza para el cálculo de dosis y administración del medicamento.</p>
                     <div className='flex flex-row items-center'>
-                      <input 
-                        className='leading-none px-2 py-0.5 bg-transparent border-0 border-b border-gray-300 focus:outline-none focus:ring-0 focus:shadow-none focus:border-blue-500 transition-colors duration-200' 
-                        placeholder='Ej: 600' 
-                        type="number" 
-                        value={medicationBaseConcentration}
-                      />
+                      {(
+                        (newMedication.unidad) != 'comp' 
+                        ? 
+                          (
+                            <input 
+                              className='leading-none px-2 py-0.5 bg-transparent border-0 border-b border-gray-300 focus:outline-none focus:ring-0 focus:shadow-none focus:border-blue-500 transition-colors duration-200' 
+                              placeholder='Ej: 600' 
+                              type="number" 
+                              value={newMedication.concentracionBase}
+                            />
+                          )
+                        :
+                          ''
+                      )}
                       <div className='text-sm px-2 bg-orange-50 rounded-md mt-2'>
-                        <p>{medicationBaseConcentrationUnit}</p>
+                        <p>{newMedication.unidad}</p>
                       </div>
-                      {/* <select 
-                        name="unidad_medida" 
-                        id="unidad_medida" 
-                        className='!appearance-none py-0.5 bg-transparent bg-gray-400 text-gray-500 border-0 border-gray-300 focus:outline-none focus:ring-0 focus:shadow-none focus:border-blue-500 transition-colors duration-200'
-                        value={medicationBaseConcentrationUnit}
-                        disabled={!medicationBaseConcentration}
-                        >
-                        <option value="mg">mg</option>
-                        <option value="ml">ml</option>
-                        <option value="comp">comp</option>
-                        </select>
-                        <p className='text-sm px-2 bg-orange-50 rounded-md mt-2'>La unidad de medida se actualizará automáticamente según la concentración ingresada.</p> */}
                     </div>
                   </div>
                 </div>
