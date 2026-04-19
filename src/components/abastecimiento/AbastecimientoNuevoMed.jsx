@@ -65,13 +65,6 @@ function AbastecimientoNuevoMed() {
     console.log(newMedication);
   }
 
-  // const handleRemoveDrug = (index) => {
-  //   const existingDrugs = JSON.parse(localStorage.getItem('selectedDrugs')) || [];
-  //   const updatedDrugs = existingDrugs.filter((_, i) => i !== index); // Eliminar la droga en el índice especificado
-  //   localStorage.setItem('selectedDrugs', JSON.stringify(updatedDrugs));
-  //   setDrugCounter(drugCounter - 1);
-  // }
-
   const [newDrugName, setNewDrugName] = useState('');
   const [selectedDrugName, setSelectedDrugName] = useState('');
   const [enableNewDrugInput, setEnableNewDrugInput] = useState(false);
@@ -319,20 +312,6 @@ function AbastecimientoNuevoMed() {
           </div>
 
           <div className='flex flex-col gap-4 border-2 p-4 rounded-lg col-span-5'>
-            {/* 
-              unidad minima de dispensacion, lo dejo por las dudas pero creo que no va
-              <div className='flex flex-col items-start justify-center gap-2'>
-              <label className='whitespace-nowrap' title='unidad minima dispensable'>
-                <select className='w-full px-2 py-0.5 bg-transparent border-0 border-b border-gray-300 focus:outline-none focus:ring-0 focus:shadow-none focus:border-blue-500 transition-colors duration-200' name="unidad_minima_dispensable" id="unidad_minima_dispensable">
-                  <option value="">Unidad de dispensación</option>
-                  <option value="comprimidos">mg</option>
-                  <option value="jarabe">ml</option>
-                  <option value="crema">g</option>
-                  <option value="inhalador">U.I.</option>
-                  <option value="inhalador">porcentaje</option>
-                </select>
-              </label>
-            </div> */}
             <div className='flex flex-col gap-2 w-full'>
               <div>
                 <h2 className='font-semibold text-xl'>Composición</h2>
@@ -463,11 +442,7 @@ function AbastecimientoNuevoMed() {
                             </tr>
                           ))
                         )}
-                        {/* {drugs.map((drug, index) => {
-                          <td className='border' key={index} onClick={() => {setSelectedDrugName(drug.droga), setEnableNewDrugInput(false);}}>
-                            {drug.droga}
-                          </td>
-                        })} */}
+                        
                     </tbody>
                   </table>
                 </div>
