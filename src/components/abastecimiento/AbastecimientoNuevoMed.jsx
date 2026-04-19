@@ -25,19 +25,48 @@ function AbastecimientoNuevoMed() {
     // Se debe actualizar la tabla con las drogas que componen el medicamento
     // nombre de la droga, concentracion de la droga en x cantidad de medicacion, etc. se toman de los inputs del modal
     console.log("Adding drug to form:", selectedDrugName);
-    console.log("Concentration and unit would be taken from the modal inputs");
-    console.log("Aquí se debería agregar la droga seleccionada a la tabla de composición del medicamento en el formulario principal");
+    console.log("Concentration de la droga: ", drugConcentration," ", drugConcentrationUnit, " en ", medicationBaseConcentration, " ", medicationBaseConcentrationUnit);
+    // agregarla al local storage y si ya hay algo en el local storage agregarlo a la lista y actualizarla, si no hay nada crear la lista con la droga seleccionada
+    const existingDrugs = JSON.parse(localStorage.getItem('selectedDrugs')) || [];
+    const updatedDrugs = [
+        ...existingDrugs,
+        {
+          name: selectedDrugName,
+          concentration: drugConcentration,
+          unit: drugConcentrationUnit,
+          baseConcentration: medicationBaseConcentration,
+          baseUnit: medicationBaseConcentrationUnit
+        }
+      ];
+    localStorage.setItem('selectedDrugs', JSON.stringify(updatedDrugs));
+    setDrugCounter(drugCounter + 1);
+  }
+
+  const handleRemoveDrug = (index) => {
+    const existingDrugs = JSON.parse(localStorage.getItem('selectedDrugs')) || [];
+    const updatedDrugs = existingDrugs.filter((_, i) => i !== index); // Eliminar la droga en el índice especificado
+    localStorage.setItem('selectedDrugs', JSON.stringify(updatedDrugs));
+    setDrugCounter(drugCounter - 1);
   }
 
   const [newDrugName, setNewDrugName] = useState('');
   const [selectedDrugName, setSelectedDrugName] = useState('');
   const [enableNewDrugInput, setEnableNewDrugInput] = useState(false);
   const [drugs, setDrugs] = useState([]);
+  const [drugsInMedicationBase, setDrugsInMedicationBase] = useState([]);
   const [medicationBaseConcentration, setMedicationBaseConcentration] = useState('');
   const [medicationBaseConcentrationUnit, setMedicationBaseConcentrationUnit] = useState('');
+  const [drugConcentration, setDrugConcentration] = useState('');
+  const [drugConcentrationUnit, setDrugConcentrationUnit] = useState('mg');
+  const [drugCounter, setDrugCounter] = useState(0);
 
   const scrolllock = modal ? 'hidden' : 'auto';
   document.body.style.overflow = scrolllock;
+
+  useEffect(() => {
+    const storedDrugs = JSON.parse(localStorage.getItem('selectedDrugs')) || [];
+    setDrugsInMedicationBase(storedDrugs);
+  }, [drugCounter]);
 
   useEffect(() => {
     fetchAllDrugs(setDrugs);
@@ -172,12 +201,16 @@ function AbastecimientoNuevoMed() {
                     </tr>
                   </thead>
                   <tbody>
-                    <tr className='border hover:bg-gray-100'>
-                      <td className='border'> -- </td>
-                      <td className='border'> -- </td>
-                      <td className='border'> -- </td>
-                      <td className='border text-red-500 hover:bg-red-500 hover:text-white px-1 py-0.5 rounded-md transition-colors duration-200 cursor-pointer'> -- </td>
-                    </tr>
+                    {drugsInMedicationBase.map((drug, index) => (
+                      <tr className='border hover:bg-gray-100' key={index}>
+                        <td className='border'>{drug.name}</td>
+                        <td className='border'>{drug.unit}</td>
+                        <td className='border'>{drug.concentration} {drug.unit} en {drug.baseConcentration} {drug.baseUnit}</td>
+                        <td className='border text-red-500 hover:bg-red-500 hover:text-white px-1 py-0.5 rounded-md transition-colors duration-200 cursor-pointer'>
+                          <button onClick={() => handleRemoveDrug(index)}>Eliminar</button>
+                        </td>
+                      </tr>
+                    ))}
                   </tbody>
                 </table>
                 <button 
@@ -383,8 +416,15 @@ function AbastecimientoNuevoMed() {
                       className='leading-none px-2 py-0.5 bg-transparent border-0 border-b border-gray-300 focus:outline-none focus:ring-0 focus:shadow-none focus:border-blue-500 transition-colors duration-200' 
                       placeholder='Ej: 600' 
                       type="number" 
+                      onChange={(e) => setDrugConcentration(e.target.value)}
                       />
-                    <select name="unidad_medida" id="unidad_medida" className='!appearance-none py-0.5 bg-transparent border-0 border-gray-300 focus:outline-none focus:ring-0 focus:shadow-none focus:border-blue-500 transition-colors duration-200'>
+                    <select 
+                      name="unidad_medida" 
+                      id="unidad_medida" 
+                      className='!appearance-none py-0.5 bg-transparent border-0 border-gray-300 focus:outline-none focus:ring-0 focus:shadow-none focus:border-blue-500 transition-colors duration-200'
+                      onChange={(e) => setDrugConcentrationUnit(e.target.value)}
+                      value={drugConcentrationUnit}
+                    >
                       <option value="mg" selected>mg</option>
                       <option value="ml">ml</option>
                     </select>
@@ -418,7 +458,12 @@ function AbastecimientoNuevoMed() {
                 </div>
                 <button 
                 className='border border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white mt-4 px-1 py-0.5 rounded-md transition-colors duration-200'
-                onClick={() => handleAddDrugToForm()}
+                onClick={
+                  () => {
+                    handleAddDrugToForm(),
+                    setModal(false)
+                  } 
+                }
                 >
                   Ingresar
                 </button>
