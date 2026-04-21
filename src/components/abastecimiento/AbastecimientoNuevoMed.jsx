@@ -25,23 +25,26 @@ function AbastecimientoNuevoMed() {
     // Se debe actualizar la tabla con las drogas que componen el medicamento
     // nombre de la droga, concentracion de la droga en x cantidad de medicacion, etc. se toman de los inputs del modal
     console.log("Adding drug to form:", selectedDrugName);
-    console.log("Concentration de la droga: ", drugConcentration," ", drugConcentrationUnit, " en ", newMedication.concentracionBase, " ", newMedication.unidad);
+    console.log("Concentration de la droga: ", drugConcentration, " ", drugConcentrationUnit, " en ", newMedication.concentracionBase, " ", newMedication.unidad);
     // agregarla a la lista de drugs
     const newDrug = {
       id: Date.now(),
       name: selectedDrugName,
       concentration: drugConcentration,
-      unit: drugConcentrationUnit,
-      base: newMedication.concentracionBase,
-      baseUnit: newMedication.unidad
+      unit: drugConcentrationUnit
     };
-    setDrugsInMedicationBase(prev => [...prev, newDrug]);
+    setNewMedication(prev => (
+      { ...prev, 
+          drug: [
+            ...prev.drug, 
+            newDrug
+          ] 
+      })
+    );
   }
 
   const handleRemoveDrug = (id) => {
-    setDrugsInMedicationBase(prev =>
-      prev.filter(drug => drug.id !== id)
-    );
+    setNewMedication(prev => ({ ...prev, drug: prev.drug.filter(drug => drug.id !== id) }));
   };
 
   const handleAddNewMedication = () => {
@@ -54,8 +57,13 @@ function AbastecimientoNuevoMed() {
       vademecum: vademecum,
       estado: estado,
       presentacion: presentacion,
+      concentracionBase: concentracionBase,
       unidad: unidad,
-      drug: drugsInMedicationBase,
+      drug: {
+          name: selectedDrugName,
+          concentration: drugConcentration,
+          unit: drugConcentrationUnit
+      },
       requireColdStorage: reqColdStrg,
       ranurable: ranurable,
       ventaBajoReceta: ventaBajoReceta,
@@ -85,7 +93,7 @@ function AbastecimientoNuevoMed() {
       presentacion: '',
       concentracionBase: '',
       unidad: '',
-      drug: drugsInMedicationBase,
+      drug: [],
       requireColdStorage: '',
       ranurable: '',
       ventaBajoReceta: '',
@@ -107,13 +115,7 @@ function AbastecimientoNuevoMed() {
   };
 
   // USE EFFECTS--------------------------------------------------------------------
-  useEffect(() => {
-    //cuando el estado cambie actualizar el local storage como backup de lo que se esta ingresando
-    localStorage.setItem(
-      'selectedDrugs', JSON.stringify(drugsInMedicationBase)
-    );
-  }, [drugsInMedicationBase])
-
+  // Cuando el estado cambia en el formulario se hace un backup en el local storage
   useEffect(() => {
     //preservar el formulario de medicacion en el local storage
     localStorage.setItem(
@@ -325,7 +327,7 @@ function AbastecimientoNuevoMed() {
                     </tr>
                   </thead>
                   <tbody>
-                    {drugsInMedicationBase.map((drug, index) => (
+                    {newMedication.drug.map((drug, index) => (
                       <tr className='border hover:bg-gray-100' key={index}>
                         <td className='border'>{drug.name}</td>
                         <td className='border'>{drug.unit}</td>
@@ -339,7 +341,7 @@ function AbastecimientoNuevoMed() {
                             )
                             :
                               <td className='border'>
-                                {drug.concentration} {drug.unit} en {drug.base} {drug.baseUnit}
+                                {drug.concentration} {drug.unit} en {newMedication.concentracionBase} {newMedication.unidad}
                               </td>
                         }
                         <td className='border text-red-500 hover:bg-red-500 hover:text-white px-1 py-0.5 rounded-md transition-colors duration-200 cursor-pointer'>
