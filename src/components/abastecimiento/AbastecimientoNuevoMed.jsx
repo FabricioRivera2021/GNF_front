@@ -399,7 +399,10 @@ function AbastecimientoNuevoMed() {
               </div>
             </div>
             <div className='h-full flex justify-start items-end gap-4'>
-              <button className='border border-green-600 text-green-600 font-bold hover:bg-green-600 hover:text-white px-1 py-0.5 rounded-md transition-colors duration-200'>
+              <button 
+                className='border border-green-600 text-green-600 font-bold hover:bg-green-600 hover:text-white px-1 py-0.5 rounded-md transition-colors duration-200'
+                onClick={() => console.log(newMedication)}
+                >
                 Guardar Medicamento
               </button>
               <button className='border border-gray-500 text-gray-500 font-bold hover:bg-gray-500 hover:text-white px-1 py-0.5 rounded-md transition-colors duration-200'>
