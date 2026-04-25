@@ -55,7 +55,7 @@ export default function DefaultLayout() {
   const handleClickPosition = (position) => {
     setIsChangingPosition(true);
     axios
-      .post('http://localhost:8000/api/changePosition/', {
+      .post('http://localhost:8000/api/changePosition', {
           'position': `${position}`
       })
       .then(({ data }) => {

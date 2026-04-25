@@ -73,6 +73,14 @@ function AbastecimientoNuevoMed() {
     console.log(newMedication);
   }
 
+  //todavia no borra nada del useState, solo resetea el local storage y hace un reload de la pagina para resetear el estado del formulario
+  const resetAddMedicationForm = () => {
+    localStorage.removeItem('newMedicationForm');
+
+    //hacer un f5 para resetear el estado del formulario
+    window.location.reload();
+  }
+
   const [newDrugName, setNewDrugName] = useState('');
   const [selectedDrugName, setSelectedDrugName] = useState('');
   const [enableNewDrugInput, setEnableNewDrugInput] = useState(false);
@@ -407,7 +415,10 @@ function AbastecimientoNuevoMed() {
                 >
                 Guardar Medicamento
               </button>
-              <button className='border border-gray-500 text-gray-500 font-bold hover:bg-gray-500 hover:text-white px-1 py-0.5 rounded-md transition-colors duration-200'>
+              <button 
+                className='border border-gray-500 text-gray-500 font-bold hover:bg-gray-500 hover:text-white px-1 py-0.5 rounded-md transition-colors duration-200'
+                onClick={() => resetAddMedicationForm()}
+                >
                 Resetear fomulario
               </button>
             </div>

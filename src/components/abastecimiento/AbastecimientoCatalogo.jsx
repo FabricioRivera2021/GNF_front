@@ -37,9 +37,9 @@ function AbastecimientoCatalogo() {
 
         <div>
           {/* Aquí iría la tabla de medicamentos, hecha con tarjetas horizontales */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-2">
+          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 mt-2">
             {/* tarjeta de medicacion */}
-            <div className="bg-white group pt-4 flex flex-col justify-between space-between rounded-lg col-span-1 shadow-lg cursor-pointer border hover:shadow-xl hover:border hover:border-cyan-500 transition">
+            <div className="bg-gray-100 group text-gray-700 pt-4 flex flex-col justify-between space-between rounded-lg col-span-1 shadow-lg cursor-pointer border hover:shadow-xl hover:border hover:border-cyan-500 transition">
               <div>
                 <h2 className="text-2xl px-4 font-bold text-blue-500 group-hover:bg-blue-500 group-hover:text-white transition">Dolex</h2>
                 <hr />
@@ -47,11 +47,11 @@ function AbastecimientoCatalogo() {
                   <div>
                     <p>Laboratorio: MegaLabs</p>
                     <p>Presentación: Tabletas</p>
-                    <p>Contenido por envase: 20 tabletas</p>
+                    <p>Contenido: 20 tabletas</p>
                     <p>Contenido por tableta: 100 mg</p>
                   </div>
                   <div>
-                    <h3>Composición por tableta (100 mg)</h3>
+                    <h3>Composición</h3>
                     <ul className='list-disc list-inside'>
                       <li>Paracetamol 12mg</li>
                       <li>Cafeína 65mg</li>
@@ -59,10 +59,10 @@ function AbastecimientoCatalogo() {
                   </div>
                 </div>
               </div>
-              <div className='flex gap-4 mt-4 bg-yellow-200 rounded text-gray-500 items-center justify-end px-2 py-1'>
+              <div className='flex gap-4 mt-4 bg-slate-400 rounded text-gray-100 items-center justify-end px-2 py-1'>
                 <p>Estado: Disponible</p>
                 <p>Venta bajo receta</p>
-                <p>Bajo stock !</p>
+                <p className='bg-yellow-300 rounded-md px-2 text-slate-800'>Bajo stock !</p>
               </div>
             </div>
             {/* FIN-- tarjeta de medicacion --FIN */}
