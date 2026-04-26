@@ -364,3 +364,45 @@ export const createNewDrug = async (drugName) => {
         // Aquí puedes manejar el error, como mostrar un mensaje de error al usuario
       });
 }
+
+//traer los datos de lab, unidades, y presentacion para el formulario de medicacion
+//labs
+export const fetchLabs = (setLabs) => {
+    console.log(`${API_URL}/allLab`);
+    axios
+        .get(`${API_URL}/allLab`)
+        .then(response => {
+            // response.data.sort((a, b) => a.lab.localeCompare(b.lab)); //ordenar por orden alfabetico
+            setLabs(response.data);
+        })
+        .catch(error => {
+            console.error('Error fetching lobs:', error);
+        });
+}
+
+// unidades
+export const fetchUnits = (setUnits) => {
+    console.log(`${API_URL}/allUnidades`);
+    axios
+        .get(`${API_URL}/allUnidades`)
+        .then(response => {
+            setUnits(response.data);
+        })
+        .catch(error => {
+            console.error('Error fetching units:', error);
+        });
+    }
+
+// presentaciones
+export const fetchPresentaciones = (setPresentaciones) => {
+    console.log(`${API_URL}/allPresentaciones`);
+    axios
+    .get(`${API_URL}/allPresentaciones`)
+    .then(response => {
+            // response.data.sort((a, b) => a.pres.localeCompare(b.pres)); //ordenar por orden alfabetico
+            setPresentaciones(response.data);
+        })
+        .catch(error => {
+            console.error('Error fetching Presentaciones:', error);
+        });
+}

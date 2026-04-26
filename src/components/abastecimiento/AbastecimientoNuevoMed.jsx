@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Modal from '../Modal';
-import { createNewDrug, fetchAllDrugs } from '../../API/apiServices';
+import { createNewDrug, fetchAllDrugs, fetchLabs, fetchPresentaciones, fetchUnits } from '../../API/apiServices';
 import axios from 'axios';
 
 function AbastecimientoNuevoMed() {
@@ -69,14 +69,11 @@ function AbastecimientoNuevoMed() {
       ventaBajoReceta: ventaBajoReceta,
       medicacionControlada: medicacionControlada
     }
-
     console.log(newMedication);
   }
-
   //todavia no borra nada del useState, solo resetea el local storage y hace un reload de la pagina para resetear el estado del formulario
   const resetAddMedicationForm = () => {
     localStorage.removeItem('newMedicationForm');
-
     //hacer un f5 para resetear el estado del formulario
     window.location.reload();
   }
@@ -92,26 +89,32 @@ function AbastecimientoNuevoMed() {
   const [newMedication, setNewMedication] = useState(() => {
     const storedMedications = localStorage.getItem('newMedicationForm')
     return storedMedications ? JSON.parse(storedMedications) : {
-      name: '',
-      lab: '',
-      codigoInterno: '',
-      codigoBarras: '',
-      vademecum: '',
-      estado: '',
-      presentacion: '',
-      concentracionBase: '',
-      unidad: '',
-      drug: [],
-      requireColdStorage: '',
-      ranurable: '',
-      ventaBajoReceta: '',
-      medicacionControlada: ''
+      name: '', //antivert
+      lab: '', //Celsius
+      codigoInterno: '', //00001
+      codigoBarras: '', //00001
+      vademecum: '', //si
+      estado: '', //activo
+      presentacion: '', //capsulas
+      concentracionBase: '', //una capsula
+      unidad: '', //mg
+      drug: [], 
+        //drogas que tenga
+        //1
+        //2 etc..
+      requireColdStorage: false, //no
+      ranurable: false, //no
+      ventaBajoReceta: false, //no
+      medicacionControlada: false //no
     }
   }); //medicacion que va a ser creada en el formulario
-  const [medicationBaseConcentration, setMedicationBaseConcentration] = useState('');
-  const [medicationBaseConcentrationUnit, setMedicationBaseConcentrationUnit] = useState('');
+  // const [medicationBaseConcentration, setMedicationBaseConcentration] = useState(''); deprecado
+  // const [medicationBaseConcentrationUnit, setMedicationBaseConcentrationUnit] = useState(''); deprecado
   const [drugConcentration, setDrugConcentration] = useState('');
   const [drugConcentrationUnit, setDrugConcentrationUnit] = useState('mg');
+  const [labs, setLabs] = useState([]);
+  const [pres, setPres] = useState([]);
+  const [units, setUnits] = useState([]);
 
   //helper para armar el form de medicacion
   const handleChange = (e) => {
@@ -131,6 +134,7 @@ function AbastecimientoNuevoMed() {
     );
   }, [newMedication])
 
+  //para que no se pueda scrollear con el modal abierto
   useEffect(() => {
     document.body.style.overflow = modal ? 'hidden' : 'auto';
     return () => {
@@ -138,29 +142,18 @@ function AbastecimientoNuevoMed() {
     };
   }, [modal]);
 
+  //setear los datos para el formulario
   useEffect(() => {
-    const stored = localStorage.getItem('selectedDrugs')
-    if (stored) {
-      const drogas = JSON.parse(stored);
-      console.log("drogas:", drogas);
-    }
-  }, []);
+    console.log("traer los datos de Lab, unidades, presentaciones");
+    fetchLabs(setLabs);
+    fetchPresentaciones(setPres);
+    fetchUnits(setUnits);
+  }, [])
 
-  useEffect(() => {
-    const storedMedications = localStorage.getItem('newMedicationForm')
-    if (storedMedications) {
-      const medications = JSON.parse(storedMedications);
-      console.log("Form de medicacion:", medications);
-    }
-  }, []);
-
+  //setea las drogas
   useEffect(() => {
     fetchAllDrugs(setDrugs);
   }, []);
-
-  useEffect(() => {
-    console.log("Unidad:", medicationBaseConcentrationUnit);
-  }, [medicationBaseConcentrationUnit]);
 
   return (
     <>
@@ -189,10 +182,9 @@ function AbastecimientoNuevoMed() {
                   value={newMedication.lab}
                   onChange={handleChange}
                 >
-                  <option value="roche" selected>Roche</option>
-                  <option value="megalabs">Megalabs</option>
-                  <option value="celsius">Celsius</option>
-                  <option value="abbot">Abbot</option>
+                {labs.map((lab, index) => (
+                  <option value={lab.razon_social}>{lab.razon_social}</option>
+                ))}
                 </select>
               </label>
             </div>
@@ -277,16 +269,9 @@ function AbastecimientoNuevoMed() {
                     onChange={handleChange}
                     value={newMedication.presentacion}
                   >
-                    <option value="comprimidos" selected>Comprimidos</option>
-                    <option value="capsulas">Cápsulas</option>
-                    <option value="solucion">Solución</option>
-                    <option value="suspension">Suspensión</option>
-                    <option value="soluble">Soluble</option>
-                    <option value="jarabe">Jarabe</option>
-                    <option value="crema">Crema</option>
-                    <option value="inhalador">Inhalador</option>
-                    <option value="inyectable">Inyectable</option>
-                    <option value="lapicera">Lapicera inyectable</option>
+                    {pres.map((presentacion, index) => (
+                      <option value={presentacion.nombre}>{presentacion.nombre}</option>
+                    ))}
                   </select>
                 </label>
               </div>
@@ -311,11 +296,9 @@ function AbastecimientoNuevoMed() {
                     value={newMedication.unidad}
                   >
                     {/* atrapar el valor de la option y cargarlo en setMedicationBaseConcentrationUnit */}
-                    <option value="comp" selected>comp.</option>
-                    <option value="mg">mg</option>
-                    <option value="ml">ml</option>
-                    <option value="g">g</option>
-                    <option value="ui">ui</option>
+                    {units.map((unit, index) => (
+                      <option value={unit.codigo}>{unit.codigo}</option>
+                    ))}
                   </select>
               </div>
             </div>
@@ -443,7 +426,7 @@ function AbastecimientoNuevoMed() {
                     </thead>
                     <tbody>
                         {drugs == '' ? (
-                          <tr className='border'>Cargando...</tr>
+                          <tr className='border'><td>Cargando...</td></tr>
                         ) : (
                           drugs.map((drug, index) => (
                             <tr 
@@ -454,7 +437,7 @@ function AbastecimientoNuevoMed() {
                                 setEnableNewDrugInput(false);
                               }}
                             >
-                              {drug.droga}
+                              <td>{drug.droga}</td>
                             </tr>
                           ))
                         )}
@@ -552,10 +535,10 @@ function AbastecimientoNuevoMed() {
                       name="unidad_medida" 
                       id="unidad_medida" 
                       className='!appearance-none py-0.5 bg-transparent border-0 border-gray-300 focus:outline-none focus:ring-0 focus:shadow-none focus:border-blue-500 transition-colors duration-200'
-                      onChange={(e) => setDrugConcentrationUnit(e.target.value)}
                       value={drugConcentrationUnit}
+                      onChange={handleChange}
                     >
-                      <option value="mg" selected>mg</option>
+                      <option value="mg">mg</option>
                       <option value="ml">ml</option>
                     </select>
                     <p className='text-sm px-2 bg-orange-50 rounded-md mt-2'>Ingrese la concentración indicando la cantidad de sustancia activa contenida en una cantidad total del producto.</p>
@@ -571,6 +554,7 @@ function AbastecimientoNuevoMed() {
                               placeholder='Ej: 600' 
                               type="number" 
                               value={newMedication.concentracionBase}
+                              readOnly
                             />
                           )
                         :
