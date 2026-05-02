@@ -1,13 +1,24 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Modal from '../Modal';
+import { fetchAllMedicamentos } from '../../API/apiServices';
 
 function AbastecimientoCatalogo() {
 
-  const [modal, setModal] = useState(false)
+  const [modal, setModal] = useState(false);
+  const [medication, setMedication] = useState([]);
 
   const handleCreateNewCatalogDrug = () => {
     setModal(true);
   }
+
+  useEffect(() => {
+    fetchAllMedicamentos(setMedication);
+  }, [])
+  
+  useEffect(() => {
+    console.log(medication);
+  }, [medication])
+
 
   return (
     <>
@@ -37,34 +48,46 @@ function AbastecimientoCatalogo() {
 
         <div>
           {/* Aquí iría la tabla de medicamentos, hecha con tarjetas horizontales */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 mt-2">
+          <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-4 mt-2">
             {/* tarjeta de medicacion */}
-            <div className="bg-gray-100 group text-gray-700 pt-4 flex flex-col justify-between space-between rounded-lg col-span-1 shadow-lg cursor-pointer border hover:shadow-xl hover:border hover:border-cyan-500 transition">
-              <div>
-                <h2 className="text-2xl px-4 font-bold text-blue-500 group-hover:bg-blue-500 group-hover:text-white transition">Dolex</h2>
-                <hr />
-                <div className='flex gap-8 mt-4 px-4'>
-                  <div>
-                    <p>Laboratorio: MegaLabs</p>
-                    <p>Presentación: Tabletas</p>
-                    <p>Contenido: 20 tabletas</p>
-                    <p>Contenido por tableta: 100 mg</p>
-                  </div>
-                  <div>
-                    <h3>Composición</h3>
-                    <ul className='list-disc list-inside'>
-                      <li>Paracetamol 12mg</li>
-                      <li>Cafeína 65mg</li>
-                    </ul>
+            {medication.map((med, index) => (
+              <div key={med.id} className="bg-gray-100 group text-gray-700 pt-4 flex flex-col justify-between space-between rounded-lg col-span-1 shadow-lg cursor-pointer border hover:shadow-xl hover:border hover:border-cyan-500 transition">
+                <div>
+                  <h2 className="text-xl px-4 font-bold text-blue-500 group-hover:bg-blue-500 group-hover:text-white transition">{med.nombre_comercial}</h2>
+                  <hr />
+                  <div className='text-sm flex gap-8 mt-4 px-4'>
+                    <div>
+                      <p>Laboratorio: {med.laboratorio.razon_social}</p>
+                      <p>Presentación: {med.presentacion_farmaceutica.nombre}</p>
+                      {med.tiene_contenido_x_unidad ? 
+                        (
+                          <>
+                            <p>Contenido: {Math.floor(med.contenido)} {med.presentacion_farmaceutica.nombre}</p>
+                            <p>Contenido por tableta: {med.contenido_por_unidad} {med.unidad.codigo}</p>
+                          </>
+                        )
+                        :
+                        (
+                          <p>Contenido: {med.contenido} {med.unidad.codigo}</p>
+                        )
+                      }
+                    </div>
+                    <div>
+                      <h3>Composición</h3>
+                        <ul className='list-disc list-inside'>
+                        {med.drogas.map((droga) => (
+                          <li key={droga.id}>{droga.droga} 12mg</li>
+                        ))}
+                      </ul>
+                    </div>
                   </div>
                 </div>
+                <div className='flex gap-4 mt-4 bg-slate-400 rounded text-gray-100 items-center justify-end px-2 py-1'>
+                  <p>Estado: Disponible</p>
+                  <p>Venta bajo receta</p>
+                </div>
               </div>
-              <div className='flex gap-4 mt-4 bg-slate-400 rounded text-gray-100 items-center justify-end px-2 py-1'>
-                <p>Estado: Disponible</p>
-                <p>Venta bajo receta</p>
-                <p className='bg-yellow-300 rounded-md px-2 text-slate-800'>Bajo stock !</p>
-              </div>
-            </div>
+            ))}
             {/* FIN-- tarjeta de medicacion --FIN */}
           </div>
         </div>

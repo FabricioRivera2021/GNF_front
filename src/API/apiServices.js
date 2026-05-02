@@ -400,9 +400,25 @@ export const fetchPresentaciones = (setPresentaciones) => {
     .get(`${API_URL}/allPresentaciones`)
     .then(response => {
             // response.data.sort((a, b) => a.pres.localeCompare(b.pres)); //ordenar por orden alfabetico
+            console.log(response.data);
             setPresentaciones(response.data);
         })
         .catch(error => {
             console.error('Error fetching Presentaciones:', error);
+        });
+}
+
+//crear nuevo medicamento
+export const createNewMedication = (newMedication) => {
+    console.log(`${API_URL}/newMedication`);
+    axios
+        .post(`${API_URL}/newMedication`, { medication: newMedication })
+        .then(response => {
+            console.log('Medication creada:', response.data);
+            // Aquí puedes agregar lógica adicional, como actualizar la lista de drogas o mostrar un mensaje de éxito
+        })
+        .catch(error => {
+            console.error('Error al crear la droga:', error);
+            // Aquí puedes manejar el error, como mostrar un mensaje de error al usuario
         });
 }

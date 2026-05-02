@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Modal from '../Modal';
-import { createNewDrug, fetchAllDrugs, fetchLabs, fetchPresentaciones, fetchUnits } from '../../API/apiServices';
+import { createNewDrug, createNewMedication, fetchAllDrugs, fetchLabs, fetchPresentaciones, fetchUnits } from '../../API/apiServices';
 import axios from 'axios';
 
 function AbastecimientoNuevoMed() {
@@ -47,30 +47,16 @@ function AbastecimientoNuevoMed() {
     setNewMedication(prev => ({ ...prev, drug: prev.drug.filter(drug => drug.id !== id) }));
   };
 
-  const handleAddNewMedication = () => {
-    //se quiere ingresar una nueva medicacion
-    const newMedication = {
-      name: name,
-      lab: lab,
-      codigoInterno: cod,
-      codigoBarras: codBarras,
-      vademecum: vademecum,
-      estado: estado,
-      presentacion: presentacion,
-      concentracionBase: concentracionBase,
-      unidad: unidad,
-      drug: {
-          name: selectedDrugName,
-          concentration: drugConcentration,
-          unit: drugConcentrationUnit
-      },
-      requireColdStorage: reqColdStrg,
-      ranurable: ranurable,
-      ventaBajoReceta: ventaBajoReceta,
-      medicacionControlada: medicacionControlada
-    }
-    console.log(newMedication);
+  const handleConfirmCreateMedication = () => {
+    setConfirmCreateMedicationModal(true);
   }
+
+  const handleCreateNewMedication = () => {
+    //se quiere ingresar una nueva medicacion
+    console.log(newMedication)
+    createNewMedication(newMedication);
+  }
+
   //todavia no borra nada del useState, solo resetea el local storage y hace un reload de la pagina para resetear el estado del formulario
   const resetAddMedicationForm = () => {
     localStorage.removeItem('newMedicationForm');
@@ -95,7 +81,10 @@ function AbastecimientoNuevoMed() {
       codigoBarras: '', //00001
       vademecum: '', //si
       estado: '', //activo
-      presentacion: '', //capsulas
+      presentacion: {
+        nombre: '',
+        unidadIndivisible: false
+      },
       concentracionBase: '', //una capsula
       unidad: '', //mg
       drug: [], 
@@ -115,13 +104,36 @@ function AbastecimientoNuevoMed() {
   const [labs, setLabs] = useState([]);
   const [pres, setPres] = useState([]);
   const [units, setUnits] = useState([]);
+  const [confirmCreateMedicationModal, setConfirmCreateMedicationModal] = useState(false);
+  const [unidadIndivisible, setUnidadIndivisible] = useState(0);
 
   //helper para armar el form de medicacion
   const handleChange = (e) => {
     const { name, type, value, checked } = e.target;
+
+    let finalValue =
+      type === 'checkbox' ? checked :
+      type === 'radio' ? value === 'true' :
+      value;
+
+    // 👇 caso especial
+    if (name === 'presentacionId') {
+      const selected = pres.find(p => p.id == value);
+
+      setNewMedication(prev => ({
+        ...prev,
+        presentacionId: value,
+        presentacion: {
+          nombre: selected?.nombre || '',
+          unidadIndivisible: !!selected?.unidad_indivisible
+        }
+      }));
+      return;
+    }
+
     setNewMedication(prev => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value
+      [name]: finalValue
     }));
   };
 
@@ -155,6 +167,10 @@ function AbastecimientoNuevoMed() {
     fetchAllDrugs(setDrugs);
   }, []);
 
+  const selectedPresentacion = pres.find(
+    p => p.id == newMedication.presentacionId
+  );
+
   return (
     <>
       <div className='bg-white p-6 rounded-lg w-full overflow-auto '>
@@ -183,7 +199,7 @@ function AbastecimientoNuevoMed() {
                   onChange={handleChange}
                 >
                 {labs.map((lab, index) => (
-                  <option value={lab.razon_social}>{lab.razon_social}</option>
+                  <option key={index} value={lab.razon_social}>{lab.razon_social}</option>
                 ))}
                 </select>
               </label>
@@ -220,7 +236,7 @@ function AbastecimientoNuevoMed() {
                     name="vademecum" 
                     id="vademecum-si"
                     value="true"
-                    checked={newMedication.vademecum === 'true'}
+                    checked={newMedication.vademecum === true}
                     onChange={handleChange}
                   /> Sí
                 </label>
@@ -230,7 +246,7 @@ function AbastecimientoNuevoMed() {
                     name="vademecum" 
                     id="vademecum-no"
                     value="false" 
-                    checked={newMedication.vademecum === 'false'}
+                    checked={newMedication.vademecum === false}
                     onChange={handleChange}
                   /> No
                 </label>
@@ -243,7 +259,7 @@ function AbastecimientoNuevoMed() {
                     name="estado" 
                     value="true"
                     id="estado-activo" 
-                    checked={newMedication.estado === 'true'}
+                    checked={newMedication.estado === true}
                     onChange={handleChange}
                   /> Activo
                 </label>
@@ -253,7 +269,7 @@ function AbastecimientoNuevoMed() {
                     name="estado"
                     value="false" 
                     id="estado-inactivo"
-                    checked={newMedication.estado === 'false'}
+                    checked={newMedication.estado === false}
                     onChange={handleChange} 
                   /> Inactivo
                 </label>
@@ -265,12 +281,17 @@ function AbastecimientoNuevoMed() {
                 <label className='whitespace-nowrap' title='forma_farmaceutica'>
                   <select 
                     className='w-full pl-2 py-0.5 bg-transparent border-0 border-b border-gray-300 focus:outline-none focus:ring-0 focus:shadow-none focus:border-blue-500 transition-colors duration-200' name="forma_farmaceutica" id="forma_farmaceutica"
-                    name="presentacion"
+                    name="presentacionId"
                     onChange={handleChange}
-                    value={newMedication.presentacion}
+                    value={newMedication.presentacionId || ''}
                   >
                     {pres.map((presentacion, index) => (
-                      <option value={presentacion.nombre}>{presentacion.nombre}</option>
+                      <option 
+                        key={presentacion.id} 
+                        value={presentacion.id}
+                      >
+                          {presentacion.nombre}
+                      </option>
                     ))}
                   </select>
                 </label>
@@ -279,27 +300,29 @@ function AbastecimientoNuevoMed() {
                 {/* <label className='whitespace-nowrap' title='Unidades por envase'>
                   <input type="number" placeholder='Unidades por envase' className='leading-none px-2 py-0.5 w-full bg-transparent border-0 border-b border-gray-300 focus:outline-none focus:ring-0 focus:shadow-none focus:border-blue-500 transition-colors duration-200'/>
                 </label> */}
-                  <input 
-                    className='leading-none px-2 py-0.5 bg-transparent border-0 border-b border-gray-300 focus:outline-none focus:ring-0 focus:shadow-none focus:border-blue-500 transition-colors duration-200' 
-                    placeholder='Ej: 600' 
-                    type="number"
-                    name='concentracionBase'
-                    value={newMedication.concentracionBase}
-                    onChange={handleChange}
-                    />
-                  <select 
-                    name="unidad_medida" 
-                    id="unidad_medida" 
-                    className='!appearance-none py-0.5 pl-2 bg-transparent border-0 border-gray-300 focus:outline-none focus:ring-0 focus:shadow-none focus:border-blue-500 transition-colors duration-200'
-                    name='unidad'
-                    onChange={handleChange}
-                    value={newMedication.unidad}
-                  >
-                    {/* atrapar el valor de la option y cargarlo en setMedicationBaseConcentrationUnit */}
-                    {units.map((unit, index) => (
-                      <option value={unit.codigo}>{unit.codigo}</option>
-                    ))}
-                  </select>
+                <input 
+                  className='leading-none px-2 py-0.5 bg-transparent border-0 border-b border-gray-300 focus:outline-none focus:ring-0 focus:shadow-none focus:border-blue-500 transition-colors duration-200' 
+                  placeholder='Ej: 600' 
+                  type="number"
+                  name='concentracionBase'
+                  value={newMedication.concentracionBase}
+                  onChange={handleChange}
+                  />
+                <select 
+                  name="unidad_medida" 
+                  id="unidad_medida" 
+                  className='!appearance-none py-0.5 pl-2 bg-transparent border-0 border-gray-300 focus:outline-none focus:ring-0 focus:shadow-none focus:border-blue-500 transition-colors duration-200'
+                  name='unidad'
+                  onChange={handleChange}
+                  value={newMedication.unidad}
+                >
+                  {/* atrapar el valor de la option y cargarlo en setMedicationBaseConcentrationUnit */}
+                  {selectedPresentacion?.unidades?.map((unit) => (
+                    <option key={unit.id} value={unit.id}>
+                      {unit.codigo}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
           </div>
@@ -323,14 +346,14 @@ function AbastecimientoNuevoMed() {
                         <td className='border'>{drug.name}</td>
                         <td className='border'>{drug.unit}</td>
                         {
-                          (newMedication.unidad) == 'comp'
+                          (newMedication.unidad) == 'comp' || (newMedication.unidad) == 'dosis'
                           ?
                             (
                               <td className='border'>
-                                {drug.concentration} {drug.unit} x {drug.baseUnit}
+                                {drug.concentration} {drug.unit} x {newMedication.unidad}
                               </td>
                             )
-                            :
+                            : 
                               <td className='border'>
                                 {drug.concentration} {drug.unit} en {newMedication.concentracionBase} {newMedication.unidad}
                               </td>
@@ -394,7 +417,7 @@ function AbastecimientoNuevoMed() {
             <div className='h-full flex justify-start items-end gap-4'>
               <button 
                 className='border border-green-600 text-green-600 font-bold hover:bg-green-600 hover:text-white px-1 py-0.5 rounded-md transition-colors duration-200'
-                onClick={() => console.log(newMedication)}
+                onClick={() => handleConfirmCreateMedication()}
                 >
                 Guardar Medicamento
               </button>
@@ -405,6 +428,30 @@ function AbastecimientoNuevoMed() {
                 Resetear fomulario
               </button>
             </div>
+            {/* Modal de confirmar crear medicacion */}
+            <Modal cancelButtonShown={false} show={confirmCreateMedicationModal} handleClose={() => setConfirmCreateMedicationModal(false)}>
+              <div className='flex flex-col justify-center items-center'>
+                <h3>¿Esta seguro de crear la siguiente droga?</h3>
+                <h3 className='mt-2 font-semibold bg-gray-300 rounded-md px-3'>{newMedication.name}</h3>
+              </div>
+              <div className='flex justify-center gap-6 mt-4'>
+                <button 
+                  className='border border-red-400 text-red-400 hover:bg-red-400 hover:text-white px-2 py-0.5 rounded-md transition-colors duration-200'
+                  onClick={() => setConfirmCreateMedicationModal(false)}
+                >Cancelar</button>
+                <button 
+                  className='border border-blue-400 text-blue-400 hover:bg-blue-400 hover:text-white px-2 py-0.5 rounded-md transition-colors duration-200'
+                  onClick={
+                    () => {
+                      console.log(newMedication);
+              
+                      // handleCreateNewMedication(newMedication);
+                      setConfirmCreateMedicationModal(false);
+                    } 
+                  }
+                >Confirmar</button>
+              </div>
+            </Modal>
           {/* ------ */}
           </div>
           <Modal show={modal} handleClose={() => setModal(false)}>
